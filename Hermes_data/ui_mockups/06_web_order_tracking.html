@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>NONGKRONG.id - Web Live Order Tracking</title>
+  
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=Poppins:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-font-smoothing: antialiased; }
+  body {
+    background-color: #E2E8F0;
+    font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
+    color: #0F172A;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 30px;
+  }
+  .desktop-window {
+    width: 1440px;
+    height: 900px;
+    background: #FFFFFF;
+    border-radius: 20px;
+    border: 2px solid #CBD5E1;
+    box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.25);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    position: relative;
+  }
+  .window-titlebar {
+    height: 42px;
+    background: #F8FAFC;
+    border-bottom: 1.5px solid #E2E8F0;
+    display: flex;
+    align-items: center;
+    padding: 0 16px;
+    justify-content: space-between;
+    flex-shrink: 0;
+  }
+  .window-dots {
+    display: flex;
+    gap: 8px;
+  }
+  .window-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+  }
+  .dot-red { background: #EF4444; }
+  .dot-yellow { background: #F59E0B; }
+  .dot-green { background: #10B981; }
+  .window-urlbar {
+    background: #FFFFFF;
+    border: 1px solid #CBD5E1;
+    border-radius: 8px;
+    padding: 4px 16px;
+    font-size: 12px;
+    font-family: 'JetBrains Mono', monospace;
+    color: #475569;
+    width: 480px;
+    text-align: center;
+  }
+  .window-badge {
+    font-size: 11px;
+    font-weight: 700;
+    background: #DBEAFE;
+    color: #1E40AF;
+    padding: 3px 10px;
+    border-radius: 6px;
+    letter-spacing: 0.3px;
+  }
+  .window-body {
+    flex: 1;
+    background: #FFFFFF;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    position: relative;
+  }
+</style>
+
+  <style>
+    .track-navbar {
+      height: 64px;
+      border-bottom: 1.5px solid #E2E8F0;
+      background: #FFFFFF;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 32px;
+      z-index: 10;
+    }
+    .track-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 36px 64px;
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+      background: #F8FAFC;
+    }
+
+    /* HEADER BANNER CARD */
+    .status-hero-card {
+      background: #FFFFFF;
+      border: 2px solid #004AAD;
+      border-radius: 20px;
+      padding: 24px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 10px 25px -5px rgba(0, 74, 173, 0.08);
+    }
+    .live-pulse {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: #DCFCE7;
+      color: #166534;
+      font-size: 12px;
+      font-weight: 800;
+      padding: 5px 14px;
+      border-radius: 999px;
+      margin-bottom: 6px;
+    }
+    .pulse-dot {
+      width: 8px;
+      height: 8px;
+      background: #22C55E;
+      border-radius: 50%;
+    }
+
+    /* HORIZONTAL 4-STEPPER (DESKTOP) */
+    .stepper-card {
+      background: #FFFFFF;
+      border: 1.5px solid #CBD5E1;
+      border-radius: 20px;
+      padding: 32px 40px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    .stepper-track-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: relative;
+    }
+    .track-line-bg {
+      position: absolute;
+      top: 24px;
+      left: 60px;
+      right: 60px;
+      height: 4px;
+      background: #E2E8F0;
+      z-index: 1;
+    }
+    .track-line-progress {
+      position: absolute;
+      top: 24px;
+      left: 60px;
+      width: 40%;
+      height: 4px;
+      background: #004AAD;
+      z-index: 2;
+    }
+    .step-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      position: relative;
+      z-index: 5;
+      width: 180px;
+    }
+    .step-circle {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 16px;
+      margin-bottom: 12px;
+      border: 3px solid #FFFFFF;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+    .circle-done {
+      background: #004AAD;
+      color: #FFFFFF;
+    }
+    .circle-active {
+      background: #FFFFFF;
+      border-color: #004AAD;
+      color: #004AAD;
+      border: 3px solid #004AAD;
+    }
+    .circle-pending {
+      background: #F1F5F9;
+      color: #94A3B8;
+      border: 2px solid #CBD5E1;
+    }
+    .step-title {
+      font-size: 14px;
+      font-weight: 800;
+      color: #0F172A;
+      margin-bottom: 4px;
+    }
+    .step-desc {
+      font-size: 11px;
+      color: #64748B;
+      line-height: 1.4;
+    }
+
+    /* BOTTOM 2 COLUMNS */
+    .track-details-split {
+      display: grid;
+      grid-template-columns: 1.3fr 0.9fr;
+      gap: 24px;
+    }
+    .detail-card {
+      background: #FFFFFF;
+      border: 1.5px solid #E2E8F0;
+      border-radius: 18px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .action-row-btn {
+      display: flex;
+      gap: 14px;
+    }
+    .btn-act-outline {
+      flex: 1;
+      height: 46px;
+      border: 2px solid #004AAD;
+      background: #FFFFFF;
+      color: #004AAD;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+    .btn-act-solid {
+      flex: 1;
+      height: 46px;
+      background: #004AAD;
+      border: none;
+      color: #FFFFFF;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="desktop-window">
+    <div class="window-titlebar">
+      <div class="window-dots">
+        <div class="window-dot dot-red"></div>
+        <div class="window-dot dot-yellow"></div>
+        <div class="window-dot dot-green"></div>
+      </div>
+      <div class="window-urlbar">https://nongkrong.id/order/status/ORD-20261008-002</div>
+      <div class="window-badge">Live Order Tracking Web</div>
+    </div>
+
+    <div class="window-body">
+      <!-- Navbar -->
+      <header class="track-navbar">
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <svg width="32" height="32" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M40 18 L36 8" stroke="#004AAD" stroke-width="4.5" stroke-linecap="round"/>
+  <path d="M50 16 L50 6" stroke="#004AAD" stroke-width="4.5" stroke-linecap="round"/>
+  <path d="M60 18 L64 8" stroke="#004AAD" stroke-width="4.5" stroke-linecap="round"/>
+  <path d="M26 28 H74 V58 C74 71 63 80 50 80 C37 80 26 71 26 58 Z" fill="#FFFFFF" stroke="#004AAD" stroke-width="4.5" stroke-linejoin="round"/>
+  <path d="M74 36 C86 36 88 52 74 55" stroke="#004AAD" stroke-width="4.5" stroke-linecap="round" fill="none"/>
+  <path d="M38 46 C40 43 44 43 46 46" stroke="#004AAD" stroke-width="3.5" stroke-linecap="round" fill="none"/>
+  <path d="M54 46 C56 43 60 43 62 46" stroke="#004AAD" stroke-width="3.5" stroke-linecap="round" fill="none"/>
+  <circle cx="35" cy="51" r="2.5" fill="#004AAD" opacity="0.35"/>
+  <circle cx="65" cy="51" r="2.5" fill="#004AAD" opacity="0.35"/>
+  <path d="M44 54 Q50 62 56 54" stroke="#004AAD" stroke-width="3.5" stroke-linecap="round" fill="none"/>
+</svg>
+          <div style="font-size: 20px; font-weight: 900; color: #004AAD;">NONGKRONG.id</div>
+        </div>
+
+        <div style="display: flex; align-items: center; gap: 14px;">
+          <span style="font-size: 13px; font-weight: 700; color: #64748B;">Sesi Meja Aktif:</span>
+          <span style="font-size: 13px; font-weight: 800; background: #004AAD; color: #FFFFFF; padding: 6px 16px; border-radius: 999px;">
+            Meja 03
+          </span>
+        </div>
+      </header>
+
+      <div class="track-body">
+        <!-- Status Hero -->
+        <div class="status-hero-card">
+          <div>
+            <div class="live-pulse">
+              <span class="pulse-dot"></span>
+              REALTIME LIVEWIRE TRACKING (wire:poll.3s)
+            </div>
+            <h1 style="font-size: 24px; font-weight: 900; color: #004AAD; margin-top: 4px;">
+              Pesanan #ORD-20261008-002 Sedang Diramu!
+            </h1>
+            <p style="font-size: 13px; color: #64748B; margin-top: 4px;">
+              Barista di bar dapur sedang menyeduh minuman dan memanggang pastry pesananmu.
+            </p>
+          </div>
+
+          <div style="text-align: right;">
+            <div style="font-size: 12px; font-weight: 700; color: #64748B;">ESTIMASI PENYAJIAN:</div>
+            <div style="font-size: 28px; font-weight: 900; color: #004AAD;">~ 5 – 8 Menit</div>
+            <div style="font-size: 12px; font-weight: 800; color: #166534; background: #DCFCE7; padding: 3px 10px; border-radius: 6px; display: inline-block; margin-top: 4px;">QRIS: Lunas ✓</div>
+          </div>
+        </div>
+
+        <!-- 4-Stepper Card -->
+        <div class="stepper-card">
+          <div style="font-size: 15px; font-weight: 800; color: #0F172A;">Tahapan Proses Pesanan Dapur:</div>
+
+          <div class="stepper-track-row">
+            <div class="track-line-bg"></div>
+            <div class="track-line-progress"></div>
+
+            <!-- Step 1: Done -->
+            <div class="step-item">
+              <div class="step-circle circle-done">✓</div>
+              <div class="step-title">Pesanan Diterima</div>
+              <div class="step-desc">Tiket masuk antrean sistem (11:42 WIB)</div>
+            </div>
+
+            <!-- Step 2: Active -->
+            <div class="step-item">
+              <div class="step-circle circle-active">☕</div>
+              <div class="step-title" style="color: #004AAD;">Sedang Diramu</div>
+              <div class="step-desc">Sedang diseduh & dipanggang di dapur</div>
+            </div>
+
+            <!-- Step 3: Pending -->
+            <div class="step-item">
+              <div class="step-circle circle-pending">3</div>
+              <div class="step-title">Siap Disajikan</div>
+              <div class="step-desc">Hidangan siap di Pick-up Desk</div>
+            </div>
+
+            <!-- Step 4: Pending -->
+            <div class="step-item">
+              <div class="step-circle circle-pending">4</div>
+              <div class="step-title">Tiba di Meja</div>
+              <div class="step-desc">Waiter menyajikan ke Meja 03</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2 Columns Bottom -->
+        <div class="track-details-split">
+          <!-- Detail Menu -->
+          <div class="detail-card">
+            <div style="font-size: 15px; font-weight: 800; color: #0F172A; display: flex; justify-content: space-between;">
+              <span>Rincian Tiket Meja 03</span>
+              <span style="font-size: 13px; color: #004AAD; font-weight: 800;">Total: Rp 74.800</span>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 10px; font-size: 13px;">
+              <div style="display: flex; justify-content: space-between; padding-bottom: 8px; border-bottom: 1px solid #F1F5F9;">
+                <span>1x Caramel Macchiato Iced (Less sugar 50%)</span>
+                <strong>Rp 28.000</strong>
+              </div>
+              <div style="display: flex; justify-content: space-between; padding-bottom: 8px; border-bottom: 1px solid #F1F5F9;">
+                <span>1x Kopi Susu Aren Spesial (Normal ice)</span>
+                <strong>Rp 22.000</strong>
+              </div>
+              <div style="display: flex; justify-content: space-between; padding-bottom: 8px; border-bottom: 1px solid #F1F5F9;">
+                <span>1x Butter Croissant Renyah (Hangat)</span>
+                <strong>Rp 18.000</strong>
+              </div>
+            </div>
+          </div>
+
+          <!-- Actions -->
+          <div class="detail-card">
+            <div style="font-size: 15px; font-weight: 800; color: #0F172A;">Layanan Pelanggan Meja</div>
+            <p style="font-size: 12px; color: #64748B;">Ada permintaan khusus atau butuh bantuan saat menunggu pesananmu?</p>
+            <div class="action-row-btn">
+              <button class="btn-act-outline">🔔 Panggil Waiter</button>
+              <button class="btn-act-solid">+ Pesan Tambahan</button>
+            </div>
+            <div style="font-size: 11px; text-align: center; color: #94A3B8; margin-top: 6px;">
+              Struk digital otomatis tersimpan di sistem kasir NONGKRONG.id
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

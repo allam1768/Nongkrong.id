@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>07 - Live Order Tracking</title>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=Poppins:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-font-smoothing: antialiased; }
+  body {
+    background-color: #F1F5F9;
+    font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
+    color: #0F172A;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 30px 20px;
+  }
+  /* Phone Shell Container */
+  .phone-frame {
+    width: 430px;
+    height: 932px;
+    background: #FFFFFF;
+    border-radius: 54px;
+    border: 12px solid #0F172A;
+    box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.25);
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+  /* Dynamic Island */
+  .dynamic-island {
+    position: absolute;
+    top: 14px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 124px;
+    height: 35px;
+    background: #0F172A;
+    border-radius: 20px;
+    z-index: 999;
+  }
+  /* Status Bar */
+  .status-bar {
+    height: 52px;
+    padding: 14px 28px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 14px;
+    font-weight: 700;
+    z-index: 998;
+    position: relative;
+  }
+  .home-indicator {
+    position: absolute;
+    bottom: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 140px;
+    height: 5px;
+    background: #0F172A;
+    border-radius: 4px;
+    z-index: 999;
+  }
+</style>
+
+<style>
+  .track-body {
+    background-color: #F8FAFC;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 55px 18px 24px;
+    overflow-y: auto;
+  }
+  .step-node {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    position: relative;
+    padding-bottom: 22px;
+  }
+  .step-node:not(:last-child)::before {
+    content: "";
+    position: absolute;
+    left: 17px;
+    top: 36px;
+    bottom: 0;
+    width: 2.5px;
+    background: #CBD5E1;
+  }
+  .step-node.completed::before {
+    background: #004AAD;
+  }
+  .icon-circle {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 800;
+    z-index: 5;
+  }
+  .icon-circle.done {
+    background: #004AAD;
+    color: #FFFFFF;
+  }
+  .icon-circle.active {
+    background: #FFFFFF;
+    color: #004AAD;
+    border: 3px solid #004AAD;
+    animation: pulse 1.5s infinite;
+  }
+  .icon-circle.pending {
+    background: #F1F5F9;
+    color: #94A3B8;
+    border: 2px solid #CBD5E1;
+  }
+</style>
+</head>
+<body>
+  <div class="phone-frame">
+    <div class="dynamic-island"></div>
+    <div class="track-body">
+      <!-- Header -->
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <svg width="34" height="34" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M40 18 L36 8" stroke="#004AAD" stroke-width="4.5" stroke-linecap="round"/>
+  <path d="M50 16 L50 6" stroke="#004AAD" stroke-width="4.5" stroke-linecap="round"/>
+  <path d="M60 18 L64 8" stroke="#004AAD" stroke-width="4.5" stroke-linecap="round"/>
+  <path d="M26 28 H74 V58 C74 71 63 80 50 80 C37 80 26 71 26 58 Z" fill="#FFFFFF" stroke="#004AAD" stroke-width="4.5" stroke-linejoin="round"/>
+  <path d="M74 36 C86 36 88 52 74 55" stroke="#004AAD" stroke-width="4.5" stroke-linecap="round" fill="none"/>
+  <path d="M38 46 C40 43 44 43 46 46" stroke="#004AAD" stroke-width="3.5" stroke-linecap="round" fill="none"/>
+  <path d="M54 46 C56 43 60 43 62 46" stroke="#004AAD" stroke-width="3.5" stroke-linecap="round" fill="none"/>
+  <circle cx="35" cy="51" r="2.5" fill="#004AAD" opacity="0.35"/>
+  <circle cx="65" cy="51" r="2.5" fill="#004AAD" opacity="0.35"/>
+  <path d="M44 54 Q50 62 56 54" stroke="#004AAD" stroke-width="3.5" stroke-linecap="round" fill="none"/>
+</svg>
+          <div>
+            <h2 style="font-size: 17px; font-weight: 800; color: #0F172A;">Status Pesanan Anda</h2>
+            <div style="display: flex; align-items: center; gap: 5px;">
+              <span style="width: 7px; height: 7px; border-radius: 50%; background: #10B981; animation: blink 1s infinite;"></span>
+              <span style="font-size: 11px; color: #004AAD; font-weight: 700; font-family: 'JetBrains Mono', monospace;">wire:poll.3s Realtime</span>
+            </div>
+          </div>
+        </div>
+        <div style="background: #004AAD; color: #FFFFFF; font-size: 12px; font-weight: 800; padding: 6px 12px; border-radius: 16px;">
+          Meja 03
+        </div>
+      </div>
+
+      <!-- Order Ticket Banner -->
+      <div style="background: #FFFFFF; border: 2px solid #004AAD; border-radius: 20px; padding: 18px; margin-bottom: 20px; box-shadow: 0 4px 14px rgba(0, 74, 173, 0.08);">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1.5px dashed #E2E8F0;">
+          <div>
+            <span style="font-size: 11px; color: #64748B; font-weight: 600;">Nomor Pesanan</span>
+            <div style="font-size: 16px; font-weight: 900; color: #004AAD; font-family: 'JetBrains Mono', monospace;">#ORD-20261008-002</div>
+          </div>
+          <span style="background: #DCFCE7; color: #166534; font-size: 11px; font-weight: 800; padding: 4px 10px; border-radius: 10px;">QRIS: Lunas ✓</span>
+        </div>
+
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <div style="background: #EFF6FF; border: 2px solid #004AAD; width: 50px; height: 50px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 24px;">
+            ☕
+          </div>
+          <div>
+            <div style="font-size: 14px; font-weight: 800; color: #0F172A;">Sedang Diramu di Dapur</div>
+            <div style="font-size: 12px; color: #64748B;">Estimasi penyajian: <b style="color: #004AAD;">~5 - 8 Menit</b></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pipeline Steps (ANSI/ISO Flowchart Sequence) -->
+      <div style="background: #FFFFFF; border: 1.5px solid #E2E8F0; border-radius: 20px; padding: 20px 18px; margin-bottom: 16px;">
+        <h4 style="font-size: 13px; font-weight: 800; color: #0F172A; margin-bottom: 16px;">Alur Penyajian Pesanan:</h4>
+
+        <!-- Step 1: Diterima -->
+        <div class="step-node completed">
+          <div class="icon-circle done">✓</div>
+          <div>
+            <h5 style="font-size: 13px; font-weight: 800; color: #0F172A;">Pesanan Diterima Sistem</h5>
+            <p style="font-size: 11px; color: #64748B;">Tiket pesanan masuk ke antrean kasir & dapur (11:42)</p>
+          </div>
+        </div>
+
+        <!-- Step 2: Sedang Diramu (Current Active) -->
+        <div class="step-node completed">
+          <div class="icon-circle active">●</div>
+          <div>
+            <h5 style="font-size: 13px; font-weight: 800; color: #004AAD;">Sedang Diramu Barista</h5>
+            <p style="font-size: 11px; color: #475569;">Barista sedang menyeduh espresso & meracik pesanan</p>
+          </div>
+        </div>
+
+        <!-- Step 3: Siap Disajikan -->
+        <div class="step-node">
+          <div class="icon-circle pending">3</div>
+          <div>
+            <h5 style="font-size: 13px; font-weight: 700; color: #64748B;">Siap Disajikan (Pick-up Desk)</h5>
+            <p style="font-size: 11px; color: #94A3B8;">Makanan & minuman selesai diracik</p>
+          </div>
+        </div>
+
+        <!-- Step 4: Selesai -->
+        <div class="step-node" style="padding-bottom: 0;">
+          <div class="icon-circle pending">4</div>
+          <div>
+            <h5 style="font-size: 13px; font-weight: 700; color: #64748B;">Hidangan Tiba di Meja</h5>
+            <p style="font-size: 11px; color: #94A3B8;">Waiter menyajikan ke Meja 03 & status selesai</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div style="display: flex; gap: 8px;">
+        <button style="flex: 1; background: #FFFFFF; border: 2px solid #004AAD; color: #004AAD; font-size: 13px; font-weight: 800; padding: 13px; border-radius: 20px; cursor: pointer;">
+          + Pesan Tambahan
+        </button>
+        <button style="flex: 1; background: #004AAD; border: none; color: #FFFFFF; font-size: 13px; font-weight: 800; padding: 13px; border-radius: 20px; cursor: pointer;">
+          Panggil Waiter
+        </button>
+      </div>
+    </div>
+    <div class="home-indicator"></div>
+  </div>
+</body>
+</html>

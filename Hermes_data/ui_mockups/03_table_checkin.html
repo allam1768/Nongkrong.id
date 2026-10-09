@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>03 - Table Check-in</title>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=Poppins:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-font-smoothing: antialiased; }
+  body {
+    background-color: #F1F5F9;
+    font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
+    color: #0F172A;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 30px 20px;
+  }
+  /* Phone Shell Container */
+  .phone-frame {
+    width: 430px;
+    height: 932px;
+    background: #FFFFFF;
+    border-radius: 54px;
+    border: 12px solid #0F172A;
+    box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.25);
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+  /* Dynamic Island */
+  .dynamic-island {
+    position: absolute;
+    top: 14px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 124px;
+    height: 35px;
+    background: #0F172A;
+    border-radius: 20px;
+    z-index: 999;
+  }
+  /* Status Bar */
+  .status-bar {
+    height: 52px;
+    padding: 14px 28px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 14px;
+    font-weight: 700;
+    z-index: 998;
+    position: relative;
+  }
+  .home-indicator {
+    position: absolute;
+    bottom: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 140px;
+    height: 5px;
+    background: #0F172A;
+    border-radius: 4px;
+    z-index: 999;
+  }
+</style>
+
+<style>
+  .checkin-body {
+    background-color: #FFFFFF;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 55px 22px 25px;
+    position: relative;
+    overflow: hidden;
+  }
+  .qr-box {
+    background: #FFFFFF;
+    border: 2px solid #004AAD;
+    border-radius: 24px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(0, 74, 173, 0.08);
+  }
+  .divider-or {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 14px 0;
+    position: relative;
+  }
+  .divider-or::before, .divider-or::after {
+    content: "";
+    flex: 1;
+    height: 1.5px;
+    background: #E2E8F0;
+  }
+  .divider-or span {
+    padding: 0 14px;
+    font-size: 14px;
+    font-weight: 800;
+    color: #0F172A;
+  }
+  .code-inputs {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+    margin: 14px 0 18px;
+  }
+  .code-box {
+    width: 58px;
+    height: 64px;
+    border: 2px solid #004AAD;
+    border-radius: 14px;
+    background: #FFFFFF;
+    font-size: 26px;
+    font-weight: 800;
+    color: #004AAD;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .btn-confirm {
+    width: 100%;
+    background-color: #004AAD;
+    color: #FFFFFF;
+    font-size: 16px;
+    font-weight: 700;
+    padding: 15px;
+    border-radius: 30px;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 6px 16px rgba(0, 74, 173, 0.28);
+  }
+</style>
+</head>
+<body>
+  <div class="phone-frame">
+    <div class="dynamic-island"></div>
+    <div class="status-bar">
+      <span>09:41</span>
+      <div style="display: flex; gap: 6px; align-items: center;">
+        <svg width="18" height="12" viewBox="0 0 18 12" fill="#0F172A"><path d="M1 8h2v3H1zM5 6h2v5H5zM9 4h2v7H9zM13 1h2v10h-2z"/></svg>
+      </div>
+    </div>
+
+    <div class="checkin-body">
+      <svg width="80" height="76" viewBox="0 0 100 95" fill="none" style="transform: rotate(-15deg); position: absolute; top: 10px; left: -25px; z-index: 1; pointer-events: none;" xmlns="http://www.w3.org/2000/svg">
+<path d="M49.9297 0L61.7167 35.9311H99.8602L69.0014 58.1378L80.7884 94.0689L49.9297 71.8622L19.071 94.0689L30.8579 58.1378L-0.000778198 35.9311H38.1427L49.9297 0Z" fill="#004AAD"/>
+</svg>
+      <svg width="95" height="90" viewBox="0 0 100 95" fill="none" style="transform: rotate(20deg); position: absolute; top: 25px; right: -30px; z-index: 1; pointer-events: none;" xmlns="http://www.w3.org/2000/svg">
+<path d="M49.9297 0L61.7167 35.9311H99.8602L69.0014 58.1378L80.7884 94.0689L49.9297 71.8622L19.071 94.0689L30.8579 58.1378L-0.000778198 35.9311H38.1427L49.9297 0Z" fill="#004AAD"/>
+</svg>
+      <svg width="75" height="71" viewBox="0 0 100 95" fill="none" style="transform: rotate(-30deg); position: absolute; bottom: 120px; left: -25px; z-index: 1; pointer-events: none;" xmlns="http://www.w3.org/2000/svg">
+<path d="M49.9297 0L61.7167 35.9311H99.8602L69.0014 58.1378L80.7884 94.0689L49.9297 71.8622L19.071 94.0689L30.8579 58.1378L-0.000778198 35.9311H38.1427L49.9297 0Z" fill="#004AAD"/>
+</svg>
+      <svg width="85" height="80" viewBox="0 0 100 95" fill="none" style="transform: rotate(15deg); position: absolute; bottom: -15px; right: -25px; z-index: 1; pointer-events: none;" xmlns="http://www.w3.org/2000/svg">
+<path d="M49.9297 0L61.7167 35.9311H99.8602L69.0014 58.1378L80.7884 94.0689L49.9297 71.8622L19.071 94.0689L30.8579 58.1378L-0.000778198 35.9311H38.1427L49.9297 0Z" fill="#004AAD"/>
+</svg>
+
+      <!-- Brand Logo -->
+      <div style="display: flex; justify-content: center; position: relative; z-index: 10; margin-top: 5px;">
+        <div style="position: relative; display: inline-flex; align-items: flex-end;">
+          <div style="position: absolute; top: -34px; left: 98px;">
+            <svg width="38" height="38" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M40 18 L36 8" stroke="#004AAD" stroke-width="4.5" stroke-linecap="round"/>
+  <path d="M50 16 L50 6" stroke="#004AAD" stroke-width="4.5" stroke-linecap="round"/>
+  <path d="M60 18 L64 8" stroke="#004AAD" stroke-width="4.5" stroke-linecap="round"/>
+  <path d="M26 28 H74 V58 C74 71 63 80 50 80 C37 80 26 71 26 58 Z" fill="#FFFFFF" stroke="#004AAD" stroke-width="4.5" stroke-linejoin="round"/>
+  <path d="M74 36 C86 36 88 52 74 55" stroke="#004AAD" stroke-width="4.5" stroke-linecap="round" fill="none"/>
+  <path d="M38 46 C40 43 44 43 46 46" stroke="#004AAD" stroke-width="3.5" stroke-linecap="round" fill="none"/>
+  <path d="M54 46 C56 43 60 43 62 46" stroke="#004AAD" stroke-width="3.5" stroke-linecap="round" fill="none"/>
+  <circle cx="35" cy="51" r="2.5" fill="#004AAD" opacity="0.35"/>
+  <circle cx="65" cy="51" r="2.5" fill="#004AAD" opacity="0.35"/>
+  <path d="M44 54 Q50 62 56 54" stroke="#004AAD" stroke-width="3.5" stroke-linecap="round" fill="none"/>
+</svg>
+          </div>
+          <span style="font-size: 26px; font-weight: 900; color: #004AAD; letter-spacing: -0.5px;">NONGKRONG</span>
+          <span style="font-size: 26px; font-weight: 900; color: #004AAD;">.id</span>
+        </div>
+      </div>
+
+      <!-- Main Options Container -->
+      <div style="position: relative; z-index: 10; margin: auto 0;">
+        <!-- Option 1: Scan QR Code -->
+        <div class="qr-box">
+          <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#004AAD" stroke-width="2.2"><path d="M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2"/></svg>
+            <span style="font-size: 14px; font-weight: 700; color: #004AAD;">Arahkan Kamera ke QR Meja</span>
+          </div>
+
+          <!-- Stylized QR Code SVG -->
+          <div style="background: #F8FAFC; padding: 14px; border-radius: 16px; border: 1.5px dashed #CBD5E1;">
+            <svg width="150" height="150" viewBox="0 0 100 100" fill="#0F172A">
+              <!-- Top Left Corner Box -->
+              <rect x="5" y="5" width="30" height="30" rx="4" fill="none" stroke="#004AAD" stroke-width="6"/>
+              <rect x="13" y="13" width="14" height="14" fill="#004AAD"/>
+              <!-- Top Right Corner Box -->
+              <rect x="65" y="5" width="30" height="30" rx="4" fill="none" stroke="#004AAD" stroke-width="6"/>
+              <rect x="73" y="13" width="14" height="14" fill="#004AAD"/>
+              <!-- Bottom Left Corner Box -->
+              <rect x="5" y="65" width="30" height="30" rx="4" fill="none" stroke="#004AAD" stroke-width="6"/>
+              <rect x="13" y="73" width="14" height="14" fill="#004AAD"/>
+              <!-- Random Data Dots -->
+              <rect x="42" y="8" width="6" height="6" fill="#0F172A"/>
+              <rect x="52" y="16" width="6" height="12" fill="#0F172A"/>
+              <rect x="42" y="24" width="8" height="6" fill="#0F172A"/>
+              <rect x="12" y="44" width="14" height="6" fill="#0F172A"/>
+              <rect x="32" y="40" width="8" height="8" fill="#004AAD"/>
+              <rect x="46" y="46" width="10" height="10" fill="#0F172A"/>
+              <rect x="62" y="42" width="12" height="6" fill="#0F172A"/>
+              <rect x="80" y="44" width="8" height="12" fill="#0F172A"/>
+              <rect x="42" y="66" width="8" height="8" fill="#0F172A"/>
+              <rect x="56" y="62" width="6" height="14" fill="#0F172A"/>
+              <rect x="70" y="72" width="14" height="6" fill="#004AAD"/>
+              <rect x="44" y="82" width="12" height="8" fill="#0F172A"/>
+              <rect x="68" y="84" width="8" height="8" fill="#0F172A"/>
+              <rect x="84" y="80" width="8" height="12" fill="#0F172A"/>
+            </svg>
+          </div>
+          <span style="font-size: 11px; color: #64748B; margin-top: 10px; font-weight: 500;">Otomatis redirect ke katalog meja Anda</span>
+        </div>
+
+        <!-- Divider OR -->
+        <div class="divider-or">
+          <span>OR</span>
+        </div>
+
+        <!-- Option 2: Enter Table Code -->
+        <div style="background: #F8FAFC; border: 2px solid #E2E8F0; border-radius: 24px; padding: 20px 18px; text-align: center;">
+          <h2 style="font-size: 18px; font-weight: 800; color: #000000; margin-bottom: 4px;">
+            Enter your table code !
+          </h2>
+          <p style="font-size: 12px; color: #64748B; margin-bottom: 12px;">
+            Ketik 5 digit kode yang tertera pada stiker meja Anda
+          </p>
+
+          <!-- 5 Input Boxes -->
+          <div class="code-inputs">
+            <div class="code-box">7</div>
+            <div class="code-box">K</div>
+            <div class="code-box">9</div>
+            <div class="code-box">2</div>
+            <div class="code-box" style="border-color: #004AAD; background: #EFF6FF;">A</div>
+          </div>
+
+          <button class="btn-confirm">Confirm Meja</button>
+        </div>
+      </div>
+
+      <div style="text-align: center; font-size: 11px; color: #94A3B8; z-index: 10;">
+        Butuh bantuan? Silakan panggil waiter atau kasir kami
+      </div>
+    </div>
+    <div class="home-indicator"></div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,112 @@
+// =====================================================================
+// ENTITY RELATIONSHIP DIAGRAM (ERD) - SMART CAFE POS SYSTEM
+// Database: nongkrong_id (MariaDB / MySQL 3NF Architecture)
+// Tool: dbdiagram.io (DBML - Database Markup Language)
+// =====================================================================
+
+Table users {
+  id bigint [pk, increment]
+  name varchar(100) [not null]
+  email varchar(150) [unique, not null]
+  password varchar(255) [not null]
+  role varchar(20) [default: 'staff', note: 'enum: admin, staff']
+  created_at timestamp [null]
+  updated_at timestamp [null]
+
+  Note: 'Master data akun karyawan (Admin & Staff Kasir/Barista)'
+}
+
+Table tables {
+  id bigint [pk, increment]
+  table_number varchar(20) [unique, not null]
+  capacity int [default: 4]
+  status varchar(20) [default: 'available', note: 'enum: available, occupied, reserved']
+  qr_code_token varchar(64) [unique, null, note: 'Token unik untuk binding scan QR']
+  access_code varchar(10) [unique, null, note: 'Kode acak 5 karakter jika kamera HP error']
+  created_at timestamp [null]
+  updated_at timestamp [null]
+
+  Note: 'Master meja kafe, kuota kursi, dan akses QR/PIN manual'
+}
+
+Table categories {
+  id bigint [pk, increment]
+  name varchar(100) [not null]
+  slug varchar(100) [unique, not null]
+  icon varchar(50) [null]
+  is_active boolean [default: true]
+  created_at timestamp [null]
+  updated_at timestamp [null]
+
+  Note: 'Kategori menu (Coffee, Non-Coffee, Meals, Pastry, dll)'
+}
+
+Table menus {
+  id bigint [pk, increment]
+  category_id bigint [not null]
+  name varchar(150) [not null]
+  price decimal(10,2) [not null]
+  description text [null]
+  image_path varchar(255) [null]
+  is_available boolean [default: true]
+  taste_profile json [null, note: 'Tag profil rasa untuk pencocokan AI Barista Gemini']
+  created_at timestamp [null]
+  updated_at timestamp [null]
+
+  Note: 'Katalog produk minuman dan makanan kafe'
+}
+
+Table orders {
+  id bigint [pk, increment]
+  order_code varchar(32) [unique, not null]
+  table_id bigint [null, note: 'Nullable jika pesanan walk-in / takeaway']
+  user_id bigint [null, note: 'Nullable jika self-service sebelum diverifikasi kasir']
+  customer_name varchar(100) [not null]
+  order_status varchar(20) [default: 'pending', note: 'enum: pending, processing, ready, completed, cancelled']
+  payment_status varchar(20) [default: 'unpaid', note: 'enum: unpaid, paid']
+  payment_method varchar(30) [null, note: 'Metode: QRIS, Cash, Transfer']
+  total_amount decimal(10,2) [default: 0]
+  notes text [null]
+  created_at timestamp [null]
+  updated_at timestamp [null]
+
+  Note: 'Header transaksi pesanan dan Kanban state machine'
+}
+
+Table order_items {
+  id bigint [pk, increment]
+  order_id bigint [not null]
+  menu_id bigint [not null]
+  price decimal(10,2) [not null, note: 'Snapshot harga satuan saat transaksi dibuat']
+  quantity int [default: 1]
+  subtotal decimal(10,2) [not null, note: 'price x quantity']
+  notes varchar(255) [null, note: 'Catatan custom: less ice, normal sugar, dll']
+  created_at timestamp [null]
+  updated_at timestamp [null]
+
+  Note: 'Detail line item pemesanan per menu'
+}
+
+Table ai_consultations {
+  id bigint [pk, increment]
+  table_id bigint [null]
+  customer_preference text [not null, note: 'Prompt / keluhan rasa dari pembeli']
+  ai_response text [not null, note: 'Balasan konsultasi dari Gemini AI Barista']
+  recommended_ids json [note: 'Array menu_id hasil filter cerdas AI']
+  is_converted boolean [default: false, note: 'Apakah customer jadi checkout menu ini']
+  created_at timestamp [null]
+  updated_at timestamp [null]
+
+  Note: 'Log audit rekomendasi AI Barista dan conversion rate'
+}
+
+// =====================================================================
+// DEFINISI RELASI ANTAR TABEL (KARDINALITAS 1 : N)
+// =====================================================================
+
+Ref: categories.id < menus.category_id [delete: cascade]
+Ref: menus.id < order_items.menu_id [delete: restrict]
+Ref: orders.id < order_items.order_id [delete: cascade]
+Ref: tables.id < orders.table_id [delete: set null]
+Ref: users.id < orders.user_id [delete: set null]
+Ref: tables.id < ai_consultations.table_id [delete: cascade]

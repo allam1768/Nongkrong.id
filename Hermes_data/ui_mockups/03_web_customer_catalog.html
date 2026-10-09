@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>NONGKRONG.id - Customer Web Catalog & Order</title>
+  
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=Poppins:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-font-smoothing: antialiased; }
+  body {
+    background-color: #E2E8F0;
+    font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
+    color: #0F172A;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 30px;
+  }
+  .desktop-window {
+    width: 1440px;
+    height: 900px;
+    background: #FFFFFF;
+    border-radius: 20px;
+    border: 2px solid #CBD5E1;
+    box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.25);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    position: relative;
+  }
+  .window-titlebar {
+    height: 42px;
+    background: #F8FAFC;
+    border-bottom: 1.5px solid #E2E8F0;
+    display: flex;
+    align-items: center;
+    padding: 0 16px;
+    justify-content: space-between;
+    flex-shrink: 0;
+  }
+  .window-dots {
+    display: flex;
+    gap: 8px;
+  }
+  .window-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+  }
+  .dot-red { background: #EF4444; }
+  .dot-yellow { background: #F59E0B; }
+  .dot-green { background: #10B981; }
+  .window-urlbar {
+    background: #FFFFFF;
+    border: 1px solid #CBD5E1;
+    border-radius: 8px;
+    padding: 4px 16px;
+    font-size: 12px;
+    font-family: 'JetBrains Mono', monospace;
+    color: #475569;
+    width: 480px;
+    text-align: center;
+  }
+  .window-badge {
+    font-size: 11px;
+    font-weight: 700;
+    background: #DBEAFE;
+    color: #1E40AF;
+    padding: 3px 10px;
+    border-radius: 6px;
+    letter-spacing: 0.3px;
+  }
+  .window-body {
+    flex: 1;
+    background: #FFFFFF;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    position: relative;
+  }
+</style>
+
+  <style>
+    .cat-navbar {
+      height: 64px;
+      border-bottom: 1.5px solid #E2E8F0;
+      background: #FFFFFF;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 32px;
+      z-index: 10;
+    }
+    .nav-search {
+      width: 440px;
+      height: 40px;
+      background: #F8FAFC;
+      border: 1.5px solid #CBD5E1;
+      border-radius: 999px;
+      display: flex;
+      align-items: center;
+      padding: 0 16px;
+      gap: 10px;
+    }
+    .nav-search input {
+      border: none;
+      background: transparent;
+      outline: none;
+      font-size: 13px;
+      font-family: inherit;
+      width: 100%;
+    }
+    .table-tag {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: #004AAD;
+      color: #FFFFFF;
+      font-size: 13px;
+      font-weight: 800;
+      padding: 8px 18px;
+      border-radius: 999px;
+    }
+
+    .cat-content-split {
+      flex: 1;
+      display: flex;
+      overflow: hidden;
+      background: #F8FAFC;
+    }
+
+    /* LEFT: MENU SECTION */
+    .cat-main-scroll {
+      flex: 1;
+      overflow-y: auto;
+      padding: 24px 32px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    /* AI HERO BANNER */
+    .ai-banner-card {
+      background: #004AAD;
+      border-radius: 20px;
+      padding: 22px 28px;
+      color: #FFFFFF;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border: 2px solid #003087;
+      position: relative;
+      overflow: hidden;
+    }
+    .ai-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #FFFFFF;
+      color: #004AAD;
+      font-size: 11px;
+      font-weight: 800;
+      padding: 3px 10px;
+      border-radius: 999px;
+      margin-bottom: 8px;
+    }
+    .ai-banner-title {
+      font-size: 22px;
+      font-weight: 900;
+      margin-bottom: 4px;
+    }
+    .ai-banner-desc {
+      font-size: 13px;
+      color: #DBEAFE;
+      max-width: 480px;
+    }
+    .btn-ai-cta {
+      background: #FFFFFF;
+      color: #004AAD;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 800;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      flex-shrink: 0;
+    }
+
+    /* CATEGORIES BAR */
+    .cat-tabs-bar {
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+    }
+    .cat-tab {
+      padding: 8px 18px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 700;
+      background: #FFFFFF;
+      border: 1.5px solid #CBD5E1;
+      color: #475569;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .cat-tab.active {
+      background: #004AAD;
+      border-color: #004AAD;
+      color: #FFFFFF;
+    }
+
+    /* MENU GRID (3 COLS) */
+    .menu-grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+    .menu-card {
+      background: #FFFFFF;
+      border: 1.5px solid #E2E8F0;
+      border-radius: 16px;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      transition: border-color 0.15s;
+    }
+    .menu-card:hover {
+      border-color: #004AAD;
+    }
+    .card-img-placeholder {
+      height: 120px;
+      background: #EFF6FF;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      border: 1px solid #DBEAFE;
+    }
+    .flavor-tag {
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      background: #FFFFFF;
+      color: #004AAD;
+      font-size: 10px;
+      font-weight: 800;
+      padding: 3px 8px;
+      border-radius: 6px;
+      border: 1px solid #BFDBFE;
+    }
+    .menu-info h4 {
+      font-size: 15px;
+      font-weight: 800;
+      color: #0F172A;
+      margin-bottom: 4px;
+    }
+    .menu-info p {
+      font-size: 12px;
+      color: #64748B;
+      line-height: 1.4;
+      height: 34px;
+      overflow: hidden;
+    }
+    .menu-bottom {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 4px;
+    }
+    .menu-price {
+      font-size: 15px;
+      font-weight: 900;
+      color: #004AAD;
+    }
+    .btn-add-item {
+      width: 34px;
+      height: 34px;
+      background: #004AAD;
+      color: #FFFFFF;
+      border: none;
+      border-radius: 50%;
+      font-size: 18px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+
+    /* RIGHT: STICKY CART (360px) */
+    .cat-cart-panel {
+      width: 360px;
+      background: #FFFFFF;
+      border-left: 1.5px solid #E2E8F0;
+      display: flex;
+      flex-direction: column;
+    }
+    .cart-header {
+      padding: 20px 24px;
+      border-bottom: 1.5px solid #F1F5F9;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .cart-title {
+      font-size: 16px;
+      font-weight: 800;
+      color: #0F172A;
+    }
+    .cart-items-scroll {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .cart-item-row {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      padding-bottom: 12px;
+      border-bottom: 1px solid #F1F5F9;
+    }
+    .cart-item-info {
+      flex: 1;
+    }
+    .cart-item-name {
+      font-size: 13px;
+      font-weight: 800;
+      color: #0F172A;
+    }
+    .cart-item-note {
+      font-size: 11px;
+      color: #64748B;
+      margin-top: 2px;
+    }
+    .cart-item-price {
+      font-size: 13px;
+      font-weight: 800;
+      color: #004AAD;
+      margin-top: 4px;
+    }
+    .cart-qty-ctrl {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: #F8FAFC;
+      border: 1px solid #CBD5E1;
+      border-radius: 8px;
+      padding: 2px 6px;
+    }
+    .qty-btn {
+      border: none;
+      background: transparent;
+      font-weight: 800;
+      font-size: 14px;
+      color: #004AAD;
+      cursor: pointer;
+    }
+    .qty-num {
+      font-size: 12px;
+      font-weight: 800;
+      width: 16px;
+      text-align: center;
+    }
+
+    .cart-footer {
+      padding: 20px 24px;
+      border-top: 1.5px solid #E2E8F0;
+      background: #F8FAFC;
+    }
+    .bill-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 13px;
+      color: #64748B;
+      margin-bottom: 8px;
+    }
+    .bill-row.total {
+      font-size: 16px;
+      font-weight: 900;
+      color: #0F172A;
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px dashed #CBD5E1;
+    }
+    .btn-checkout-cart {
+      width: 100%;
+      height: 48px;
+      background: #004AAD;
+      color: #FFFFFF;
+      border: none;
+      border-radius: 999px;
+      font-size: 14px;
+      font-weight: 800;
+      cursor: pointer;
+      margin-top: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+  </style>
+</head>
+<body>
+  <div class="desktop-window">
+    <div class="window-titlebar">
+      <div class="window-dots">
+        <div class="window-dot dot-red"></div>
+        <div class="window-dot dot-yellow"></div>
+        <div class="window-dot dot-green"></div>
+      </div>
+      <div class="window-urlbar">https://nongkrong.id/order?table=03</div>
+      <div class="window-badge">Catalog & Order Web</div>
+    </div>
+
+    <div class="window-body">
+      <!-- Navbar -->
+      <header class="cat-navbar">
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <svg width="32" height="32" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M40 18 L36 8" stroke="#004AAD" stroke-width="4.5" stroke-linecap="round"/>
+  <path d="M50 16 L50 6" stroke="#004AAD" stroke-width="4.5" stroke-linecap="round"/>
+  <path d="M60 18 L64 8" stroke="#004AAD" stroke-width="4.5" stroke-linecap="round"/>
+  <path d="M26 28 H74 V58 C74 71 63 80 50 80 C37 80 26 71 26 58 Z" fill="#FFFFFF" stroke="#004AAD" stroke-width="4.5" stroke-linejoin="round"/>
+  <path d="M74 36 C86 36 88 52 74 55" stroke="#004AAD" stroke-width="4.5" stroke-linecap="round" fill="none"/>
+  <path d="M38 46 C40 43 44 43 46 46" stroke="#004AAD" stroke-width="3.5" stroke-linecap="round" fill="none"/>
+  <path d="M54 46 C56 43 60 43 62 46" stroke="#004AAD" stroke-width="3.5" stroke-linecap="round" fill="none"/>
+  <circle cx="35" cy="51" r="2.5" fill="#004AAD" opacity="0.35"/>
+  <circle cx="65" cy="51" r="2.5" fill="#004AAD" opacity="0.35"/>
+  <path d="M44 54 Q50 62 56 54" stroke="#004AAD" stroke-width="3.5" stroke-linecap="round" fill="none"/>
+</svg>
+          <div style="font-size: 20px; font-weight: 900; color: #004AAD;">NONGKRONG.id</div>
+        </div>
+
+        <div class="nav-search">
+          <span style="font-size: 14px; color: #64748B;">🔍</span>
+          <input type="text" placeholder="Cari kopi, tea, makanan, atau snack..." value="">
+        </div>
+
+        <div style="display: flex; align-items: center; gap: 16px;">
+          <div class="table-tag">
+            <span style="width: 8px; height: 8px; background: #22C55E; border-radius: 50%;"></span>
+            Meja 03 (Indoor)
+          </div>
+        </div>
+      </header>
+
+      <!-- Main Split -->
+      <div class="cat-content-split">
+        <!-- Menu Catalog (Scrollable) -->
+        <div class="cat-main-scroll">
+          <!-- AI Hero Banner -->
+          <div class="ai-banner-card">
+            <div>
+              <div class="ai-badge">✨ GEMINI 1.5 FLASH COFFEE ASSISTANT</div>
+              <h2 class="ai-banner-title">Bingung Mau Minum Apa Hari Ini?</h2>
+              <p class="ai-banner-desc">Ceritakan rasa & mood favoritmu, Barista AI kami akan meracikkan rekomendasi menu yang paling pas dengan seleramu!</p>
+            </div>
+            <button class="btn-ai-cta">
+              Tanya Barista AI ➔
+            </button>
+          </div>
+
+          <!-- Category Pills -->
+          <div class="cat-tabs-bar">
+            <button class="cat-tab active">Semua Menu (15)</button>
+            <button class="cat-tab">Espresso Based</button>
+            <button class="cat-tab">Signature Coffee</button>
+            <button class="cat-tab">Tea & Mocktail</button>
+            <button class="cat-tab">Pastry & Snacks</button>
+            <button class="cat-tab">Main Course</button>
+          </div>
+
+          <!-- Menu Grid -->
+          <div class="menu-grid-3">
+            <!-- 1 -->
+            <div class="menu-card">
+              <div class="card-img-placeholder">
+                <span class="flavor-tag">Sweet & Creamy</span>
+                <span style="font-size: 38px;">☕</span>
+              </div>
+              <div class="menu-info">
+                <h4>Kopi Susu Aren</h4>
+                <p>Espresso double-shot, susu sapi segar, dan pemanis gula aren Jawa.</p>
+              </div>
+              <div class="menu-bottom">
+                <span class="menu-price">Rp 22.000</span>
+                <button class="btn-add-item">+</button>
+              </div>
+            </div>
+
+            <!-- 2 -->
+            <div class="menu-card">
+              <div class="card-img-placeholder">
+                <span class="flavor-tag">Caramel & Nutty</span>
+                <span style="font-size: 38px;">🥛</span>
+              </div>
+              <div class="menu-info">
+                <h4>Caramel Macchiato</h4>
+                <p>Vanilla syrup, steamed fresh milk, espresso & saus karamel drizzle.</p>
+              </div>
+              <div class="menu-bottom">
+                <span class="menu-price">Rp 28.000</span>
+                <button class="btn-add-item">+</button>
+              </div>
+            </div>
+
+            <!-- 3 -->
+            <div class="menu-card">
+              <div class="card-img-placeholder">
+                <span class="flavor-tag">Bitter & Bold</span>
+                <span style="font-size: 38px;">🧊</span>
+              </div>
+              <div class="menu-info">
+                <h4>Americano Cold Brew</h4>
+                <p>Ekstraksi dingin 12 jam biji Arabika pilihan dengan sensasi fruity clean.</p>
+              </div>
+              <div class="menu-bottom">
+                <span class="menu-price">Rp 20.000</span>
+                <button class="btn-add-item">+</button>
+              </div>
+            </div>
+
+            <!-- 4 -->
+            <div class="menu-card">
+              <div class="card-img-placeholder">
+                <span class="flavor-tag">Earthy & Sweet</span>
+                <span style="font-size: 38px;">🍵</span>
+              </div>
+              <div class="menu-info">
+                <h4>Matcha Latte Iced</h4>
+                <p>Pure Uji matcha Jepang dengan susu segar dingin kental.</p>
+              </div>
+              <div class="menu-bottom">
+                <span class="menu-price">Rp 25.000</span>
+                <button class="btn-add-item">+</button>
+              </div>
+            </div>
+
+            <!-- 5 -->
+            <div class="menu-card">
+              <div class="card-img-placeholder">
+                <span class="flavor-tag">Flaky & Butter</span>
+                <span style="font-size: 38px;">🥐</span>
+              </div>
+              <div class="menu-info">
+                <h4>Butter Croissant</h4>
+                <p>Pastry berlapis renyah dengan butter asli Prancis dipanggang hangat.</p>
+              </div>
+              <div class="menu-bottom">
+                <span class="menu-price">Rp 18.000</span>
+                <button class="btn-add-item">+</button>
+              </div>
+            </div>
+
+            <!-- 6 -->
+            <div class="menu-card">
+              <div class="card-img-placeholder">
+                <span class="flavor-tag">Savory & Crispy</span>
+                <span style="font-size: 38px;">🥪</span>
+              </div>
+              <div class="menu-info">
+                <h4>Beef Panini Toast</h4>
+                <p>Roti gandum panggang isi daging asap, keju mozarella meleleh.</p>
+              </div>
+              <div class="menu-bottom">
+                <span class="menu-price">Rp 32.000</span>
+                <button class="btn-add-item">+</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sticky Cart Sidebar -->
+        <div class="cat-cart-panel">
+          <div class="cart-header">
+            <div class="cart-title">🛒 Pesanan Meja 03</div>
+            <span style="font-size: 12px; font-weight: 700; color: #004AAD; background: #DBEAFE; padding: 2px 8px; border-radius: 6px;">3 Item</span>
+          </div>
+
+          <div class="cart-items-scroll">
+            <div class="cart-item-row">
+              <div class="cart-item-info">
+                <div class="cart-item-name">Caramel Macchiato</div>
+                <div class="cart-item-note">Catatan: Less sugar 50%</div>
+                <div class="cart-item-price">Rp 28.000</div>
+              </div>
+              <div class="cart-qty-ctrl">
+                <button class="qty-btn">-</button>
+                <span class="qty-num">1</span>
+                <button class="qty-btn">+</button>
+              </div>
+            </div>
+
+            <div class="cart-item-row">
+              <div class="cart-item-info">
+                <div class="cart-item-name">Kopi Susu Aren</div>
+                <div class="cart-item-note">Catatan: Normal ice</div>
+                <div class="cart-item-price">Rp 22.000</div>
+              </div>
+              <div class="cart-qty-ctrl">
+                <button class="qty-btn">-</button>
+                <span class="qty-num">1</span>
+                <button class="qty-btn">+</button>
+              </div>
+            </div>
+
+            <div class="cart-item-row">
+              <div class="cart-item-info">
+                <div class="cart-item-name">Butter Croissant</div>
+                <div class="cart-item-note">Catatan: Dihangatkan</div>
+                <div class="cart-item-price">Rp 18.000</div>
+              </div>
+              <div class="cart-qty-ctrl">
+                <button class="qty-btn">-</button>
+                <span class="qty-num">1</span>
+                <button class="qty-btn">+</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="cart-footer">
+            <div class="bill-row">
+              <span>Subtotal</span>
+              <span>Rp 68.000</span>
+            </div>
+            <div class="bill-row">
+              <span>PB1 (Pajak Resto 10%)</span>
+              <span>Rp 6.800</span>
+            </div>
+            <div class="bill-row total">
+              <span>Total Tagihan</span>
+              <span style="color: #004AAD;">Rp 74.800</span>
+            </div>
+            <button class="btn-checkout-cart">
+              Lanjut ke Checkout ➔
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

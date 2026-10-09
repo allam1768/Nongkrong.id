@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>10 - Admin Executive Analytics</title>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=Poppins:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-font-smoothing: antialiased; }
+  body {
+    background-color: #E2E8F0;
+    font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
+    color: #0F172A;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 30px;
+  }
+  .desktop-window {
+    width: 1440px;
+    height: 900px;
+    background: #FFFFFF;
+    border-radius: 20px;
+    border: 2px solid #CBD5E1;
+    box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.25);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .window-titlebar {
+    height: 42px;
+    background: #F8FAFC;
+    border-bottom: 1.5px solid #E2E8F0;
+    display: flex;
+    align-items: center;
+    padding: 0 16px;
+    justify-content: space-between;
+  }
+  .window-dots {
+    display: flex;
+    gap: 8px;
+  }
+  .window-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+  }
+  .dot-red { background: #EF4444; }
+  .dot-yellow { background: #F59E0B; }
+  .dot-green { background: #10B981; }
+  .url-bar {
+    background: #FFFFFF;
+    border: 1px solid #CBD5E1;
+    border-radius: 8px;
+    padding: 4px 18px;
+    font-size: 12px;
+    color: #475569;
+    font-family: 'JetBrains Mono', monospace;
+    width: 440px;
+    text-align: center;
+  }
+  .admin-layout {
+    display: flex;
+    flex: 1;
+    height: calc(100% - 42px);
+    overflow: hidden;
+  }
+  .admin-sidebar {
+    width: 250px;
+    background: #0F172A;
+    color: #FFFFFF;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 20px 16px;
+  }
+  .sidebar-link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 11px 14px;
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 700;
+    color: #94A3B8;
+    text-decoration: none;
+    margin-bottom: 4px;
+    cursor: pointer;
+  }
+  .sidebar-link.active {
+    background: #004AAD;
+    color: #FFFFFF;
+  }
+  .admin-content {
+    flex: 1;
+    background: #F8FAFC;
+    overflow-y: auto;
+    padding: 24px 30px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  .kpi-card {
+    background: #FFFFFF;
+    border: 1.5px solid #E2E8F0;
+    border-radius: 18px;
+    padding: 18px 20px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  }
+</style>
+
+</head>
+<body>
+  <div class="desktop-window">
+    <div class="window-titlebar">
+      <div class="window-dots">
+        <div class="window-dot dot-red"></div>
+        <div class="window-dot dot-yellow"></div>
+        <div class="window-dot dot-green"></div>
+      </div>
+      <div class="url-bar">https://nongkrong.id/admin/dashboard/analytics</div>
+      <div style="font-size: 11px; font-weight: 700; color: #64748B;">Executive Analytics</div>
+    </div>
+
+    <div class="admin-layout">
+      
+    <div class="admin-sidebar">
+      <div>
+        <!-- Logo -->
+        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 28px; padding-left: 8px;">
+          <svg width="34" height="34" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M40 18 L36 8" stroke="#FFFFFF" stroke-width="4.5" stroke-linecap="round"/>
+  <path d="M50 16 L50 6" stroke="#FFFFFF" stroke-width="4.5" stroke-linecap="round"/>
+  <path d="M60 18 L64 8" stroke="#FFFFFF" stroke-width="4.5" stroke-linecap="round"/>
+  <path d="M26 28 H74 V58 C74 71 63 80 50 80 C37 80 26 71 26 58 Z" fill="#004AAD" stroke="#FFFFFF" stroke-width="4.5" stroke-linejoin="round"/>
+  <path d="M74 36 C86 36 88 52 74 55" stroke="#FFFFFF" stroke-width="4.5" stroke-linecap="round" fill="none"/>
+  <path d="M38 46 C40 43 44 43 46 46" stroke="#FFFFFF" stroke-width="3.5" stroke-linecap="round" fill="none"/>
+  <path d="M54 46 C56 43 60 43 62 46" stroke="#FFFFFF" stroke-width="3.5" stroke-linecap="round" fill="none"/>
+  <circle cx="35" cy="51" r="2.5" fill="#FFFFFF" opacity="0.35"/>
+  <circle cx="65" cy="51" r="2.5" fill="#FFFFFF" opacity="0.35"/>
+  <path d="M44 54 Q50 62 56 54" stroke="#FFFFFF" stroke-width="3.5" stroke-linecap="round" fill="none"/>
+</svg>
+          <div>
+            <div style="font-size: 16px; font-weight: 900; color: #FFFFFF; letter-spacing: -0.3px;">NONGKRONG<span style="color: #60A5FA;">.id</span></div>
+            <div style="font-size: 10px; color: #94A3B8; font-weight: 600;">Admin Management Portal</div>
+          </div>
+        </div>
+
+        <!-- Menu links -->
+        <div class="sidebar-link active">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>
+          Analitik Bisnis
+        </div>
+
+        <div class="sidebar-link ">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+          Manajemen Menu & Stok
+        </div>
+
+        <div class="sidebar-link ">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
+          Konfigurasi AI Barista
+        </div>
+
+        <div class="sidebar-link">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+          Laporan Shift & Kasir
+        </div>
+
+        <div class="sidebar-link">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          Pengaturan Sistem
+        </div>
+      </div>
+
+      <!-- User footer -->
+      <div style="border-top: 1px solid #1E293B; padding-top: 14px; display: flex; align-items: center; gap: 10px;">
+        <div style="width: 38px; height: 38px; border-radius: 50%; background: #004AAD; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px;">AL</div>
+        <div>
+          <div style="font-size: 13px; font-weight: 800; color: #FFFFFF;">Allam (Admin)</div>
+          <div style="font-size: 11px; color: #64748B;">Super Administrator</div>
+        </div>
+      </div>
+    </div>
+    
+
+      <!-- Content -->
+      <div class="admin-content">
+        <!-- Top bar -->
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <div>
+            <h1 style="font-size: 22px; font-weight: 900; color: #0F172A;">Analitik & Performa Bisnis Kafe</h1>
+            <p style="font-size: 12px; color: #64748B;">Ringkasan metrik penjualan, tren jam sibuk, dan konversi AI Barista</p>
+          </div>
+          <div style="display: flex; gap: 10px;">
+            <button style="background: #FFFFFF; border: 1.5px solid #004AAD; color: #004AAD; font-size: 12px; font-weight: 800; padding: 10px 16px; border-radius: 12px; cursor: pointer;">
+              📄 Ekspor PDF Laporan
+            </button>
+            <button style="background: #004AAD; border: none; color: #FFFFFF; font-size: 12px; font-weight: 800; padding: 10px 16px; border-radius: 12px; cursor: pointer;">
+              📊 Ekspor Microsoft Excel
+            </button>
+          </div>
+        </div>
+
+        <!-- 4 KPI Cards (ANSI Flowchart: Query Agregasi Penjualan) -->
+        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px;">
+          <div class="kpi-card" style="border-left: 5px solid #004AAD;">
+            <div style="font-size: 12px; color: #64748B; font-weight: 700; margin-bottom: 6px;">Total Omzet Hari Ini</div>
+            <div style="font-size: 24px; font-weight: 900; color: #0F172A;">Rp 4.850.000</div>
+            <div style="display: flex; align-items: center; gap: 4px; font-size: 11px; color: #10B981; font-weight: 700; margin-top: 6px;">
+              <span>▲ +18.4%</span>
+              <span style="color: #94A3B8; font-weight: 500;">vs rata-rata harian</span>
+            </div>
+          </div>
+
+          <div class="kpi-card" style="border-left: 5px solid #10B981;">
+            <div style="font-size: 12px; color: #64748B; font-weight: 700; margin-bottom: 6px;">Jumlah Transaksi</div>
+            <div style="font-size: 24px; font-weight: 900; color: #0F172A;">142 Order</div>
+            <div style="font-size: 11px; color: #64748B; margin-top: 6px;">
+              QR: <b style="color: #004AAD;">108</b> • Walk-In: <b style="color: #0F172A;">34</b>
+            </div>
+          </div>
+
+          <div class="kpi-card" style="border-left: 5px solid #F59E0B;">
+            <div style="font-size: 12px; color: #64748B; font-weight: 700; margin-bottom: 6px;">Total Item Terjual</div>
+            <div style="font-size: 24px; font-weight: 900; color: #0F172A;">318 Item</div>
+            <div style="font-size: 11px; color: #64748B; margin-top: 6px;">
+              Rata-rata 2.24 item / meja
+            </div>
+          </div>
+
+          <div class="kpi-card" style="border-left: 5px solid #8B5CF6;">
+            <div style="font-size: 12px; color: #64748B; font-weight: 700; margin-bottom: 6px;">Konversi AI Barista</div>
+            <div style="font-size: 24px; font-weight: 900; color: #004AAD;">34.8%</div>
+            <div style="font-size: 11px; color: #64748B; margin-top: 6px;">
+              49 Checkout dari rekomendasi
+            </div>
+          </div>
+        </div>
+
+        <!-- Charts Section (ApexCharts visual representation) -->
+        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 18px;">
+          <!-- Left: Sales per hour -->
+          <div style="background: #FFFFFF; border: 1.5px solid #E2E8F0; border-radius: 18px; padding: 20px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+              <div>
+                <h3 style="font-size: 15px; font-weight: 800; color: #0F172A;">Tren Omzet & Jam Sibuk (Peak Hours)</h3>
+                <p style="font-size: 11px; color: #64748B;">Pantauan transaksi jam 08:00 s/d 22:00 WIB</p>
+              </div>
+              <span style="font-size: 11px; font-weight: 700; color: #004AAD; background: #EFF6FF; padding: 4px 10px; border-radius: 8px;">Hari Ini</span>
+            </div>
+
+            <!-- Stylized Flat Bar Graph -->
+            <div style="height: 190px; display: flex; align-items: flex-end; gap: 14px; padding-top: 10px; border-bottom: 1.5px solid #E2E8F0; padding-bottom: 6px;">
+              <div style="flex: 1; display: flex; flex-direction: column; align-items: center; gap: 6px;">
+                <div style="background: #93C5FD; width: 100%; height: 45px; border-radius: 6px 6px 0 0;"></div>
+                <span style="font-size: 10px; color: #64748B; font-weight: 600;">08:00</span>
+              </div>
+              <div style="flex: 1; display: flex; flex-direction: column; align-items: center; gap: 6px;">
+                <div style="background: #93C5FD; width: 100%; height: 75px; border-radius: 6px 6px 0 0;"></div>
+                <span style="font-size: 10px; color: #64748B; font-weight: 600;">10:00</span>
+              </div>
+              <div style="flex: 1; display: flex; flex-direction: column; align-items: center; gap: 6px;">
+                <div style="background: #004AAD; width: 100%; height: 160px; border-radius: 6px 6px 0 0;"></div>
+                <span style="font-size: 10px; color: #004AAD; font-weight: 800;">12:00</span>
+              </div>
+              <div style="flex: 1; display: flex; flex-direction: column; align-items: center; gap: 6px;">
+                <div style="background: #93C5FD; width: 100%; height: 110px; border-radius: 6px 6px 0 0;"></div>
+                <span style="font-size: 10px; color: #64748B; font-weight: 600;">14:00</span>
+              </div>
+              <div style="flex: 1; display: flex; flex-direction: column; align-items: center; gap: 6px;">
+                <div style="background: #93C5FD; width: 100%; height: 85px; border-radius: 6px 6px 0 0;"></div>
+                <span style="font-size: 10px; color: #64748B; font-weight: 600;">16:00</span>
+              </div>
+              <div style="flex: 1; display: flex; flex-direction: column; align-items: center; gap: 6px;">
+                <div style="background: #004AAD; width: 100%; height: 175px; border-radius: 6px 6px 0 0;"></div>
+                <span style="font-size: 10px; color: #004AAD; font-weight: 800;">19:00</span>
+              </div>
+              <div style="flex: 1; display: flex; flex-direction: column; align-items: center; gap: 6px;">
+                <div style="background: #93C5FD; width: 100%; height: 130px; border-radius: 6px 6px 0 0;"></div>
+                <span style="font-size: 10px; color: #64748B; font-weight: 600;">21:00</span>
+              </div>
+            </div>
+            <div style="font-size: 11px; color: #64748B; margin-top: 10px;">
+              Puncak order terjadi pada <b>Jam Makan Siang (12:00 - 13:30)</b> dan <b>Nongkrong Malam (19:00 - 21:00)</b>.
+            </div>
+          </div>
+
+          <!-- Right: Top 5 Best Sellers -->
+          <div style="background: #FFFFFF; border: 1.5px solid #E2E8F0; border-radius: 18px; padding: 20px;">
+            <h3 style="font-size: 15px; font-weight: 800; color: #0F172A; margin-bottom: 14px;">5 Menu Terlaris (Ranking)</h3>
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; font-size: 12px;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <span style="width: 20px; height: 20px; background: #004AAD; color: #FFFFFF; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 10px;">1</span>
+                  <b>Kopi Susu Aren</b>
+                </div>
+                <span style="color: #004AAD; font-weight: 800;">78 Porsi</span>
+              </div>
+              <div style="display: flex; justify-content: space-between; align-items: center; font-size: 12px;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <span style="width: 20px; height: 20px; background: #004AAD; color: #FFFFFF; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 10px;">2</span>
+                  <b>Caramel Macchiato</b>
+                </div>
+                <span style="color: #004AAD; font-weight: 800;">52 Porsi</span>
+              </div>
+              <div style="display: flex; justify-content: space-between; align-items: center; font-size: 12px;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <span style="width: 20px; height: 20px; background: #CBD5E1; color: #0F172A; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 10px;">3</span>
+                  <b>Butter Croissant</b>
+                </div>
+                <span style="color: #004AAD; font-weight: 800;">41 Porsi</span>
+              </div>
+              <div style="display: flex; justify-content: space-between; align-items: center; font-size: 12px;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <span style="width: 20px; height: 20px; background: #CBD5E1; color: #0F172A; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 10px;">4</span>
+                  <b>Matcha Latte Iced</b>
+                </div>
+                <span style="color: #004AAD; font-weight: 800;">34 Porsi</span>
+              </div>
+              <div style="display: flex; justify-content: space-between; align-items: center; font-size: 12px;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <span style="width: 20px; height: 20px; background: #CBD5E1; color: #0F172A; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 10px;">5</span>
+                  <b>Americano Cold Brew</b>
+                </div>
+                <span style="color: #004AAD; font-weight: 800;">29 Porsi</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

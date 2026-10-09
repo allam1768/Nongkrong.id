@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>06 - Review Keranjang & Checkout</title>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=Poppins:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-font-smoothing: antialiased; }
+  body {
+    background-color: #F1F5F9;
+    font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
+    color: #0F172A;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 30px 20px;
+  }
+  /* Phone Shell Container */
+  .phone-frame {
+    width: 430px;
+    height: 932px;
+    background: #FFFFFF;
+    border-radius: 54px;
+    border: 12px solid #0F172A;
+    box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.25);
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+  /* Dynamic Island */
+  .dynamic-island {
+    position: absolute;
+    top: 14px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 124px;
+    height: 35px;
+    background: #0F172A;
+    border-radius: 20px;
+    z-index: 999;
+  }
+  /* Status Bar */
+  .status-bar {
+    height: 52px;
+    padding: 14px 28px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 14px;
+    font-weight: 700;
+    z-index: 998;
+    position: relative;
+  }
+  .home-indicator {
+    position: absolute;
+    bottom: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 140px;
+    height: 5px;
+    background: #0F172A;
+    border-radius: 4px;
+    z-index: 999;
+  }
+</style>
+
+<style>
+  .cart-body {
+    background-color: #F8FAFC;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 55px 18px 24px;
+    overflow-y: auto;
+  }
+  .cart-card {
+    background: #FFFFFF;
+    border: 1.5px solid #E2E8F0;
+    border-radius: 18px;
+    padding: 14px;
+    margin-bottom: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .payment-option {
+    background: #FFFFFF;
+    border: 2px solid #E2E8F0;
+    border-radius: 16px;
+    padding: 12px 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    cursor: pointer;
+  }
+  .payment-option.selected {
+    border-color: #004AAD;
+    background: #EFF6FF;
+  }
+  .btn-pay {
+    background: #004AAD;
+    color: #FFFFFF;
+    font-size: 16px;
+    font-weight: 800;
+    padding: 16px;
+    border-radius: 30px;
+    border: none;
+    width: 100%;
+    cursor: pointer;
+    box-shadow: 0 6px 18px rgba(0, 74, 173, 0.28);
+  }
+</style>
+</head>
+<body>
+  <div class="phone-frame">
+    <div class="dynamic-island"></div>
+    <div class="cart-body">
+      <!-- Header -->
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <button style="background: #FFFFFF; border: 1.5px solid #E2E8F0; width: 36px; height: 36px; border-radius: 50%; font-weight: 800; cursor: pointer;">←</button>
+          <div>
+            <h2 style="font-size: 18px; font-weight: 800; color: #0F172A;">Rincian Pesanan</h2>
+            <p style="font-size: 11px; color: #64748B;">Meja 03 • 3 Item Terpilih</p>
+          </div>
+        </div>
+        <span style="background: #E0E7FF; color: #004AAD; font-size: 11px; font-weight: 800; padding: 4px 10px; border-radius: 12px;">Self-Order</span>
+      </div>
+
+      <!-- Item List -->
+      <div style="flex: 1; overflow-y: auto;">
+        <!-- Item 1 -->
+        <div class="cart-card">
+          <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+            <div>
+              <h4 style="font-size: 14px; font-weight: 800; color: #0F172A;">Caramel Macchiato Iced</h4>
+              <span style="font-size: 12px; font-weight: 700; color: #004AAD;">Rp 28.000</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <button style="background: #F1F5F9; border: none; width: 26px; height: 26px; border-radius: 8px; font-weight: 800;">-</button>
+              <span style="font-size: 13px; font-weight: 800;">1</span>
+              <button style="background: #004AAD; color: #FFFFFF; border: none; width: 26px; height: 26px; border-radius: 8px; font-weight: 800;">+</button>
+            </div>
+          </div>
+          <!-- Note -->
+          <div style="background: #F8FAFC; border: 1px dashed #CBD5E1; border-radius: 10px; padding: 6px 10px; font-size: 11px; color: #64748B;">
+            📝 Catatan: <span style="color: #0F172A; font-weight: 600;">Less sugar (50%), es sedang</span>
+          </div>
+        </div>
+
+        <!-- Item 2 -->
+        <div class="cart-card">
+          <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+            <div>
+              <h4 style="font-size: 14px; font-weight: 800; color: #0F172A;">Kopi Susu Aren</h4>
+              <span style="font-size: 12px; font-weight: 700; color: #004AAD;">Rp 22.000</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <button style="background: #F1F5F9; border: none; width: 26px; height: 26px; border-radius: 8px; font-weight: 800;">-</button>
+              <span style="font-size: 13px; font-weight: 800;">1</span>
+              <button style="background: #004AAD; color: #FFFFFF; border: none; width: 26px; height: 26px; border-radius: 8px; font-weight: 800;">+</button>
+            </div>
+          </div>
+          <div style="background: #F8FAFC; border: 1px dashed #CBD5E1; border-radius: 10px; padding: 6px 10px; font-size: 11px; color: #64748B;">
+            📝 Catatan: <span style="color: #0F172A; font-weight: 600;">Normal sugar & es</span>
+          </div>
+        </div>
+
+        <!-- Item 3 -->
+        <div class="cart-card">
+          <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+            <div>
+              <h4 style="font-size: 14px; font-weight: 800; color: #0F172A;">Butter Croissant</h4>
+              <span style="font-size: 12px; font-weight: 700; color: #004AAD;">Rp 18.000</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <button style="background: #F1F5F9; border: none; width: 26px; height: 26px; border-radius: 8px; font-weight: 800;">-</button>
+              <span style="font-size: 13px; font-weight: 800;">1</span>
+              <button style="background: #004AAD; color: #FFFFFF; border: none; width: 26px; height: 26px; border-radius: 8px; font-weight: 800;">+</button>
+            </div>
+          </div>
+          <div style="background: #F8FAFC; border: 1px dashed #CBD5E1; border-radius: 10px; padding: 6px 10px; font-size: 11px; color: #64748B;">
+            📝 Catatan: <span style="color: #0F172A; font-weight: 600;">Hangatkan sebelum disajikan</span>
+          </div>
+        </div>
+
+        <!-- Payment Method Selection (Branch Flowchart: QRIS vs Tunai Kasir) -->
+        <div style="margin: 16px 0 10px;">
+          <h4 style="font-size: 13px; font-weight: 800; color: #0F172A; margin-bottom: 8px;">Metode Pembayaran</h4>
+          <div class="payment-option selected">
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <span style="background: #004AAD; color: #FFFFFF; font-size: 11px; font-weight: 900; padding: 4px 8px; border-radius: 6px;">QRIS</span>
+              <div>
+                <div style="font-size: 13px; font-weight: 800; color: #0F172A;">QRIS Digital (Instan)</div>
+                <div style="font-size: 10px; color: #64748B;">Gopay, OVO, Dana, BCA, Mandiri</div>
+              </div>
+            </div>
+            <div style="width: 18px; height: 18px; border-radius: 50%; border: 5px solid #004AAD; background: #FFFFFF;"></div>
+          </div>
+
+          <div class="payment-option">
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <span style="background: #64748B; color: #FFFFFF; font-size: 11px; font-weight: 900; padding: 4px 8px; border-radius: 6px;">KASIR</span>
+              <div>
+                <div style="font-size: 13px; font-weight: 800; color: #0F172A;">Bayar Tunai di Kasir</div>
+                <div style="font-size: 10px; color: #64748B;">Konfirmasi pembayaran ke staf kasir</div>
+              </div>
+            </div>
+            <div style="width: 18px; height: 18px; border-radius: 50%; border: 2px solid #CBD5E1;"></div>
+          </div>
+        </div>
+
+        <!-- Cost Breakdown -->
+        <div style="background: #FFFFFF; border: 1.5px solid #E2E8F0; border-radius: 16px; padding: 14px; margin-bottom: 14px;">
+          <div style="display: flex; justify-content: space-between; font-size: 12px; color: #64748B; margin-bottom: 6px;">
+            <span>Subtotal (3 item)</span>
+            <span>Rp 68.000</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; font-size: 12px; color: #64748B; margin-bottom: 8px;">
+            <span>Pajak Restoran (PB1 10%)</span>
+            <span>Rp 6.800</span>
+          </div>
+          <div style="border-top: 1.5px dashed #E2E8F0; padding-top: 8px; display: flex; justify-content: space-between; font-size: 15px; font-weight: 800; color: #004AAD;">
+            <span>Total Pembayaran</span>
+            <span>Rp 74.800</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Action Button -->
+      <button class="btn-pay">Kirim & Bayar Pesanan (Rp 74.800)</button>
+    </div>
+    <div class="home-indicator"></div>
+  </div>
+</body>
+</html>

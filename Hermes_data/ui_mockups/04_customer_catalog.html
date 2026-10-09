@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>04 - Menu Catalog & AI Banner</title>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=Poppins:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-font-smoothing: antialiased; }
+  body {
+    background-color: #F1F5F9;
+    font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
+    color: #0F172A;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 30px 20px;
+  }
+  /* Phone Shell Container */
+  .phone-frame {
+    width: 430px;
+    height: 932px;
+    background: #FFFFFF;
+    border-radius: 54px;
+    border: 12px solid #0F172A;
+    box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.25);
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+  /* Dynamic Island */
+  .dynamic-island {
+    position: absolute;
+    top: 14px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 124px;
+    height: 35px;
+    background: #0F172A;
+    border-radius: 20px;
+    z-index: 999;
+  }
+  /* Status Bar */
+  .status-bar {
+    height: 52px;
+    padding: 14px 28px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 14px;
+    font-weight: 700;
+    z-index: 998;
+    position: relative;
+  }
+  .home-indicator {
+    position: absolute;
+    bottom: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 140px;
+    height: 5px;
+    background: #0F172A;
+    border-radius: 4px;
+    z-index: 999;
+  }
+</style>
+
+<style>
+  .catalog-body {
+    background-color: #F8FAFC;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    padding: 52px 18px 20px;
+    overflow-y: auto;
+    position: relative;
+  }
+  .app-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+  }
+  .table-badge {
+    background: #004AAD;
+    color: #FFFFFF;
+    font-size: 12px;
+    font-weight: 800;
+    padding: 6px 14px;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .search-bar {
+    background: #FFFFFF;
+    border: 2px solid #E2E8F0;
+    border-radius: 16px;
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+  .ai-banner {
+    background: #004AAD;
+    border-radius: 22px;
+    padding: 18px 20px;
+    color: #FFFFFF;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 18px;
+    border: 2px solid #003080;
+  }
+  .category-scroll {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    padding-bottom: 4px;
+    margin-bottom: 16px;
+  }
+  .cat-pill {
+    white-space: nowrap;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 700;
+    border: 1.5px solid #E2E8F0;
+    background: #FFFFFF;
+    color: #64748B;
+    cursor: pointer;
+  }
+  .cat-pill.active {
+    background: #004AAD;
+    color: #FFFFFF;
+    border-color: #004AAD;
+  }
+  .menu-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    padding-bottom: 80px;
+  }
+  .menu-card {
+    background: #FFFFFF;
+    border: 1.5px solid #E2E8F0;
+    border-radius: 18px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+  .menu-img {
+    height: 110px;
+    background: #EEF2F6;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+  .flavor-tag {
+    font-size: 9px;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 6px;
+    background: #EFF6FF;
+    color: #004AAD;
+    border: 1px solid #BFDBFE;
+  }
+  .bottom-nav {
+    position: absolute;
+    bottom: 20px;
+    left: 18px;
+    right: 18px;
+    background: #0F172A;
+    border-radius: 30px;
+    padding: 12px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: #FFFFFF;
+    box-shadow: 0 10px 25px rgba(15, 23, 42, 0.35);
+    z-index: 50;
+  }
+</style>
+</head>
+<body>
+  <div class="phone-frame">
+    <div class="dynamic-island"></div>
+    <div class="catalog-body">
+      <!-- Top App Bar -->
+      <div class="app-header">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <svg width="32" height="32" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M40 18 L36 8" stroke="#004AAD" stroke-width="4.5" stroke-linecap="round"/>
+  <path d="M50 16 L50 6" stroke="#004AAD" stroke-width="4.5" stroke-linecap="round"/>
+  <path d="M60 18 L64 8" stroke="#004AAD" stroke-width="4.5" stroke-linecap="round"/>
+  <path d="M26 28 H74 V58 C74 71 63 80 50 80 C37 80 26 71 26 58 Z" fill="#FFFFFF" stroke="#004AAD" stroke-width="4.5" stroke-linejoin="round"/>
+  <path d="M74 36 C86 36 88 52 74 55" stroke="#004AAD" stroke-width="4.5" stroke-linecap="round" fill="none"/>
+  <path d="M38 46 C40 43 44 43 46 46" stroke="#004AAD" stroke-width="3.5" stroke-linecap="round" fill="none"/>
+  <path d="M54 46 C56 43 60 43 62 46" stroke="#004AAD" stroke-width="3.5" stroke-linecap="round" fill="none"/>
+  <circle cx="35" cy="51" r="2.5" fill="#004AAD" opacity="0.35"/>
+  <circle cx="65" cy="51" r="2.5" fill="#004AAD" opacity="0.35"/>
+  <path d="M44 54 Q50 62 56 54" stroke="#004AAD" stroke-width="3.5" stroke-linecap="round" fill="none"/>
+</svg>
+          <span style="font-size: 18px; font-weight: 900; color: #004AAD;">NONGKRONG.id</span>
+        </div>
+        <div class="table-badge">
+          <span style="width: 8px; height: 8px; border-radius: 50%; background: #10B981;"></span>
+          Meja 03
+        </div>
+      </div>
+
+      <!-- Search Bar -->
+      <div class="search-bar">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#64748B" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        <span style="font-size: 13px; color: #94A3B8; font-weight: 500;">Cari kopi, pastry, makanan...</span>
+      </div>
+
+      <!-- AI Barista Banner (Step 4 & Branch 1 Flowchart) -->
+      <div class="ai-banner">
+        <svg width="85" height="80" viewBox="0 0 100 95" fill="none" style="transform: rotate(25deg); position: absolute; top: -20px; right: -20px; z-index: 1; pointer-events: none;" xmlns="http://www.w3.org/2000/svg">
+<path d="M49.9297 0L61.7167 35.9311H99.8602L69.0014 58.1378L80.7884 94.0689L49.9297 71.8622L19.071 94.0689L30.8579 58.1378L-0.000778198 35.9311H38.1427L49.9297 0Z" fill="#1D4ED8"/>
+</svg>
+        <div style="position: relative; z-index: 5; max-width: 230px;">
+          <div style="display: inline-flex; align-items: center; gap: 6px; background: #FFFFFF; color: #004AAD; font-size: 10px; font-weight: 800; padding: 3px 8px; border-radius: 12px; margin-bottom: 6px; text-transform: uppercase;">
+            <span>✨ Gemini 1.5 Flash</span>
+          </div>
+          <h3 style="font-size: 16px; font-weight: 800; line-height: 1.25; margin-bottom: 4px;">
+            Bingung Mau Minum Apa?
+          </h3>
+          <p style="font-size: 11px; color: #E0E7FF; margin-bottom: 10px;">
+            Ceritakan mood & rasa favoritmu, Barista AI racikkan rekomendasinya!
+          </p>
+          <button style="background: #FFFFFF; color: #004AAD; font-size: 12px; font-weight: 800; padding: 8px 16px; border-radius: 20px; border: none; cursor: pointer;">
+            Tanya AI Barista ➔
+          </button>
+        </div>
+        <div style="position: relative; z-index: 5;">
+          <svg width="60" height="60" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M40 18 L36 8" stroke="#FFFFFF" stroke-width="4.5" stroke-linecap="round"/>
+  <path d="M50 16 L50 6" stroke="#FFFFFF" stroke-width="4.5" stroke-linecap="round"/>
+  <path d="M60 18 L64 8" stroke="#FFFFFF" stroke-width="4.5" stroke-linecap="round"/>
+  <path d="M26 28 H74 V58 C74 71 63 80 50 80 C37 80 26 71 26 58 Z" fill="#004AAD" stroke="#FFFFFF" stroke-width="4.5" stroke-linejoin="round"/>
+  <path d="M74 36 C86 36 88 52 74 55" stroke="#FFFFFF" stroke-width="4.5" stroke-linecap="round" fill="none"/>
+  <path d="M38 46 C40 43 44 43 46 46" stroke="#FFFFFF" stroke-width="3.5" stroke-linecap="round" fill="none"/>
+  <path d="M54 46 C56 43 60 43 62 46" stroke="#FFFFFF" stroke-width="3.5" stroke-linecap="round" fill="none"/>
+  <circle cx="35" cy="51" r="2.5" fill="#FFFFFF" opacity="0.35"/>
+  <circle cx="65" cy="51" r="2.5" fill="#FFFFFF" opacity="0.35"/>
+  <path d="M44 54 Q50 62 56 54" stroke="#FFFFFF" stroke-width="3.5" stroke-linecap="round" fill="none"/>
+</svg>
+        </div>
+      </div>
+
+      <!-- Categories Pills -->
+      <div class="category-scroll">
+        <div class="cat-pill active">Semua (15)</div>
+        <div class="cat-pill">Espresso Based</div>
+        <div class="cat-pill">Signature Coffee</div>
+        <div class="cat-pill">Non-Coffee</div>
+        <div class="cat-pill">Pastry & Toast</div>
+      </div>
+
+      <!-- Menu Grid -->
+      <div class="menu-grid">
+        <!-- Item 1 -->
+        <div class="menu-card">
+          <div class="menu-img">
+            <svg width="50" height="50" viewBox="0 0 24 24" fill="none" stroke="#004AAD" stroke-width="1.8"><path d="M18 8h1a4 4 0 0 1 0 8h-1M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><path d="M6 1v3M10 1v3M14 1v3"/></svg>
+            <div style="position: absolute; top: 8px; left: 8px; display: flex; gap: 4px;">
+              <span class="flavor-tag">Sweet</span>
+              <span class="flavor-tag">Creamy</span>
+            </div>
+          </div>
+          <div style="padding: 10px; display: flex; flex-direction: column; justify-content: space-between; flex: 1;">
+            <div>
+              <h4 style="font-size: 13px; font-weight: 800; color: #0F172A; margin-bottom: 2px;">Kopi Susu Aren</h4>
+              <p style="font-size: 10px; color: #64748B; margin-bottom: 6px;">Espresso, susu segar, gula aren organik</p>
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span style="font-size: 13px; font-weight: 800; color: #004AAD;">Rp 22.000</span>
+              <button style="background: #004AAD; color: #FFFFFF; border: none; width: 26px; height: 26px; border-radius: 8px; font-weight: 800; cursor: pointer; display: flex; align-items: center; justify-content: center;">+</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Item 2 -->
+        <div class="menu-card">
+          <div class="menu-img">
+            <svg width="50" height="50" viewBox="0 0 24 24" fill="none" stroke="#004AAD" stroke-width="1.8"><path d="M17 8h1a4 4 0 1 1 0 8h-1M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V8z"/></svg>
+            <div style="position: absolute; top: 8px; left: 8px; display: flex; gap: 4px;">
+              <span class="flavor-tag">Caramel</span>
+              <span class="flavor-tag">Nutty</span>
+            </div>
+          </div>
+          <div style="padding: 10px; display: flex; flex-direction: column; justify-content: space-between; flex: 1;">
+            <div>
+              <h4 style="font-size: 13px; font-weight: 800; color: #0F172A; margin-bottom: 2px;">Caramel Macchiato</h4>
+              <p style="font-size: 10px; color: #64748B; margin-bottom: 6px;">Vanilla syrup, steamed milk, caramel drizzle</p>
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span style="font-size: 13px; font-weight: 800; color: #004AAD;">Rp 28.000</span>
+              <button style="background: #004AAD; color: #FFFFFF; border: none; width: 26px; height: 26px; border-radius: 8px; font-weight: 800; cursor: pointer; display: flex; align-items: center; justify-content: center;">+</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Item 3 -->
+        <div class="menu-card">
+          <div class="menu-img">
+            <svg width="46" height="46" viewBox="0 0 24 24" fill="none" stroke="#004AAD" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="4"/><path d="M7 12h10M7 8h10M7 16h6"/></svg>
+            <div style="position: absolute; top: 8px; left: 8px; display: flex; gap: 4px;">
+              <span class="flavor-tag">Bitter</span>
+              <span class="flavor-tag">Bold</span>
+            </div>
+          </div>
+          <div style="padding: 10px; display: flex; flex-direction: column; justify-content: space-between; flex: 1;">
+            <div>
+              <h4 style="font-size: 13px; font-weight: 800; color: #0F172A; margin-bottom: 2px;">Americano Cold Brew</h4>
+              <p style="font-size: 10px; color: #64748B; margin-bottom: 6px;">Ekstraksi dingin 12 jam, rasa clean</p>
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span style="font-size: 13px; font-weight: 800; color: #004AAD;">Rp 20.000</span>
+              <button style="background: #004AAD; color: #FFFFFF; border: none; width: 26px; height: 26px; border-radius: 8px; font-weight: 800; cursor: pointer; display: flex; align-items: center; justify-content: center;">+</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Item 4 -->
+        <div class="menu-card">
+          <div class="menu-img">
+            <svg width="46" height="46" viewBox="0 0 24 24" fill="none" stroke="#004AAD" stroke-width="1.8"><path d="M12 2a10 10 0 0 0-7.07 17.07l14.14-14.14A9.96 9.96 0 0 0 12 2z"/></svg>
+            <div style="position: absolute; top: 8px; left: 8px; display: flex; gap: 4px;">
+              <span class="flavor-tag">Flaky</span>
+              <span class="flavor-tag">Butter</span>
+            </div>
+          </div>
+          <div style="padding: 10px; display: flex; flex-direction: column; justify-content: space-between; flex: 1;">
+            <div>
+              <h4 style="font-size: 13px; font-weight: 800; color: #0F172A; margin-bottom: 2px;">Butter Croissant</h4>
+              <p style="font-size: 10px; color: #64748B; margin-bottom: 6px;">Pastry renyah dengan butter Prancis</p>
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span style="font-size: 13px; font-weight: 800; color: #004AAD;">Rp 18.000</span>
+              <button style="background: #004AAD; color: #FFFFFF; border: none; width: 26px; height: 26px; border-radius: 8px; font-weight: 800; cursor: pointer; display: flex; align-items: center; justify-content: center;">+</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bottom Floating Cart Bar -->
+      <div class="bottom-nav">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <div style="position: relative;">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.2"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+            <span style="position: absolute; -top: 6px; -right: 8px; background: #004AAD; color: #FFFFFF; font-size: 10px; font-weight: 800; width: 16px; height: 16px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">3</span>
+          </div>
+          <div>
+            <div style="font-size: 11px; color: #94A3B8;">Subtotal Pesanan</div>
+            <div style="font-size: 15px; font-weight: 800; color: #FFFFFF;">Rp 68.000</div>
+          </div>
+        </div>
+        <button style="background: #004AAD; color: #FFFFFF; font-size: 13px; font-weight: 800; padding: 10px 18px; border-radius: 20px; border: none; cursor: pointer;">
+          Checkout ➔
+        </button>
+      </div>
+    </div>
+    <div class="home-indicator"></div>
+  </div>
+</body>
+</html>

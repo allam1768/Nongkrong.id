@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>05 - AI Barista Consultation</title>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=Poppins:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-font-smoothing: antialiased; }
+  body {
+    background-color: #F1F5F9;
+    font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
+    color: #0F172A;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 30px 20px;
+  }
+  /* Phone Shell Container */
+  .phone-frame {
+    width: 430px;
+    height: 932px;
+    background: #FFFFFF;
+    border-radius: 54px;
+    border: 12px solid #0F172A;
+    box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.25);
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+  /* Dynamic Island */
+  .dynamic-island {
+    position: absolute;
+    top: 14px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 124px;
+    height: 35px;
+    background: #0F172A;
+    border-radius: 20px;
+    z-index: 999;
+  }
+  /* Status Bar */
+  .status-bar {
+    height: 52px;
+    padding: 14px 28px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 14px;
+    font-weight: 700;
+    z-index: 998;
+    position: relative;
+  }
+  .home-indicator {
+    position: absolute;
+    bottom: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 140px;
+    height: 5px;
+    background: #0F172A;
+    border-radius: 4px;
+    z-index: 999;
+  }
+</style>
+
+<style>
+  .modal-backdrop {
+    background: rgba(15, 23, 42, 0.6);
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    position: relative;
+    overflow: hidden;
+  }
+  .sheet-container {
+    background: #FFFFFF;
+    border-top-left-radius: 36px;
+    border-top-right-radius: 36px;
+    height: 85%;
+    display: flex;
+    flex-direction: column;
+    padding: 24px 20px 24px;
+    position: relative;
+    border: 2px solid #E2E8F0;
+    border-bottom: none;
+  }
+  .chat-bubble-ai {
+    background: #EFF6FF;
+    border: 1.5px solid #BFDBFE;
+    border-radius: 20px;
+    border-top-left-radius: 4px;
+    padding: 14px 16px;
+    margin-bottom: 12px;
+    font-size: 13px;
+    color: #1E293B;
+    line-height: 1.5;
+  }
+  .chat-bubble-user {
+    background: #004AAD;
+    color: #FFFFFF;
+    border-radius: 20px;
+    border-top-right-radius: 4px;
+    padding: 14px 16px;
+    margin-bottom: 16px;
+    font-size: 13px;
+    align-self: flex-end;
+    max-width: 85%;
+    line-height: 1.5;
+  }
+  .recom-card {
+    background: #FFFFFF;
+    border: 2px solid #004AAD;
+    border-radius: 18px;
+    padding: 14px;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 4px 12px rgba(0, 74, 173, 0.08);
+  }
+</style>
+</head>
+<body>
+  <div class="phone-frame">
+    <div class="dynamic-island"></div>
+    <div class="modal-backdrop">
+      <div class="sheet-container">
+        <!-- Sheet Handle -->
+        <div style="width: 44px; height: 5px; background: #CBD5E1; border-radius: 4px; align-self: center; margin-bottom: 16px;"></div>
+
+        <!-- AI Barista Header -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1.5px solid #E2E8F0;">
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <div style="background: #004AAD; width: 44px; height: 44px; border-radius: 14px; display: flex; align-items: center; justify-content: center;">
+              <svg width="30" height="30" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M40 18 L36 8" stroke="#FFFFFF" stroke-width="4.5" stroke-linecap="round"/>
+  <path d="M50 16 L50 6" stroke="#FFFFFF" stroke-width="4.5" stroke-linecap="round"/>
+  <path d="M60 18 L64 8" stroke="#FFFFFF" stroke-width="4.5" stroke-linecap="round"/>
+  <path d="M26 28 H74 V58 C74 71 63 80 50 80 C37 80 26 71 26 58 Z" fill="#004AAD" stroke="#FFFFFF" stroke-width="4.5" stroke-linejoin="round"/>
+  <path d="M74 36 C86 36 88 52 74 55" stroke="#FFFFFF" stroke-width="4.5" stroke-linecap="round" fill="none"/>
+  <path d="M38 46 C40 43 44 43 46 46" stroke="#FFFFFF" stroke-width="3.5" stroke-linecap="round" fill="none"/>
+  <path d="M54 46 C56 43 60 43 62 46" stroke="#FFFFFF" stroke-width="3.5" stroke-linecap="round" fill="none"/>
+  <circle cx="35" cy="51" r="2.5" fill="#FFFFFF" opacity="0.35"/>
+  <circle cx="65" cy="51" r="2.5" fill="#FFFFFF" opacity="0.35"/>
+  <path d="M44 54 Q50 62 56 54" stroke="#FFFFFF" stroke-width="3.5" stroke-linecap="round" fill="none"/>
+</svg>
+            </div>
+            <div>
+              <div style="display: flex; align-items: center; gap: 6px;">
+                <h3 style="font-size: 16px; font-weight: 800; color: #0F172A;">AI Barista Virtual</h3>
+                <span style="background: #10B981; width: 8px; height: 8px; border-radius: 50%;"></span>
+              </div>
+              <p style="font-size: 11px; color: #64748B;">Powered by Gemini API • Smart Match</p>
+            </div>
+          </div>
+          <button style="background: #F1F5F9; border: none; width: 32px; height: 32px; border-radius: 50%; font-weight: 800; color: #64748B; cursor: pointer;">✕</button>
+        </div>
+
+        <!-- Conversation Scroll -->
+        <div style="flex: 1; overflow-y: auto; padding-right: 4px;">
+          <!-- AI Prompt Question -->
+          <div class="chat-bubble-ai">
+            <span style="font-weight: 700; color: #004AAD; display: block; margin-bottom: 2px;">Barista Mas Nongki:</span>
+            Hai Allam! Lagi pengen yang manis segar buat nemenin santai siang, atau butuh kopi bold pekat buat ngerjain tugas di Meja 03?
+          </div>
+
+          <!-- Quick Preference Chips -->
+          <div style="display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px;">
+            <span style="background: #F1F5F9; border: 1.5px solid #CBD5E1; color: #004AAD; font-size: 11px; font-weight: 700; padding: 6px 12px; border-radius: 16px;">Manis & Dingin</span>
+            <span style="background: #F1F5F9; border: 1.5px solid #CBD5E1; color: #004AAD; font-size: 11px; font-weight: 700; padding: 6px 12px; border-radius: 16px;">Creamy Hazelnut</span>
+            <span style="background: #F1F5F9; border: 1.5px solid #CBD5E1; color: #004AAD; font-size: 11px; font-weight: 700; padding: 6px 12px; border-radius: 16px;">Bold & Strong</span>
+          </div>
+
+          <!-- User Preference Message -->
+          <div class="chat-bubble-user">
+            Lagi butuh kopi dingin yang creamy, nggak terlalu pait, ada aroma caramel gurih dan manisnya pas.
+          </div>
+
+          <!-- AI Gemini Structured Recommendation Response -->
+          <div class="chat-bubble-ai" style="background: #FFFFFF; border-color: #004AAD;">
+            <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 6px;">
+              <span style="font-size: 13px;">🎯</span>
+              <span style="font-weight: 800; color: #004AAD;">Rekomendasi Terbaik Buat Kamu:</span>
+            </div>
+            <p style="font-size: 12px; color: #475569; margin-bottom: 10px;">
+              Berdasarkan taste profile database, ini 2 racikan paling pas dengan selera manismu:
+            </p>
+
+            <!-- Card 1 -->
+            <div class="recom-card">
+              <div>
+                <h4 style="font-size: 13px; font-weight: 800; color: #0F172A;">Caramel Macchiato Iced</h4>
+                <div style="display: flex; gap: 4px; margin: 3px 0;">
+                  <span style="font-size: 9px; font-weight: 700; background: #EFF6FF; color: #004AAD; padding: 2px 6px; border-radius: 6px;">98% Match</span>
+                  <span style="font-size: 9px; font-weight: 700; background: #FEF3C7; color: #B45309; padding: 2px 6px; border-radius: 6px;">Sweet & Creamy</span>
+                </div>
+                <div style="font-size: 12px; font-weight: 800; color: #004AAD;">Rp 28.000</div>
+              </div>
+              <button style="background: #004AAD; color: #FFFFFF; border: none; font-size: 12px; font-weight: 800; padding: 8px 14px; border-radius: 14px; cursor: pointer;">
+                + Tambah
+              </button>
+            </div>
+
+            <!-- Card 2 -->
+            <div class="recom-card">
+              <div>
+                <h4 style="font-size: 13px; font-weight: 800; color: #0F172A;">Kopi Susu Aren Gula Jawa</h4>
+                <div style="display: flex; gap: 4px; margin: 3px 0;">
+                  <span style="font-size: 9px; font-weight: 700; background: #EFF6FF; color: #004AAD; padding: 2px 6px; border-radius: 6px;">94% Match</span>
+                  <span style="font-size: 9px; font-weight: 700; background: #FEF3C7; color: #B45309; padding: 2px 6px; border-radius: 6px;">Classic Creamy</span>
+                </div>
+                <div style="font-size: 12px; font-weight: 800; color: #004AAD;">Rp 22.000</div>
+              </div>
+              <button style="background: #004AAD; color: #FFFFFF; border: none; font-size: 12px; font-weight: 800; padding: 8px 14px; border-radius: 14px; cursor: pointer;">
+                + Tambah
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Chat Input Field -->
+        <div style="display: flex; gap: 8px; align-items: center; padding-top: 12px;">
+          <input type="text" placeholder="Ketik preferensi rasa lain..." style="flex: 1; border: 2px solid #E2E8F0; border-radius: 24px; padding: 12px 18px; font-size: 13px; outline: none;">
+          <button style="background: #004AAD; color: #FFFFFF; border: none; width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.5"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="home-indicator"></div>
+  </div>
+</body>
+</html>

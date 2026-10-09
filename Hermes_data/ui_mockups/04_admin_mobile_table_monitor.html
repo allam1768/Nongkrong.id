@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>NONGKRONG.id - Admin Mobile Table & Floor Monitor</title>
+  
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-font-smoothing: antialiased; }
+  body {
+    background-color: #E2E8F0;
+    font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
+    color: #0F172A;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 30px 20px;
+  }
+  .phone-frame {
+    width: 430px;
+    height: 932px;
+    background: #FFFFFF;
+    border-radius: 54px;
+    border: 12px solid #0F172A;
+    box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.25);
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+  .dynamic-island {
+    position: absolute;
+    top: 14px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 124px;
+    height: 35px;
+    background: #0F172A;
+    border-radius: 20px;
+    z-index: 999;
+  }
+  .status-bar {
+    height: 52px;
+    padding: 14px 28px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 14px;
+    font-weight: 700;
+    z-index: 998;
+    position: relative;
+    flex-shrink: 0;
+    background: #FFFFFF;
+  }
+  .phone-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    position: relative;
+    background: #F8FAFC;
+  }
+  .home-indicator {
+    position: absolute;
+    bottom: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 140px;
+    height: 5px;
+    background: #0F172A;
+    border-radius: 4px;
+    z-index: 999;
+  }
+  /* Bottom Tab Bar */
+  .admin-tabbar {
+    height: 64px;
+    background: #FFFFFF;
+    border-top: 1.5px solid #E2E8F0;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    padding: 0 12px 10px 12px;
+    flex-shrink: 0;
+    z-index: 100;
+  }
+  .tab-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    background: transparent;
+    border: none;
+    color: #64748B;
+    font-size: 10px;
+    font-weight: 700;
+    cursor: pointer;
+    text-decoration: none;
+  }
+  .tab-btn.active {
+    color: #004AAD;
+  }
+  .tab-icon {
+    font-size: 18px;
+  }
+</style>
+
+  <style>
+    .floor-header {
+      background: #FFFFFF;
+      padding: 12px 20px 14px 20px;
+      border-bottom: 1.5px solid #E2E8F0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-shrink: 0;
+    }
+    .scroll-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    /* OCCUPANCY SUMMARY */
+    .occ-summary-card {
+      background: #FFFFFF;
+      border: 1.5px solid #E2E8F0;
+      border-radius: 16px;
+      padding: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    /* 2-COL TABLE CARDS */
+    .table-grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    .tbl-card-m {
+      background: #FFFFFF;
+      border: 1.5px solid #E2E8F0;
+      border-radius: 16px;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .tbl-card-m.occupied {
+      border-color: #004AAD;
+      background: #FFFFFF;
+    }
+    .tbl-card-m.cooking {
+      border-color: #F59E0B;
+      background: #FFFBEB;
+    }
+    .tbl-card-m.ready {
+      border-color: #10B981;
+      background: #F0FDF4;
+    }
+    .tbl-card-m.empty {
+      border-color: #CBD5E1;
+      background: #F8FAFC;
+    }
+
+    .tbl-head-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .tbl-num {
+      font-size: 15px;
+      font-weight: 900;
+      color: #0F172A;
+    }
+    .tbl-code-badge {
+      font-size: 11px;
+      font-weight: 800;
+      font-family: 'JetBrains Mono', monospace;
+      background: #EFF6FF;
+      color: #004AAD;
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+    .tbl-status-pill {
+      font-size: 10px;
+      font-weight: 800;
+      padding: 2px 8px;
+      border-radius: 999px;
+      width: fit-content;
+    }
+    .pill-active { background: #DBEAFE; color: #1E40AF; }
+    .pill-cook { background: #FEF3C7; color: #92400E; }
+    .pill-ready { background: #DCFCE7; color: #166534; }
+    .pill-empty { background: #E2E8F0; color: #475569; }
+
+    .tbl-meta {
+      font-size: 11px;
+      color: #64748B;
+      line-height: 1.3;
+    }
+    .btn-tbl-action {
+      width: 100%;
+      padding: 6px;
+      border-radius: 6px;
+      border: 1px solid #CBD5E1;
+      background: #FFFFFF;
+      font-size: 10px;
+      font-weight: 700;
+      color: #334155;
+      cursor: pointer;
+      margin-top: 4px;
+    }
+  </style>
+</head>
+<body>
+  <div class="phone-frame">
+    <div class="dynamic-island"></div>
+
+    <div class="status-bar">
+      <span>09:41</span>
+      <div style="display: flex; gap: 6px; align-items: center;">
+        <span style="font-size: 12px;">5G</span>
+        <span style="font-size: 14px;">100%</span>
+      </div>
+    </div>
+
+    <header class="floor-header">
+      <div>
+        <div style="font-size: 16px; font-weight: 900; color: #0F172A;">Monitoring Meja Kafe</div>
+        <div style="font-size: 11px; color: #64748B;">Cabang Dipati Ukur • Live Status</div>
+      </div>
+      <button style="background: #004AAD; color: #FFFFFF; border: none; padding: 6px 12px; border-radius: 999px; font-size: 11px; font-weight: 800; cursor: pointer;">
+        + Reset Sesi
+      </button>
+    </header>
+
+    <div class="phone-content">
+      <div class="scroll-body">
+        <!-- Occupancy Bar -->
+        <div class="occ-summary-card">
+          <div>
+            <div style="font-size: 12px; font-weight: 700; color: #64748B;">STATUS OKUPANSI LANTAI:</div>
+            <div style="font-size: 18px; font-weight: 900; color: #0F172A; margin-top: 2px;">5 dari 6 Meja Terisi</div>
+          </div>
+          <span style="font-size: 16px; font-weight: 900; color: #004AAD; background: #EFF6FF; padding: 6px 14px; border-radius: 10px;">
+            83% Sibuk
+          </span>
+        </div>
+
+        <!-- 2-Col Table Cards -->
+        <div class="table-grid-2">
+          <!-- Meja 01 -->
+          <div class="tbl-card-m occupied">
+            <div class="tbl-head-row">
+              <span class="tbl-num">Meja 01</span>
+              <span class="tbl-code-badge">7K92A</span>
+            </div>
+            <span class="tbl-status-pill pill-active">● Sedang Makan</span>
+            <div class="tbl-meta">
+              Order: #ORD-001<br>
+              Durasi: 45 Menit (2 Pax)
+            </div>
+            <button class="btn-tbl-action">Lihat Bill Meja</button>
+          </div>
+
+          <!-- Meja 02 -->
+          <div class="tbl-card-m cooking">
+            <div class="tbl-head-row">
+              <span class="tbl-num">Meja 02</span>
+              <span class="tbl-code-badge">3X81B</span>
+            </div>
+            <span class="tbl-status-pill pill-cook">⏳ Sedang Diramu</span>
+            <div class="tbl-meta">
+              Order: #ORD-003<br>
+              Dapur Barista (4 Pax)
+            </div>
+            <button class="btn-tbl-action">Pantau Dapur</button>
+          </div>
+
+          <!-- Meja 03 -->
+          <div class="tbl-card-m ready">
+            <div class="tbl-head-row">
+              <span class="tbl-num">Meja 03</span>
+              <span class="tbl-code-badge">8Y24C</span>
+            </div>
+            <span class="tbl-status-pill pill-ready">✓ Siap Saji Pick-up</span>
+            <div class="tbl-meta">
+              Order: #ORD-002<br>
+              3 Item Siap (2 Pax)
+            </div>
+            <button class="btn-tbl-action">Panggil Waiter</button>
+          </div>
+
+          <!-- Meja 04 -->
+          <div class="tbl-card-m occupied">
+            <div class="tbl-head-row">
+              <span class="tbl-num">Meja 04</span>
+              <span class="tbl-code-badge">6W15D</span>
+            </div>
+            <span class="tbl-status-pill pill-active">● Sedang Makan</span>
+            <div class="tbl-meta">
+              Order: #ORD-004<br>
+              Durasi: 20 Menit (3 Pax)
+            </div>
+            <button class="btn-tbl-action">Lihat Bill Meja</button>
+          </div>
+
+          <!-- Meja 05 -->
+          <div class="tbl-card-m occupied">
+            <div class="tbl-head-row">
+              <span class="tbl-num">Meja 05</span>
+              <span class="tbl-code-badge">5V39E</span>
+            </div>
+            <span class="tbl-status-pill pill-active">● Sedang Makan</span>
+            <div class="tbl-meta">
+              Order: #ORD-005<br>
+              Durasi: 12 Menit (1 Pax)
+            </div>
+            <button class="btn-tbl-action">Lihat Bill Meja</button>
+          </div>
+
+          <!-- Meja VIP-1 (Empty) -->
+          <div class="tbl-card-m empty">
+            <div class="tbl-head-row">
+              <span class="tbl-num">VIP-1</span>
+              <span class="tbl-code-badge">4U72F</span>
+            </div>
+            <span class="tbl-status-pill pill-empty">○ Kosong / Siap</span>
+            <div class="tbl-meta">
+              Ruang AC VIP<br>
+              Kapasitas: 6 Orang
+            </div>
+            <button class="btn-tbl-action" style="background: #004AAD; color: #FFFFFF; border-color: #004AAD;">Buka Meja</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bottom Tab Bar -->
+      <nav class="admin-tabbar">
+        <a href="#" class="tab-btn">
+          <span class="tab-icon">📊</span>
+          <span>Ringkasan</span>
+        </a>
+        <a href="#" class="tab-btn">
+          <span class="tab-icon">☕</span>
+          <span>Menu & Stok</span>
+        </a>
+        <a href="#" class="tab-btn active">
+          <span class="tab-icon">🪑</span>
+          <span>Meja Kafe</span>
+        </a>
+        <a href="#" class="tab-btn">
+          <span class="tab-icon">🤖</span>
+          <span>AI Barista</span>
+        </a>
+      </nav>
+    </div>
+
+    <div class="home-indicator"></div>
+  </div>
+</body>
+</html>

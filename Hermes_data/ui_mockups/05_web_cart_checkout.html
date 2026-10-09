@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>NONGKRONG.id - Web Order Review & Checkout</title>
+  
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=Poppins:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-font-smoothing: antialiased; }
+  body {
+    background-color: #E2E8F0;
+    font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
+    color: #0F172A;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 30px;
+  }
+  .desktop-window {
+    width: 1440px;
+    height: 900px;
+    background: #FFFFFF;
+    border-radius: 20px;
+    border: 2px solid #CBD5E1;
+    box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.25);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    position: relative;
+  }
+  .window-titlebar {
+    height: 42px;
+    background: #F8FAFC;
+    border-bottom: 1.5px solid #E2E8F0;
+    display: flex;
+    align-items: center;
+    padding: 0 16px;
+    justify-content: space-between;
+    flex-shrink: 0;
+  }
+  .window-dots {
+    display: flex;
+    gap: 8px;
+  }
+  .window-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+  }
+  .dot-red { background: #EF4444; }
+  .dot-yellow { background: #F59E0B; }
+  .dot-green { background: #10B981; }
+  .window-urlbar {
+    background: #FFFFFF;
+    border: 1px solid #CBD5E1;
+    border-radius: 8px;
+    padding: 4px 16px;
+    font-size: 12px;
+    font-family: 'JetBrains Mono', monospace;
+    color: #475569;
+    width: 480px;
+    text-align: center;
+  }
+  .window-badge {
+    font-size: 11px;
+    font-weight: 700;
+    background: #DBEAFE;
+    color: #1E40AF;
+    padding: 3px 10px;
+    border-radius: 6px;
+    letter-spacing: 0.3px;
+  }
+  .window-body {
+    flex: 1;
+    background: #FFFFFF;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    position: relative;
+  }
+</style>
+
+  <style>
+    .co-navbar {
+      height: 64px;
+      border-bottom: 1.5px solid #E2E8F0;
+      background: #FFFFFF;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 32px;
+      z-index: 10;
+    }
+    .co-content-split {
+      flex: 1;
+      display: flex;
+      background: #F8FAFC;
+      overflow: hidden;
+    }
+
+    /* LEFT: ORDER ITEMS LIST (60%) */
+    .co-items-col {
+      flex: 1.2;
+      overflow-y: auto;
+      padding: 32px 48px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    .co-box-card {
+      background: #FFFFFF;
+      border: 1.5px solid #E2E8F0;
+      border-radius: 18px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .box-card-title {
+      font-size: 16px;
+      font-weight: 800;
+      color: #0F172A;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .item-table-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 0;
+      border-bottom: 1px solid #F1F5F9;
+    }
+    .item-main-info {
+      display: flex;
+      gap: 14px;
+      align-items: center;
+    }
+    .item-icon-box {
+      width: 44px;
+      height: 44px;
+      background: #EFF6FF;
+      border: 1px solid #BFDBFE;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+    }
+    .note-input-inline {
+      margin-top: 4px;
+      font-size: 12px;
+      color: #475569;
+      background: #F8FAFC;
+      border: 1px solid #CBD5E1;
+      border-radius: 6px;
+      padding: 4px 10px;
+      width: 280px;
+      outline: none;
+    }
+
+    /* RIGHT: PAYMENT METHOD & SUMMARY (40%) */
+    .co-pay-col {
+      flex: 0.9;
+      background: #FFFFFF;
+      border-left: 1.5px solid #E2E8F0;
+      overflow-y: auto;
+      padding: 32px 36px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+    .pay-methods-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .pay-card-opt {
+      border: 2px solid #CBD5E1;
+      border-radius: 14px;
+      padding: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      background: #FFFFFF;
+    }
+    .pay-card-opt.active {
+      border-color: #004AAD;
+      background: #EFF6FF;
+    }
+    .qris-display-box {
+      background: #FFFFFF;
+      border: 2px solid #004AAD;
+      border-radius: 16px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 12px;
+    }
+    .qris-code-img {
+      width: 170px;
+      height: 170px;
+      background: #F8FAFC;
+      border: 1.5px solid #CBD5E1;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .btn-pay-submit {
+      width: 100%;
+      height: 52px;
+      background: #004AAD;
+      color: #FFFFFF;
+      border: none;
+      border-radius: 999px;
+      font-size: 15px;
+      font-weight: 800;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      box-shadow: 0 10px 20px -3px rgba(0, 74, 173, 0.35);
+    }
+  </style>
+</head>
+<body>
+  <div class="desktop-window">
+    <div class="window-titlebar">
+      <div class="window-dots">
+        <div class="window-dot dot-red"></div>
+        <div class="window-dot dot-yellow"></div>
+        <div class="window-dot dot-green"></div>
+      </div>
+      <div class="window-urlbar">https://nongkrong.id/checkout?table=03</div>
+      <div class="window-badge">Review & Checkout Web</div>
+    </div>
+
+    <div class="window-body">
+      <!-- Navbar -->
+      <header class="co-navbar">
+        <div style="display: flex; align-items: center; gap: 14px;">
+          <button style="border: 1.5px solid #CBD5E1; background: #FFFFFF; padding: 6px 14px; border-radius: 999px; font-size: 12px; font-weight: 700; cursor: pointer;">
+            ← Tambah Menu Lain
+          </button>
+          <div style="font-size: 18px; font-weight: 900; color: #004AAD;">Ringkasan Pesanan & Pembayaran</div>
+        </div>
+
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <span style="font-size: 13px; font-weight: 800; background: #004AAD; color: #FFFFFF; padding: 6px 16px; border-radius: 999px;">
+            Meja 03 (Kode: 7K92A)
+          </span>
+        </div>
+      </header>
+
+      <!-- Main Split -->
+      <div class="co-content-split">
+        <!-- Left: Item List -->
+        <div class="co-items-col">
+          <div class="co-box-card">
+            <div class="box-card-title">
+              <span>📋 Daftar Hidangan yang Dipesan</span>
+              <span style="font-size: 13px; color: #004AAD; font-weight: 700;">3 Item Terpilih</span>
+            </div>
+
+            <!-- Item 1 -->
+            <div class="item-table-row">
+              <div class="item-main-info">
+                <div class="item-icon-box">☕</div>
+                <div>
+                  <div style="font-size: 14px; font-weight: 800; color: #0F172A;">Caramel Macchiato Iced (1x)</div>
+                  <input type="text" class="note-input-inline" value="Catatan: Less sugar 50%, extra caramel">
+                </div>
+              </div>
+              <div style="font-size: 14px; font-weight: 900; color: #004AAD;">Rp 28.000</div>
+            </div>
+
+            <!-- Item 2 -->
+            <div class="item-table-row">
+              <div class="item-main-info">
+                <div class="item-icon-box">🥛</div>
+                <div>
+                  <div style="font-size: 14px; font-weight: 800; color: #0F172A;">Kopi Susu Aren Jawa (1x)</div>
+                  <input type="text" class="note-input-inline" value="Catatan: Normal ice, manis pas">
+                </div>
+              </div>
+              <div style="font-size: 14px; font-weight: 900; color: #004AAD;">Rp 22.000</div>
+            </div>
+
+            <!-- Item 3 -->
+            <div class="item-table-row" style="border-bottom: none;">
+              <div class="item-main-info">
+                <div class="item-icon-box">🥐</div>
+                <div>
+                  <div style="font-size: 14px; font-weight: 800; color: #0F172A;">Butter Croissant Renyah (1x)</div>
+                  <input type="text" class="note-input-inline" value="Catatan: Dihangatkan sebelum saji">
+                </div>
+              </div>
+              <div style="font-size: 14px; font-weight: 900; color: #004AAD;">Rp 18.000</div>
+            </div>
+          </div>
+
+          <div class="co-box-card">
+            <div class="box-card-title">
+              <span>✍️ Catatan Tambahan untuk Waiter & Dapur</span>
+            </div>
+            <textarea style="width: 100%; height: 60px; border: 1.5px solid #CBD5E1; border-radius: 10px; padding: 10px; font-family: inherit; font-size: 13px; resize: none;" placeholder="Contoh: Tolong disajikan bersamaan ya..."></textarea>
+          </div>
+        </div>
+
+        <!-- Right: Payment -->
+        <div class="co-pay-col">
+          <div>
+            <div style="font-size: 16px; font-weight: 800; color: #0F172A; margin-bottom: 12px;">Metode Pembayaran</div>
+            <div class="pay-methods-wrap">
+              <div class="pay-card-opt active">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                  <span style="font-size: 20px;">📱</span>
+                  <div>
+                    <div style="font-size: 14px; font-weight: 800; color: #004AAD;">QRIS Dinamis (Instant)</div>
+                    <div style="font-size: 11px; color: #64748B;">BCA, Mandiri, GoPay, OVO, ShopeePay</div>
+                  </div>
+                </div>
+                <span style="color: #004AAD; font-weight: 800;">✓</span>
+              </div>
+
+              <div class="pay-card-opt">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                  <span style="font-size: 20px;">💵</span>
+                  <div>
+                    <div style="font-size: 14px; font-weight: 800; color: #0F172A;">Bayar Tunai di Kasir</div>
+                    <div style="font-size: 11px; color: #64748B;">Bayar langsung saat pesanan diantar/kasir</div>
+                  </div>
+                </div>
+                <span style="color: #CBD5E1; font-weight: 800;">○</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- QRIS Preview -->
+          <div class="qris-display-box">
+            <div style="font-size: 11px; font-weight: 800; background: #004AAD; color: #FFFFFF; padding: 4px 12px; border-radius: 999px;">SCAN UNTUK MEMBAYAR</div>
+            <div class="qris-code-img">
+              <svg width="130" height="130" viewBox="0 0 100 100" fill="#004AAD">
+                <rect x="10" y="10" width="30" height="30" rx="4" fill="none" stroke="#004AAD" stroke-width="6"/>
+                <rect x="20" y="20" width="10" height="10" fill="#004AAD"/>
+                <rect x="60" y="10" width="30" height="30" rx="4" fill="none" stroke="#004AAD" stroke-width="6"/>
+                <rect x="70" y="20" width="10" height="10" fill="#004AAD"/>
+                <rect x="10" y="60" width="30" height="30" rx="4" fill="none" stroke="#004AAD" stroke-width="6"/>
+                <rect x="20" y="70" width="10" height="10" fill="#004AAD"/>
+                <rect x="48" y="12" width="6" height="18" rx="2"/>
+                <rect x="12" y="48" width="18" height="6" rx="2"/>
+                <rect x="48" y="48" width="14" height="14" rx="3"/>
+                <rect x="70" y="48" width="18" height="8" rx="2"/>
+                <rect x="48" y="72" width="8" height="16" rx="2"/>
+              </svg>
+            </div>
+            <div style="font-size: 12px; font-weight: 700; color: #004AAD;">NONGKRONG.ID • PT NONGKI NUSANTARA</div>
+          </div>
+
+          <!-- Total Calculation -->
+          <div>
+            <div style="display: flex; justify-content: space-between; font-size: 13px; color: #64748B; margin-bottom: 8px;">
+              <span>Subtotal Item (3)</span>
+              <span>Rp 68.000</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; font-size: 13px; color: #64748B; margin-bottom: 8px;">
+              <span>PB1 Pajak Resto 10%</span>
+              <span>Rp 6.800</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; font-size: 18px; font-weight: 900; color: #0F172A; margin-top: 12px; padding-top: 12px; border-top: 2px dashed #E2E8F0;">
+              <span>Total Bayar</span>
+              <span style="color: #004AAD;">Rp 74.800</span>
+            </div>
+          </div>
+
+          <button class="btn-pay-submit">
+            Konfirmasi & Kirim Pesanan ke Dapur ➔
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

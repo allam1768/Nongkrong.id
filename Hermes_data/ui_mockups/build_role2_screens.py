@@ -1,0 +1,667 @@
+#!/usr/bin/env python3
+"""
+Role 2 Screen Generator (Kasir & Staff POS)
+Desktop Viewport (1440px x 900px)
+Screens:
+1. 08_pos_kanban.html (Live Kanban Board Polling 3s)
+2. 09_pos_walkin.html (Walk-in Quick POS Register & Cetak Struk)
+"""
+
+import os
+
+OUTPUT_DIR = "/home/puutraa/Desktop/nongkrong_id/ui_mockups"
+os.makedirs(OUTPUT_DIR, exist_ok=True)
+
+STAR_SVG = """<svg width="{w}" height="{h}" viewBox="0 0 100 95" fill="none" style="transform: rotate({deg}deg); position: absolute; {pos}; z-index: {z}; pointer-events: none;" xmlns="http://www.w3.org/2000/svg">
+<path d="M49.9297 0L61.7167 35.9311H99.8602L69.0014 58.1378L80.7884 94.0689L49.9297 71.8622L19.071 94.0689L30.8579 58.1378L-0.000778198 35.9311H38.1427L49.9297 0Z" fill="{color}"/>
+</svg>"""
+
+MASCOT_SVG = """<svg width="{s}" height="{s}" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M40 18 L36 8" stroke="{c}" stroke-width="4.5" stroke-linecap="round"/>
+  <path d="M50 16 L50 6" stroke="{c}" stroke-width="4.5" stroke-linecap="round"/>
+  <path d="M60 18 L64 8" stroke="{c}" stroke-width="4.5" stroke-linecap="round"/>
+  <path d="M26 28 H74 V58 C74 71 63 80 50 80 C37 80 26 71 26 58 Z" fill="{bg}" stroke="{c}" stroke-width="4.5" stroke-linejoin="round"/>
+  <path d="M74 36 C86 36 88 52 74 55" stroke="{c}" stroke-width="4.5" stroke-linecap="round" fill="none"/>
+  <path d="M38 46 C40 43 44 43 46 46" stroke="{fc}" stroke-width="3.5" stroke-linecap="round" fill="none"/>
+  <path d="M54 46 C56 43 60 43 62 46" stroke="{fc}" stroke-width="3.5" stroke-linecap="round" fill="none"/>
+  <circle cx="35" cy="51" r="2.5" fill="{c}" opacity="0.35"/>
+  <circle cx="65" cy="51" r="2.5" fill="{c}" opacity="0.35"/>
+  <path d="M44 54 Q50 62 56 54" stroke="{fc}" stroke-width="3.5" stroke-linecap="round" fill="none"/>
+</svg>"""
+
+DESKTOP_HEAD = """
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=Poppins:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-font-smoothing: antialiased; }
+  body {
+    background-color: #E2E8F0;
+    font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
+    color: #0F172A;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 30px;
+  }
+  .desktop-window {
+    width: 1440px;
+    height: 900px;
+    background: #FFFFFF;
+    border-radius: 20px;
+    border: 2px solid #CBD5E1;
+    box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.25);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .window-titlebar {
+    height: 42px;
+    background: #F8FAFC;
+    border-bottom: 1.5px solid #E2E8F0;
+    display: flex;
+    align-items: center;
+    padding: 0 16px;
+    justify-content: space-between;
+  }
+  .window-dots {
+    display: flex;
+    gap: 8px;
+  }
+  .window-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+  }
+  .dot-red { background: #EF4444; }
+  .dot-yellow { background: #F59E0B; }
+  .dot-green { background: #10B981; }
+  .url-bar {
+    background: #FFFFFF;
+    border: 1px solid #CBD5E1;
+    border-radius: 8px;
+    padding: 4px 18px;
+    font-size: 12px;
+    color: #475569;
+    font-family: 'JetBrains Mono', monospace;
+    width: 440px;
+    text-align: center;
+  }
+</style>
+"""
+
+# ==========================================
+# 8. POS LIVE KANBAN BOARD (08_pos_kanban.html)
+# ==========================================
+def build_screen_08():
+    html = f"""<!DOCTYPE html>
+<html>
+<head>
+<title>08 - POS Live Kanban Board</title>
+{DESKTOP_HEAD}
+<style>
+  .app-header {{
+    height: 64px;
+    background: #FFFFFF;
+    border-bottom: 2px solid #E2E8F0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 24px;
+  }}
+  .kanban-container {{
+    flex: 1;
+    background: #F8FAFC;
+    padding: 20px 24px;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 18px;
+    overflow-x: auto;
+  }}
+  .kanban-col {{
+    background: #FFFFFF;
+    border: 1.5px solid #E2E8F0;
+    border-radius: 18px;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
+  }}
+  .col-header {{
+    padding: 14px 16px;
+    border-bottom: 2px solid #E2E8F0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #FFFFFF;
+  }}
+  .col-body {{
+    flex: 1;
+    padding: 14px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    background: #F8FAFC;
+  }}
+  .order-card {{
+    background: #FFFFFF;
+    border: 1.5px solid #E2E8F0;
+    border-radius: 14px;
+    padding: 14px;
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }}
+  .order-card.priority {{
+    border-left: 5px solid #004AAD;
+  }}
+  .badge-qris {{
+    background: #DCFCE7;
+    color: #166534;
+    font-size: 10px;
+    font-weight: 800;
+    padding: 3px 8px;
+    border-radius: 6px;
+  }}
+  .badge-cash {{
+    background: #FEF3C7;
+    color: #92400E;
+    font-size: 10px;
+    font-weight: 800;
+    padding: 3px 8px;
+    border-radius: 6px;
+  }}
+  .btn-action {{
+    background: #004AAD;
+    color: #FFFFFF;
+    border: none;
+    font-size: 12px;
+    font-weight: 800;
+    padding: 9px 12px;
+    border-radius: 10px;
+    cursor: pointer;
+    text-align: center;
+    width: 100%;
+  }}
+</style>
+</head>
+<body>
+  <div class="desktop-window">
+    <div class="window-titlebar">
+      <div class="window-dots">
+        <div class="window-dot dot-red"></div>
+        <div class="window-dot dot-yellow"></div>
+        <div class="window-dot dot-green"></div>
+      </div>
+      <div class="url-bar">https://nongkrong.id/staff/pos/kitchen-board</div>
+      <div style="font-size: 11px; font-weight: 700; color: #64748B;">Staff POS Mode</div>
+    </div>
+
+    <!-- App Header -->
+    <div class="app-header">
+      <div style="display: flex; align-items: center; gap: 14px;">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          {MASCOT_SVG.format(s=36, c="#004AAD", bg="#FFFFFF", fc="#004AAD")}
+          <span style="font-size: 20px; font-weight: 900; color: #004AAD;">NONGKRONG.id</span>
+        </div>
+        <div style="height: 24px; width: 1.5px; background: #CBD5E1;"></div>
+        <div>
+          <span style="font-size: 14px; font-weight: 800; color: #0F172A;">Kitchen & Order Kanban</span>
+          <span style="font-size: 11px; color: #64748B; margin-left: 6px;">Shift 1 (Pagi)</span>
+        </div>
+      </div>
+
+      <div style="display: flex; align-items: center; gap: 14px;">
+        <!-- Polling Indicator -->
+        <div style="display: flex; align-items: center; gap: 6px; background: #EFF6FF; border: 1px solid #BFDBFE; padding: 6px 12px; border-radius: 20px;">
+          <span style="width: 8px; height: 8px; border-radius: 50%; background: #10B981;"></span>
+          <span style="font-size: 11px; font-weight: 700; color: #004AAD; font-family: 'JetBrains Mono', monospace;">wire:poll.3s Aktif</span>
+        </div>
+
+        <button style="background: #FFFFFF; border: 1.5px solid #004AAD; color: #004AAD; font-size: 13px; font-weight: 800; padding: 8px 16px; border-radius: 12px; cursor: pointer;">
+          + Walk-in Kasir
+        </button>
+        <button style="background: #004AAD; border: none; color: #FFFFFF; font-size: 13px; font-weight: 800; padding: 9px 16px; border-radius: 12px; cursor: pointer;">
+          Rekap Kasir Shift ➔
+        </button>
+
+        <div style="display: flex; align-items: center; gap: 8px; border-left: 1.5px solid #E2E8F0; padding-left: 14px;">
+          <div style="width: 34px; height: 34px; border-radius: 50%; background: #004AAD; color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 800;">BS</div>
+          <div>
+            <div style="font-size: 12px; font-weight: 800; color: #0F172A;">Budi Santoso</div>
+            <div style="font-size: 10px; color: #64748B;">Kasir & Staff</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4 Kanban Columns -->
+    <div class="kanban-container">
+      <!-- Col 1: Menunggu Validasi -->
+      <div class="kanban-col">
+        <div class="col-header">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <span style="width: 10px; height: 10px; border-radius: 50%; background: #F59E0B;"></span>
+            <span style="font-size: 14px; font-weight: 800; color: #0F172A;">Pesanan Masuk</span>
+          </div>
+          <span style="background: #FEF3C7; color: #B45309; font-size: 12px; font-weight: 800; padding: 2px 8px; border-radius: 10px;">2 Order</span>
+        </div>
+
+        <div class="col-body">
+          <!-- Card 1 -->
+          <div class="order-card priority">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span style="font-size: 13px; font-weight: 900; color: #004AAD; font-family: 'JetBrains Mono', monospace;">#ORD-003</span>
+              <span class="badge-cash">Tunai: Belum Lunas</span>
+            </div>
+            <div style="display: flex; justify-content: space-between;">
+              <span style="font-size: 15px; font-weight: 800; color: #0F172A;">Meja 02 (Walk-In)</span>
+              <span style="font-size: 11px; color: #64748B;">2m lalu</span>
+            </div>
+            <div style="font-size: 12px; color: #475569; border-top: 1px dashed #E2E8F0; padding-top: 6px;">
+              • 1x Americano Cold Brew<br>
+              • 1x Butter Croissant
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center; font-size: 12px;">
+              <span style="color: #64748B;">Total Tagihan:</span>
+              <b style="color: #004AAD;">Rp 38.000</b>
+            </div>
+            <button class="btn-action">Terima Pembayaran Tunai</button>
+          </div>
+
+          <!-- Card 2 -->
+          <div class="order-card">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span style="font-size: 13px; font-weight: 900; color: #004AAD; font-family: 'JetBrains Mono', monospace;">#ORD-004</span>
+              <span class="badge-qris">QRIS: Lunas ✓</span>
+            </div>
+            <div style="display: flex; justify-content: space-between;">
+              <span style="font-size: 15px; font-weight: 800; color: #0F172A;">Meja 05 (Self-QR)</span>
+              <span style="font-size: 11px; color: #64748B;">Baru saja</span>
+            </div>
+            <div style="font-size: 12px; color: #475569; border-top: 1px dashed #E2E8F0; padding-top: 6px;">
+              • 2x Matcha Latte Iced<br>
+              • 1x Cinnamon Roll
+            </div>
+            <button class="btn-action">Validasi & Kirim ke Dapur</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Col 2: Sedang Diramu -->
+      <div class="kanban-col">
+        <div class="col-header">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <span style="width: 10px; height: 10px; border-radius: 50%; background: #004AAD;"></span>
+            <span style="font-size: 14px; font-weight: 800; color: #0F172A;">Sedang Diramu</span>
+          </div>
+          <span style="background: #EFF6FF; color: #004AAD; font-size: 12px; font-weight: 800; padding: 2px 8px; border-radius: 10px;">2 Tiket</span>
+        </div>
+
+        <div class="col-body">
+          <!-- Card Active in Kitchen -->
+          <div class="order-card" style="border: 2px solid #004AAD;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span style="font-size: 13px; font-weight: 900; color: #004AAD; font-family: 'JetBrains Mono', monospace;">#ORD-002</span>
+              <span class="badge-qris">QRIS: Lunas ✓</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span style="font-size: 15px; font-weight: 800; color: #0F172A;">Meja 03 (Allam)</span>
+              <span style="font-size: 11px; font-weight: 800; color: #EF4444; background: #FEE2E2; padding: 2px 6px; border-radius: 6px;">⏱ 4m 12s</span>
+            </div>
+            <div style="font-size: 12px; color: #1E293B; background: #F8FAFC; padding: 8px; border-radius: 8px;">
+              • 1x Caramel Macchiato (Less Sugar 50%)<br>
+              • 1x Kopi Susu Aren<br>
+              • 1x Butter Croissant (Hangat)
+            </div>
+            <button class="btn-action" style="background: #10B981;">✓ Selesai Racik ➔ Meja Saji</button>
+          </div>
+
+          <!-- Card 2 -->
+          <div class="order-card">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span style="font-size: 13px; font-weight: 900; color: #004AAD; font-family: 'JetBrains Mono', monospace;">#ORD-001</span>
+              <span class="badge-cash">Kasir: Lunas ✓</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span style="font-size: 15px; font-weight: 800; color: #0F172A;">Meja VIP-1</span>
+              <span style="font-size: 11px; font-weight: 700; color: #F59E0B;">⏱ 6m 40s</span>
+            </div>
+            <div style="font-size: 12px; color: #475569;">
+              • 1x V60 Gayo Wine<br>
+              • 1x Beef Panini Toast
+            </div>
+            <button class="btn-action" style="background: #10B981;">✓ Selesai Racik ➔ Meja Saji</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Col 3: Siap Disajikan -->
+      <div class="kanban-col">
+        <div class="col-header">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <span style="width: 10px; height: 10px; border-radius: 50%; background: #10B981;"></span>
+            <span style="font-size: 14px; font-weight: 800; color: #0F172A;">Siap Disajikan</span>
+          </div>
+          <span style="background: #DCFCE7; color: #166534; font-size: 12px; font-weight: 800; padding: 2px 8px; border-radius: 10px;">1 Tiket</span>
+        </div>
+
+        <div class="col-body">
+          <div class="order-card" style="border: 2px solid #10B981;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span style="font-size: 13px; font-weight: 900; color: #004AAD; font-family: 'JetBrains Mono', monospace;">#ORD-000</span>
+              <span style="background: #DCFCE7; color: #166534; font-size: 10px; font-weight: 800; padding: 3px 8px; border-radius: 6px;">Pick-up Desk</span>
+            </div>
+            <div style="font-size: 15px; font-weight: 800; color: #0F172A;">Meja 01</div>
+            <div style="font-size: 12px; color: #475569;">
+              • 1x Caffe Latte Hot (Latte Art Swan)<br>
+              • 1x Cheesy Fries
+            </div>
+            <button class="btn-action" style="background: #004AAD;">Antarkan ke Meja Pelanggan ➔</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Col 4: Selesai (Archived) -->
+      <div class="kanban-col">
+        <div class="col-header">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <span style="width: 10px; height: 10px; border-radius: 50%; background: #64748B;"></span>
+            <span style="font-size: 14px; font-weight: 800; color: #0F172A;">Selesai (Archived)</span>
+          </div>
+          <span style="background: #F1F5F9; color: #64748B; font-size: 12px; font-weight: 800; padding: 2px 8px; border-radius: 10px;">18 Selesai</span>
+        </div>
+
+        <div class="col-body" style="opacity: 0.85;">
+          <div class="order-card">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span style="font-size: 12px; font-weight: 700; color: #64748B; font-family: 'JetBrains Mono', monospace;">#ORD-898</span>
+              <span style="font-size: 10px; color: #10B981; font-weight: 700;">Delivered ✓</span>
+            </div>
+            <div style="font-size: 13px; font-weight: 700; color: #0F172A;">Meja 04 • Rp 52.000</div>
+          </div>
+
+          <div class="order-card">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span style="font-size: 12px; font-weight: 700; color: #64748B; font-family: 'JetBrains Mono', monospace;">#ORD-897</span>
+              <span style="font-size: 10px; color: #10B981; font-weight: 700;">Delivered ✓</span>
+            </div>
+            <div style="font-size: 13px; font-weight: 700; color: #0F172A;">Meja VIP-2 • Rp 124.000</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>"""
+    with open(os.path.join(OUTPUT_DIR, "08_pos_kanban.html"), "w") as f:
+        f.write(html)
+
+
+# ==========================================
+# 9. WALK-IN QUICK POS & RECEIPT (09_pos_walkin.html)
+# ==========================================
+def build_screen_09():
+    html = f"""<!DOCTYPE html>
+<html>
+<head>
+<title>09 - Walk-In POS & Struk</title>
+{DESKTOP_HEAD}
+<style>
+  .pos-body {{
+    display: flex;
+    flex: 1;
+    height: calc(100% - 42px);
+    overflow: hidden;
+  }}
+  .catalog-pane {{
+    flex: 6.5;
+    background: #F8FAFC;
+    border-right: 2px solid #E2E8F0;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+  }}
+  .register-pane {{
+    flex: 3.5;
+    background: #FFFFFF;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 20px;
+  }}
+  .pos-grid {{
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    overflow-y: auto;
+    flex: 1;
+  }}
+  .pos-item {{
+    background: #FFFFFF;
+    border: 1.5px solid #E2E8F0;
+    border-radius: 14px;
+    padding: 12px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 120px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  }}
+  .pos-item:hover {{
+    border-color: #004AAD;
+  }}
+  .numpad-grid {{
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin: 12px 0;
+  }}
+  .num-btn {{
+    background: #F1F5F9;
+    border: 1px solid #CBD5E1;
+    border-radius: 10px;
+    padding: 12px;
+    font-size: 16px;
+    font-weight: 800;
+    cursor: pointer;
+    text-align: center;
+  }}
+</style>
+</head>
+<body>
+  <div class="desktop-window">
+    <div class="window-titlebar">
+      <div class="window-dots">
+        <div class="window-dot dot-red"></div>
+        <div class="window-dot dot-yellow"></div>
+        <div class="window-dot dot-green"></div>
+      </div>
+      <div class="url-bar">https://nongkrong.id/staff/pos/cashier-register</div>
+      <div style="font-size: 11px; font-weight: 700; color: #64748B;">Kasir Walk-In Register</div>
+    </div>
+
+    <div class="pos-body">
+      <!-- Left: Menu Catalog -->
+      <div class="catalog-pane">
+        <!-- Top bar -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            {MASCOT_SVG.format(s=30, c="#004AAD", bg="#FFFFFF", fc="#004AAD")}
+            <h2 style="font-size: 18px; font-weight: 900; color: #004AAD;">Kasir Order Cepat</h2>
+          </div>
+          <div style="display: flex; gap: 8px;">
+            <input type="text" placeholder="Cari menu / Scan barcode..." style="border: 2px solid #E2E8F0; border-radius: 12px; padding: 8px 14px; font-size: 13px; width: 260px;">
+          </div>
+        </div>
+
+        <!-- Categories -->
+        <div style="display: flex; gap: 8px; margin-bottom: 14px;">
+          <button style="background: #004AAD; color: #FFFFFF; border: none; padding: 8px 16px; border-radius: 12px; font-size: 12px; font-weight: 800;">Semua Menu</button>
+          <button style="background: #FFFFFF; border: 1.5px solid #CBD5E1; color: #475569; padding: 8px 16px; border-radius: 12px; font-size: 12px; font-weight: 700;">Espresso Based</button>
+          <button style="background: #FFFFFF; border: 1.5px solid #CBD5E1; color: #475569; padding: 8px 16px; border-radius: 12px; font-size: 12px; font-weight: 700;">Signature</button>
+          <button style="background: #FFFFFF; border: 1.5px solid #CBD5E1; color: #475569; padding: 8px 16px; border-radius: 12px; font-size: 12px; font-weight: 700;">Non-Coffee</button>
+          <button style="background: #FFFFFF; border: 1.5px solid #CBD5E1; color: #475569; padding: 8px 16px; border-radius: 12px; font-size: 12px; font-weight: 700;">Makanan</button>
+        </div>
+
+        <!-- Grid of menus -->
+        <div class="pos-grid">
+          <div class="pos-item">
+            <div>
+              <div style="font-size: 14px; font-weight: 800; color: #0F172A;">Kopi Susu Aren</div>
+              <div style="font-size: 11px; color: #64748B;">Espresso + Susu + Aren</div>
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span style="font-size: 14px; font-weight: 800; color: #004AAD;">Rp 22.000</span>
+              <span style="background: #EFF6FF; color: #004AAD; font-size: 11px; font-weight: 800; padding: 2px 6px; border-radius: 6px;">Stok 48</span>
+            </div>
+          </div>
+
+          <div class="pos-item" style="border: 2px solid #004AAD; background: #F8FAFC;">
+            <div>
+              <div style="font-size: 14px; font-weight: 800; color: #0F172A;">Caramel Macchiato</div>
+              <div style="font-size: 11px; color: #64748B;">Vanilla, Milk, Espresso</div>
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span style="font-size: 14px; font-weight: 800; color: #004AAD;">Rp 28.000</span>
+              <span style="background: #EFF6FF; color: #004AAD; font-size: 11px; font-weight: 800; padding: 2px 6px; border-radius: 6px;">Stok 32</span>
+            </div>
+          </div>
+
+          <div class="pos-item">
+            <div>
+              <div style="font-size: 14px; font-weight: 800; color: #0F172A;">Americano Cold Brew</div>
+              <div style="font-size: 11px; color: #64748B;">12h Cold extraction</div>
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span style="font-size: 14px; font-weight: 800; color: #004AAD;">Rp 20.000</span>
+              <span style="background: #EFF6FF; color: #004AAD; font-size: 11px; font-weight: 800; padding: 2px 6px; border-radius: 6px;">Stok 25</span>
+            </div>
+          </div>
+
+          <div class="pos-item">
+            <div>
+              <div style="font-size: 14px; font-weight: 800; color: #0F172A;">Butter Croissant</div>
+              <div style="font-size: 11px; color: #64748B;">French butter pastry</div>
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span style="font-size: 14px; font-weight: 800; color: #004AAD;">Rp 18.000</span>
+              <span style="background: #EFF6FF; color: #004AAD; font-size: 11px; font-weight: 800; padding: 2px 6px; border-radius: 6px;">Stok 12</span>
+            </div>
+          </div>
+
+          <div class="pos-item">
+            <div>
+              <div style="font-size: 14px; font-weight: 800; color: #0F172A;">Matcha Latte Iced</div>
+              <div style="font-size: 11px; color: #64748B;">Pure Uji Matcha</div>
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span style="font-size: 14px; font-weight: 800; color: #004AAD;">Rp 26.000</span>
+              <span style="background: #EFF6FF; color: #004AAD; font-size: 11px; font-weight: 800; padding: 2px 6px; border-radius: 6px;">Stok 20</span>
+            </div>
+          </div>
+
+          <div class="pos-item">
+            <div>
+              <div style="font-size: 14px; font-weight: 800; color: #0F172A;">Beef Panini Toast</div>
+              <div style="font-size: 11px; color: #64748B;">Smoked beef & cheese</div>
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span style="font-size: 14px; font-weight: 800; color: #004AAD;">Rp 32.000</span>
+              <span style="background: #EFF6FF; color: #004AAD; font-size: 11px; font-weight: 800; padding: 2px 6px; border-radius: 6px;">Stok 8</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: Walk-In Cart & Calculator / Receipt -->
+      <div class="register-pane">
+        <!-- Top selection -->
+        <div>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1.5px solid #E2E8F0;">
+            <div>
+              <span style="font-size: 16px; font-weight: 900; color: #0F172A;">Tiket #WALK-014</span>
+              <div style="font-size: 11px; color: #64748B;">Pilih Meja: <b style="color: #004AAD;">Meja 02</b></div>
+            </div>
+            <span style="background: #E0E7FF; color: #004AAD; font-size: 11px; font-weight: 800; padding: 4px 10px; border-radius: 8px;">Dine In</span>
+          </div>
+
+          <!-- Items in order -->
+          <div style="max-height: 200px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px;">
+            <div style="display: flex; justify-content: space-between; font-size: 13px;">
+              <div>
+                <b>1x Caramel Macchiato</b>
+                <div style="font-size: 10px; color: #64748B;">Catatan: Less sugar</div>
+              </div>
+              <span style="font-weight: 700;">Rp 28.000</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; font-size: 13px;">
+              <div>
+                <b>1x Butter Croissant</b>
+                <div style="font-size: 10px; color: #64748B;">Catatan: Hangatkan</div>
+              </div>
+              <span style="font-weight: 700;">Rp 18.000</span>
+            </div>
+          </div>
+
+          <!-- Summary -->
+          <div style="border-top: 1.5px solid #E2E8F0; margin-top: 10px; padding-top: 10px;">
+            <div style="display: flex; justify-content: space-between; font-size: 12px; color: #64748B;">
+              <span>Subtotal:</span>
+              <span>Rp 46.000</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; font-size: 12px; color: #64748B;">
+              <span>PB1 (10%):</span>
+              <span>Rp 4.600</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; font-size: 16px; font-weight: 900; color: #004AAD; margin-top: 4px;">
+              <span>Total Tagihan:</span>
+              <span>Rp 50.600</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Cash Register / Numpad -->
+        <div>
+          <div style="background: #F8FAFC; border: 1.5px solid #CBD5E1; border-radius: 12px; padding: 10px; margin-bottom: 8px;">
+            <div style="display: flex; justify-content: space-between; font-size: 11px; color: #64748B;">
+              <span>Uang Diterima (Tunai):</span>
+              <b style="color: #0F172A; font-size: 14px;">Rp 100.000</b>
+            </div>
+            <div style="display: flex; justify-content: space-between; font-size: 11px; color: #10B981; font-weight: 800; margin-top: 4px;">
+              <span>Kembalian:</span>
+              <span style="font-size: 14px;">Rp 49.400</span>
+            </div>
+          </div>
+
+          <!-- Fast Presets -->
+          <div style="display: flex; gap: 6px; margin-bottom: 8px;">
+            <button style="flex: 1; background: #F1F5F9; border: 1px solid #CBD5E1; padding: 6px; border-radius: 8px; font-size: 11px; font-weight: 700;">Pas</button>
+            <button style="flex: 1; background: #F1F5F9; border: 1px solid #CBD5E1; padding: 6px; border-radius: 8px; font-size: 11px; font-weight: 700;">50.000</button>
+            <button style="flex: 1; background: #F1F5F9; border: 1px solid #CBD5E1; padding: 6px; border-radius: 8px; font-size: 11px; font-weight: 700;">100.000</button>
+          </div>
+
+          <!-- Action Buttons -->
+          <button style="width: 100%; background: #004AAD; color: #FFFFFF; font-size: 15px; font-weight: 800; padding: 14px; border-radius: 14px; border: none; cursor: pointer; box-shadow: 0 4px 12px rgba(0, 74, 173, 0.25);">
+            🖨 Bayar & Cetak Struk Kasir
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>"""
+    with open(os.path.join(OUTPUT_DIR, "09_pos_walkin.html"), "w") as f:
+        f.write(html)
+
+if __name__ == "__main__":
+    print("Building Role 2 HTML screens...")
+    build_screen_08()
+    build_screen_09()
+    print("Role 2 HTML screens complete.")
