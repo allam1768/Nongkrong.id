@@ -24,7 +24,7 @@
             </button>
 
             <div class="mb-5">
-                <span class="px-2.5 py-0.5 rounded-full bg-blue-50 text-[#004AAD] text-[11px] font-bold uppercase tracking-wider">
+                <span class="px-2.5 py-0.5 rounded-full bg-blue-50 text-brand-blue text-[11px] font-bold uppercase tracking-wider">
                     {{ $detailMenuCategory ?? 'Nongkrong.id' }}
                 </span>
                 <h3 class="mt-2 text-xl sm:text-2xl font-bold text-slate-900">
@@ -33,7 +33,7 @@
                 <p class="mt-1 text-xs text-slate-500 leading-relaxed">
                     {{ $detailMenuDesc }}
                 </p>
-                <div class="mt-3 text-xl font-extrabold text-[#004AAD]">
+                <div class="mt-3 text-xl font-extrabold text-brand-blue">
                     {{ $formattedDetailMenuPrice }}
                 </div>
             </div>
@@ -48,7 +48,7 @@
                             wire:click="$set('detailTemperature', 'cold')"
                             @class([
                                 'py-2.5 px-3 rounded-xl text-xs font-semibold border transition-all flex items-center justify-center gap-2 cursor-pointer',
-                                'bg-blue-50 border-[#004AAD] text-[#004AAD]' => $detailTemperature === 'cold',
+                                'bg-blue-50 border-brand-blue text-brand-blue' => $detailTemperature === 'cold',
                                 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50' => $detailTemperature !== 'cold',
                             ])
                         >
@@ -59,7 +59,7 @@
                             wire:click="$set('detailTemperature', 'hot')"
                             @class([
                                 'py-2.5 px-3 rounded-xl text-xs font-semibold border transition-all flex items-center justify-center gap-2 cursor-pointer',
-                                'bg-blue-50 border-[#004AAD] text-[#004AAD]' => $detailTemperature === 'hot',
+                                'bg-blue-50 border-brand-blue text-brand-blue' => $detailTemperature === 'hot',
                                 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50' => $detailTemperature !== 'hot',
                             ])
                         >
@@ -77,7 +77,7 @@
                             wire:click="$set('detailSugar', 'normal')"
                             @class([
                                 'py-2 px-2 rounded-xl text-xs font-semibold border transition-all text-center cursor-pointer',
-                                'bg-blue-50 border-[#004AAD] text-[#004AAD]' => $detailSugar === 'normal',
+                                'bg-blue-50 border-brand-blue text-brand-blue' => $detailSugar === 'normal',
                                 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50' => $detailSugar !== 'normal',
                             ])
                         >
@@ -88,7 +88,7 @@
                             wire:click="$set('detailSugar', 'less')"
                             @class([
                                 'py-2 px-2 rounded-xl text-xs font-semibold border transition-all text-center cursor-pointer',
-                                'bg-blue-50 border-[#004AAD] text-[#004AAD]' => $detailSugar === 'less',
+                                'bg-blue-50 border-brand-blue text-brand-blue' => $detailSugar === 'less',
                                 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50' => $detailSugar !== 'less',
                             ])
                         >
@@ -99,7 +99,7 @@
                             wire:click="$set('detailSugar', 'zero')"
                             @class([
                                 'py-2 px-2 rounded-xl text-xs font-semibold border transition-all text-center cursor-pointer',
-                                'bg-blue-50 border-[#004AAD] text-[#004AAD]' => $detailSugar === 'zero',
+                                'bg-blue-50 border-brand-blue text-brand-blue' => $detailSugar === 'zero',
                                 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50' => $detailSugar !== 'zero',
                             ])
                         >
@@ -116,7 +116,7 @@
                         wire:model="detailNotes"
                         id="input-detail-notes"
                         placeholder="Contoh: Less sugar 50%, dihangatkan, dll..."
-                        class="w-full h-11 px-4 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-800 focus:bg-white focus:border-[#004AAD] focus:outline-none"
+                        class="w-full h-11 px-4 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-800 focus:bg-white focus:border-brand-blue focus:outline-none"
                     />
                 </div>
 
@@ -137,7 +137,7 @@
                         <button
                             type="button"
                             wire:click="incrementDetailQty"
-                            class="w-9 h-9 rounded-xl bg-[#004AAD] text-white font-bold flex items-center justify-center cursor-pointer"
+                            class="w-9 h-9 rounded-xl bg-brand-blue text-white font-bold flex items-center justify-center cursor-pointer"
                         >
                             +
                         </button>
@@ -150,7 +150,7 @@
                     type="button"
                     wire:click="addCustomizedToCart"
                     id="btn-add-to-cart"
-                    class="w-full h-12 bg-[#004AAD] hover:bg-[#003da1] text-white rounded-full text-sm font-extrabold flex items-center justify-center gap-2 shadow-md cursor-pointer"
+                    class="w-full h-12 bg-brand-blue hover:bg-[#003da1] text-white rounded-full text-sm font-extrabold flex items-center justify-center gap-2 shadow-md cursor-pointer"
                 >
                     <span>Tambahkan ke Pesanan</span>
                     <span>• {{ $formattedDetailSubtotal }}</span>

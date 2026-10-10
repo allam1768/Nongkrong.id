@@ -15,7 +15,7 @@
             class="relative w-full max-w-sm sm:max-w-md bg-white rounded-3xl p-6 sm:p-8 shadow-2xl border border-slate-100 z-10 text-center"
             @click.stop
         >
-            <div class="w-16 h-16 sm:w-20 sm:h-20 mx-auto rounded-3xl bg-blue-50 border-2 border-[#004AAD]/20 flex items-center justify-center mb-4 relative">
+            <div class="w-16 h-16 sm:w-20 sm:h-20 mx-auto rounded-3xl bg-blue-50 border-2 border-brand-blue/20 flex items-center justify-center mb-4 relative">
                 <img
                     src="{{ asset('assets/img/Star-ic.svg') }}"
                     alt=""
@@ -34,7 +34,7 @@
             <div class="my-5 p-4 rounded-2xl bg-slate-50 border border-slate-200/80 text-left space-y-2 text-xs">
                 <div class="flex justify-between items-center pb-2 border-b border-slate-200">
                     <span class="text-slate-400">Kode Pesanan</span>
-                    <span class="font-mono font-bold text-[#004AAD] text-sm">
+                    <span class="font-mono font-bold text-brand-blue text-sm">
                         {{ $placedOrderCode }}
                     </span>
                 </div>
@@ -55,7 +55,7 @@
 
                 <div class="flex justify-between items-center pt-2 border-t border-slate-200">
                     <span class="text-slate-500 font-semibold">Total Tagihan</span>
-                    <span class="font-black text-[#004AAD] text-sm">
+                    <span class="font-black text-brand-blue text-sm">
                         {{ $formattedPlacedOrderTotal }}
                     </span>
                 </div>
@@ -65,7 +65,7 @@
                 type="button"
                 wire:click="closeOrderSuccess"
                 id="btn-close-order-success"
-                class="w-full h-11 bg-[#004AAD] hover:bg-[#003da1] text-white rounded-full font-bold text-xs cursor-pointer shadow-md"
+                class="w-full h-11 bg-brand-blue hover:bg-[#003da1] text-white rounded-full font-bold text-xs cursor-pointer shadow-md"
             >
                 Pesan Menu Lainnya
             </button>

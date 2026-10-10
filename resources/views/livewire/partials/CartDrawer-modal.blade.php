@@ -25,7 +25,7 @@
                     <h3 class="font-bold text-base text-slate-900">
                         Pesanan Meja {{ $tableNumber ?: '03' }}
                     </h3>
-                    <span class="text-xs font-bold text-[#004AAD] bg-[#DBEAFE] px-2 py-0.5 rounded-[6px]">
+                    <span class="text-xs font-bold text-brand-blue bg-[#DBEAFE] px-2 py-0.5 rounded-md">
                         {{ $cartCount }} Item
                     </span>
                 </div>
@@ -51,14 +51,14 @@
                                     Catatan: {{ $item['options_summary'] }}
                                 </div>
                             @endif
-                            <div class="text-xs font-extrabold text-[#004AAD] mt-1">
+                            <div class="text-xs font-extrabold text-brand-blue mt-1">
                                 {{ $item['formatted_subtotal'] }}
                             </div>
                         </div>
-                        <div class="flex items-center gap-2 bg-white border border-[#CBD5E1] rounded-[8px] px-2 py-1">
-                            <button type="button" wire:click="decreaseItem('{{ $key }}')" class="text-[#004AAD] font-bold text-xs cursor-pointer">-</button>
+                        <div class="flex items-center gap-2 bg-white border border-[#CBD5E1] rounded-lg px-2 py-1">
+                            <button type="button" wire:click="decreaseItem('{{ $key }}')" class="text-brand-blue font-bold text-xs cursor-pointer">-</button>
                             <span class="text-xs font-bold text-slate-800">{{ $item['quantity'] }}</span>
-                            <button type="button" wire:click="increaseItem('{{ $key }}')" class="text-[#004AAD] font-bold text-xs cursor-pointer">+</button>
+                            <button type="button" wire:click="increaseItem('{{ $key }}')" class="text-brand-blue font-bold text-xs cursor-pointer">+</button>
                         </div>
                     </div>
                 @empty
@@ -82,13 +82,13 @@
                 </div>
                 <div class="flex justify-between text-sm font-black text-slate-900 pt-2 border-t border-dashed border-[#CBD5E1]">
                     <span>Total Tagihan</span>
-                    <span class="text-[#004AAD]">{{ $formattedCartTotal }}</span>
+                    <span class="text-brand-blue">{{ $formattedCartTotal }}</span>
                 </div>
                 <button
                     type="button"
                     wire:click="checkoutOrder"
                     @disabled(empty($cart))
-                    class="w-full h-11 bg-[#004AAD] hover:bg-[#003da1] disabled:opacity-40 text-white rounded-full text-xs font-extrabold flex items-center justify-center gap-2 mt-4 cursor-pointer transition-all shadow-md active:scale-98 disabled:cursor-not-allowed"
+                    class="w-full h-11 bg-brand-blue hover:bg-[#003da1] disabled:opacity-40 text-white rounded-full text-xs font-extrabold flex items-center justify-center gap-2 mt-4 cursor-pointer transition-all shadow-md active:scale-98 disabled:cursor-not-allowed"
                 >
                     <span wire:loading.remove wire:target="checkoutOrder">Lanjut ke Checkout ➔</span>
                     <span wire:loading wire:target="checkoutOrder" class="inline-flex items-center gap-2">

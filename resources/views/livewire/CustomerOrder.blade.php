@@ -10,7 +10,7 @@
         }
     }"
     @toast-notify.window="showToast(@this.toastMessage)"
-    class="min-h-screen lg:h-screen lg:overflow-hidden bg-[#F8FAFC] text-slate-900 flex flex-col font-sans selection:bg-[#004AAD] selection:text-white"
+    class="min-h-screen lg:h-screen lg:overflow-hidden bg-[#F8FAFC] text-slate-900 flex flex-col font-sans selection:bg-brand-blue selection:text-white"
 >
     {{-- 1. TOP NAVBAR (Identik Mockup 03_web_customer_catalog.html) --}}
     <header class="h-16 shrink-0 bg-white border-b-[1.5px] border-[#E2E8F0] sticky top-0 z-30 px-4 sm:px-8 flex items-center justify-between gap-4">
@@ -20,15 +20,15 @@
                 <img
                     src="{{ asset('assets/img/NongkrongId-blue.svg') }}"
                     alt="NONGKRONG.id"
-                    class="h-6 sm:h-7 md:h-8 w-auto max-w-[145px] sm:max-w-none object-contain select-none"
+                    class="h-6 sm:h-7 md:h-8 w-auto max-w-36.25 sm:max-w-none object-contain select-none"
                 />
             </a>
             <span class="sr-only">Digital Menu</span>
         </div>
 
         {{-- Center Pill Search Bar --}}
-        <div class="flex-1 max-w-[440px] mx-4 hidden sm:flex items-center">
-            <div class="w-full h-10 bg-[#F8FAFC] border-[1.5px] border-[#CBD5E1] rounded-full flex items-center px-4 gap-2.5 focus-within:border-[#004AAD] focus-within:bg-white transition-all">
+        <div class="flex-1 max-w-110 mx-4 hidden sm:flex items-center">
+            <div class="w-full h-10 bg-[#F8FAFC] border-[1.5px] border-[#CBD5E1] rounded-full flex items-center px-4 gap-2.5 focus-within:border-brand-blue focus-within:bg-white transition-all">
                 <span class="text-sm text-slate-400 select-none">🔍</span>
                 <input
                     type="text"
@@ -53,8 +53,8 @@
 
         {{-- Right Controls: Table Badge Pill & Mobile Cart Button --}}
         <div class="flex items-center gap-3 shrink-0">
-            {{-- Table Tag Pill (#004AAD bg, white text, green dot) --}}
-            <div class="inline-flex items-center gap-2 bg-[#004AAD] text-white text-[13px] font-extrabold px-4 sm:px-4.5 py-2 rounded-full shadow-sm select-none">
+            {{-- Table Tag Pill (bg-brand-blue, white text, green dot) --}}
+            <div class="inline-flex items-center gap-2 bg-brand-blue text-white text-[13px] font-extrabold px-4 sm:px-4.5 py-2 rounded-full shadow-sm select-none">
                 <span class="w-2 h-2 rounded-full bg-[#22C55E]"></span>
                 <span>Meja {{ $tableNumber ?: '03' }} (Indoor)</span>
                 <span class="sr-only">{{ $customerName ?: 'Tamu' }}</span>
@@ -76,7 +76,7 @@
             >
                 <span class="text-lg">🛒</span>
                 @if ($cartCount > 0)
-                    <span class="absolute -top-1 -right-1 bg-[#004AAD] text-white font-bold text-[10px] w-5 h-5 rounded-full flex items-center justify-center shadow-xs">
+                    <span class="absolute -top-1 -right-1 bg-brand-blue text-white font-bold text-[10px] w-5 h-5 rounded-full flex items-center justify-center shadow-xs">
                         {{ $cartCount }}
                     </span>
                 @endif
@@ -110,10 +110,10 @@
     <div class="flex-1 flex overflow-hidden bg-[#F8FAFC]">
         {{-- LEFT MAIN SCROLLABLE CATALOG --}}
         <main class="flex-1 overflow-y-auto px-4 sm:px-8 py-6 flex flex-col gap-5">
-            {{-- AI HERO BANNER (#004AAD Deep Blue) --}}
-            <div class="shrink-0 bg-[#004AAD] rounded-[20px] p-5 sm:p-7 text-white flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-2 border-[#003087] relative overflow-hidden shadow-sm">
+            {{-- AI HERO BANNER (bg-brand-blue Deep Blue) --}}
+            <div class="shrink-0 bg-brand-blue rounded-[20px] p-5 sm:p-7 text-white flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-2 border-[#003087] relative overflow-hidden shadow-sm">
                 <div class="relative z-10 max-w-xl">
-                    <div class="inline-flex items-center gap-1.5 bg-white text-[#004AAD] text-[11px] font-extrabold px-2.5 py-1 rounded-full mb-2 shadow-xs select-none">
+                    <div class="inline-flex items-center gap-1.5 bg-white text-brand-blue text-[11px] font-extrabold px-2.5 py-1 rounded-full mb-2 shadow-xs select-none">
                         COFFEE ASSISTANT
                     </div>
                     <h2 class="text-xl sm:text-[22px] font-black text-white leading-snug mb-1">
@@ -127,7 +127,7 @@
                 <button
                     type="button"
                     wire:click="openAiModal"
-                    class="relative z-10 shrink-0 bg-white hover:bg-blue-50 text-[#004AAD] font-extrabold text-[13px] px-6 py-3 rounded-full flex items-center gap-2 shadow-md hover:shadow-lg transition-all active:scale-95 cursor-pointer"
+                    class="relative z-10 shrink-0 bg-white hover:bg-blue-50 text-brand-blue font-extrabold text-[13px] px-6 py-3 rounded-full flex items-center gap-2 shadow-md hover:shadow-lg transition-all active:scale-95 cursor-pointer"
                 >
                     <span>Tanya Barista AI</span>
                     <span>➔</span>
@@ -150,7 +150,7 @@
                     wire:click="selectCategory('all')"
                     @class([
                         'px-4.5 py-2 rounded-full text-[13px] font-bold cursor-pointer whitespace-nowrap transition-all shadow-2xs',
-                        'bg-[#004AAD] text-white border-[1.5px] border-[#004AAD]' => $selectedCategory === 'all',
+                        'bg-brand-blue text-white border-[1.5px] border-brand-blue' => $selectedCategory === 'all',
                         'bg-white text-[#475569] border-[1.5px] border-[#CBD5E1] hover:bg-slate-50' => $selectedCategory !== 'all',
                     ])
                 >
@@ -163,7 +163,7 @@
                         wire:click="selectCategory('{{ $cat->slug }}')"
                         @class([
                             'px-4.5 py-2 rounded-full text-[13px] font-bold cursor-pointer whitespace-nowrap transition-all shadow-2xs',
-                            'bg-[#004AAD] text-white border-[1.5px] border-[#004AAD]' => $selectedCategory === $cat->slug,
+                            'bg-brand-blue text-white border-[1.5px] border-brand-blue' => $selectedCategory === $cat->slug,
                             'bg-white text-[#475569] border-[1.5px] border-[#CBD5E1] hover:bg-slate-50' => $selectedCategory !== $cat->slug,
                         ])
                     >
@@ -177,16 +177,16 @@
                 <div class="shrink-0 grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
                     @foreach ($menus as $menu)
                         <div
-                            class="bg-white border-[1.5px] border-[#E2E8F0] hover:border-[#004AAD] rounded-[16px] p-3.5 flex flex-col justify-between gap-2.5 transition-all shadow-2xs hover:shadow-md group"
+                            class="bg-white border-[1.5px] border-[#E2E8F0] hover:border-brand-blue rounded-2xl p-3.5 flex flex-col justify-between gap-2.5 transition-all shadow-2xs hover:shadow-md group"
                             id="menu-card-{{ $menu->id }}"
                         >
                             {{-- Visual Image Placeholder with Taste Badge --}}
                             <div
                                 wire:click="openDetail({{ $menu->id }})"
-                                class="h-[120px] bg-[#EFF6FF] rounded-[12px] flex items-center justify-center relative border border-[#DBEAFE] cursor-pointer group-hover:bg-blue-50/80 transition-colors select-none"
+                                class="h-30 bg-[#EFF6FF] rounded-xl flex items-center justify-center relative border border-[#DBEAFE] cursor-pointer group-hover:bg-blue-50/80 transition-colors select-none"
                                 title="Klik untuk sesuaikan opsi"
                             >
-                                <span class="absolute top-2 left-2 bg-white text-[#004AAD] text-[10px] font-extrabold px-2 py-0.5 rounded-[6px] border border-[#BFDBFE] shadow-2xs">
+                                <span class="absolute top-2 left-2 bg-white text-brand-blue text-[10px] font-extrabold px-2 py-0.5 rounded-md border border-[#BFDBFE] shadow-2xs">
                                     {{ $menu->flavor_tag }}
                                 </span>
                                 <span class="text-4xl group-hover:scale-110 transition-transform">
@@ -198,24 +198,24 @@
                             <div>
                                 <h4
                                     wire:click="openDetail({{ $menu->id }})"
-                                    class="text-[15px] font-extrabold text-[#0F172A] mb-1 line-clamp-1 cursor-pointer hover:text-[#004AAD] transition-colors"
+                                    class="text-[15px] font-extrabold text-[#0F172A] mb-1 line-clamp-1 cursor-pointer hover:text-brand-blue transition-colors"
                                 >
                                     {{ $menu->name }}
                                 </h4>
-                                <p class="text-[12px] text-[#64748B] line-clamp-2 h-[34px] leading-relaxed">
+                                <p class="text-[12px] text-[#64748B] line-clamp-2 h-8.5 leading-relaxed">
                                     {{ $menu->description }}
                                 </p>
                             </div>
 
                             {{-- Bottom Price & Quick Add Button --}}
                             <div class="flex items-center justify-between pt-1">
-                                <span class="text-[15px] font-black text-[#004AAD]">
+                                <span class="text-[15px] font-black text-brand-blue">
                                     {{ $menu->formatted_price }}
                                 </span>
                                 <button
                                     type="button"
                                     wire:click="quickAddToCart({{ $menu->id }})"
-                                    class="w-[34px] h-[34px] bg-[#004AAD] hover:bg-[#003da1] text-white rounded-full font-bold flex items-center justify-center text-lg shadow-sm transition-transform active:scale-90 cursor-pointer"
+                                    class="w-8.5 h-8.5 bg-brand-blue hover:bg-[#003da1] text-white rounded-full font-bold flex items-center justify-center text-lg shadow-sm transition-transform active:scale-90 cursor-pointer"
                                     title="Tambah ke pesanan"
                                 >
                                     +
@@ -234,12 +234,12 @@
                         Menu Tidak Ditemukan
                     </h3>
                     <p class="mt-1 text-xs text-slate-500">
-                        Tidak ada menu yang sesuai dengan kata kunci "<strong class="text-[#004AAD]">{{ $searchQuery }}</strong>". Coba kata kunci lain.
+                        Tidak ada menu yang sesuai dengan kata kunci "<strong class="text-brand-blue">{{ $searchQuery }}</strong>". Coba kata kunci lain.
                     </p>
                     <button
                         type="button"
                         wire:click="$set('searchQuery', ''); selectCategory('all'); selectTaste('all')"
-                        class="mt-4 px-4 py-2 rounded-full bg-[#004AAD] text-white text-xs font-bold hover:bg-[#003da1] transition-all cursor-pointer"
+                        class="mt-4 px-4 py-2 rounded-full bg-brand-blue text-white text-xs font-bold hover:bg-[#003da1] transition-all cursor-pointer"
                     >
                         Tampilkan Semua Menu
                     </button>
@@ -248,14 +248,14 @@
         </main>
 
         {{-- RIGHT STICKY CART PANEL (360px Width - Desktop) --}}
-        <aside class="hidden lg:flex w-[360px] bg-white border-l-[1.5px] border-[#E2E8F0] flex-col shrink-0 h-full z-20">
+        <aside class="hidden lg:flex w-90 bg-white border-l-[1.5px] border-[#E2E8F0] flex-col shrink-0 h-full z-20">
             {{-- Cart Header --}}
             <div class="p-5 px-6 border-b-[1.5px] border-slate-100 flex items-center justify-between">
                 <div class="text-[16px] font-extrabold text-[#0F172A] flex items-center gap-2">
                     <span>🛒</span>
                     <span>Pesanan Meja {{ $tableNumber ?: '03' }}</span>
                 </div>
-                <span class="text-[12px] font-bold text-[#004AAD] bg-[#DBEAFE] px-2 py-0.5 rounded-[6px]">
+                <span class="text-[12px] font-bold text-brand-blue bg-[#DBEAFE] px-2 py-0.5 rounded-md">
                     {{ $cartCount }} Item
                 </span>
             </div>
@@ -275,17 +275,17 @@
                                 </div>
                             @endif
 
-                            <div class="text-[13px] font-extrabold text-[#004AAD] mt-1">
+                            <div class="text-[13px] font-extrabold text-brand-blue mt-1">
                                 {{ $item['formatted_subtotal'] }}
                             </div>
                         </div>
 
                         {{-- Quantity Stepper Control --}}
-                        <div class="flex items-center gap-2 bg-[#F8FAFC] border border-[#CBD5E1] rounded-[8px] px-1.5 py-0.5 shrink-0 select-none">
+                        <div class="flex items-center gap-2 bg-[#F8FAFC] border border-[#CBD5E1] rounded-lg px-1.5 py-0.5 shrink-0 select-none">
                             <button
                                 type="button"
                                 wire:click="decreaseItem('{{ $itemKey }}')"
-                                class="text-[#004AAD] font-extrabold text-sm px-1 cursor-pointer hover:opacity-75"
+                                class="text-brand-blue font-extrabold text-sm px-1 cursor-pointer hover:opacity-75"
                                 title="Kurangi"
                             >
                                 -
@@ -296,7 +296,7 @@
                             <button
                                 type="button"
                                 wire:click="increaseItem('{{ $itemKey }}')"
-                                class="text-[#004AAD] font-extrabold text-sm px-1 cursor-pointer hover:opacity-75"
+                                class="text-brand-blue font-extrabold text-sm px-1 cursor-pointer hover:opacity-75"
                                 title="Tambah"
                             >
                                 +
@@ -324,7 +324,7 @@
                 </div>
                 <div class="flex justify-between text-[16px] font-black text-[#0F172A] mt-2.5 pt-2.5 border-t border-dashed border-[#CBD5E1]">
                     <span>Total Tagihan</span>
-                    <span class="text-[#004AAD]">{{ $formattedCartTotal }}</span>
+                    <span class="text-brand-blue">{{ $formattedCartTotal }}</span>
                 </div>
 
                 <button
@@ -332,7 +332,7 @@
                     wire:click="checkoutOrder"
                     @disabled(empty($cart))
                     id="btn-checkout-cart"
-                    class="w-full h-12 bg-[#004AAD] hover:bg-[#003da1] disabled:opacity-40 text-white rounded-full text-[14px] font-extrabold flex items-center justify-center gap-2 mt-4 transition-all shadow-md active:scale-98 cursor-pointer disabled:cursor-not-allowed"
+                    class="w-full h-12 bg-brand-blue hover:bg-[#003da1] disabled:opacity-40 text-white rounded-full text-[14px] font-extrabold flex items-center justify-center gap-2 mt-4 transition-all shadow-md active:scale-98 cursor-pointer disabled:cursor-not-allowed"
                 >
                     <span wire:loading.remove wire:target="checkoutOrder">Lanjut ke Checkout ➔</span>
                     <span wire:loading wire:target="checkoutOrder" class="inline-flex items-center gap-2">
@@ -353,7 +353,7 @@
             <button
                 type="button"
                 wire:click="openCart"
-                class="w-full py-3.5 px-5 rounded-full bg-[#004AAD] text-white font-extrabold shadow-xl shadow-[#004AAD]/30 flex items-center justify-between active:scale-98 transition-all cursor-pointer"
+                class="w-full py-3.5 px-5 rounded-full bg-brand-blue text-white font-extrabold shadow-xl shadow-brand-blue/30 flex items-center justify-between active:scale-98 transition-all cursor-pointer"
             >
                 <div class="flex items-center gap-2.5">
                     <span class="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center text-xs font-bold">

@@ -12,7 +12,7 @@
         ></div>
 
         <div
-            class="relative w-full max-w-2xl bg-white rounded-t-[28px] sm:rounded-[24px] rounded-b-none sm:rounded-b-[24px] shadow-2xl border-t sm:border border-slate-100 z-10 overflow-hidden flex flex-col max-h-[85vh] sm:max-h-[90vh] animate-sheet-up sm:animate-modal-pop"
+            class="relative w-full max-w-2xl bg-white rounded-t-[28px] sm:rounded-3xl rounded-b-none sm:rounded-b-3xl shadow-2xl border-t sm:border border-slate-100 z-10 overflow-hidden flex flex-col max-h-[85vh] sm:max-h-[90vh] animate-sheet-up sm:animate-modal-pop"
             @click.stop
         >
             {{-- Mobile Drag Handle Pill --}}
@@ -21,7 +21,7 @@
             {{-- AI Modal Header --}}
             <div class="p-5 px-6 border-b border-[#E2E8F0] bg-[#F8FAFC] flex items-center justify-between">
                 <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-2xl bg-[#004AAD] text-white flex items-center justify-center text-xl shadow-sm">
+                    <div class="w-10 h-10 rounded-2xl bg-brand-blue text-white flex items-center justify-center text-xl shadow-sm">
                         ☕
                     </div>
                     <div>
@@ -29,7 +29,7 @@
                             <span class="w-2 h-2 rounded-full bg-[#22C55E] animate-pulse"></span>
                             Coffee Assistant Connected
                         </div>
-                        <h3 class="text-base font-black text-[#004AAD]">
+                        <h3 class="text-base font-black text-brand-blue">
                             Konsultasi Barista AI Virtual
                         </h3>
                     </div>
@@ -56,7 +56,7 @@
                                 wire:click="askAiBarista('{{ $key }}')"
                                 @class([
                                     'px-3.5 py-1.5 rounded-full text-xs font-bold cursor-pointer transition-all',
-                                    'bg-[#004AAD] text-white' => $aiMoodInput === $key,
+                                    'bg-brand-blue text-white' => $aiMoodInput === $key,
                                     'bg-[#F8FAFC] text-slate-700 border border-[#CBD5E1] hover:bg-slate-100' => $aiMoodInput !== $key,
                                 ])
                             >
@@ -85,7 +85,7 @@
                                 <div class="p-3.5 rounded-xl border-[1.5px] border-[#BFDBFE] bg-[#EFF6FF]/40 flex flex-col justify-between gap-2">
                                     <div>
                                         <div class="flex items-center justify-between mb-1">
-                                            <span class="text-[10px] font-extrabold text-[#004AAD] bg-[#DBEAFE] px-2 py-0.5 rounded-[4px]">
+                                            <span class="text-[10px] font-extrabold text-brand-blue bg-[#DBEAFE] px-2 py-0.5 rounded-sm">
                                                 {{ $rec['flavor'] }}
                                             </span>
                                             <span class="text-xl">{{ $rec['visual'] }}</span>
@@ -94,11 +94,11 @@
                                         <p class="text-[11px] text-[#64748B] line-clamp-2 mt-0.5">{{ $rec['description'] }}</p>
                                     </div>
                                     <div class="flex items-center justify-between pt-2 border-t border-blue-100">
-                                        <span class="text-xs font-black text-[#004AAD]">{{ $rec['formatted_price'] }}</span>
+                                        <span class="text-xs font-black text-brand-blue">{{ $rec['formatted_price'] }}</span>
                                         <button
                                             type="button"
                                             wire:click="quickAddToCart({{ $rec['id'] }})"
-                                            class="px-3 py-1 rounded-full bg-[#004AAD] hover:bg-[#003da1] text-white text-[11px] font-bold cursor-pointer transition-all"
+                                            class="px-3 py-1 rounded-full bg-brand-blue hover:bg-[#003da1] text-white text-[11px] font-bold cursor-pointer transition-all"
                                         >
                                             + Tambah
                                         </button>
@@ -117,12 +117,12 @@
                     wire:model="aiMoodInput"
                     wire:keydown.enter="askAiBarista"
                     placeholder="Ketik apa yang kamu inginkan (misal: kopi dingin manis, cemilan renyah)..."
-                    class="flex-1 h-11 bg-[#F8FAFC] border-[1.5px] border-[#CBD5E1] rounded-full px-4 text-xs sm:text-sm text-slate-800 focus:outline-none focus:border-[#004AAD]"
+                    class="flex-1 h-11 bg-[#F8FAFC] border-[1.5px] border-[#CBD5E1] rounded-full px-4 text-xs sm:text-sm text-slate-800 focus:outline-none focus:border-brand-blue"
                 />
                 <button
                     type="button"
                     wire:click="askAiBarista"
-                    class="h-11 px-5 rounded-full bg-[#004AAD] hover:bg-[#003da1] text-white font-bold text-xs cursor-pointer shadow-sm"
+                    class="h-11 px-5 rounded-full bg-brand-blue hover:bg-[#003da1] text-white font-bold text-xs cursor-pointer shadow-sm"
                 >
                     Tanya
                 </button>

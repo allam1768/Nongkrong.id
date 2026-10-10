@@ -25,7 +25,7 @@
     {{-- 2. MAIN CONTENT --}}
     <main class="w-full max-w-7xl mx-auto flex-1 flex flex-col md:flex-row items-center justify-center md:justify-end md:pr-12 lg:pr-20 xl:pr-28 py-2 sm:py-6 z-20">
         {{-- Baristas Illustration Container (Barista 2 Mepet ke Kiri di Mobile & Fixed di Desktop) --}}
-        <div class="relative w-[calc(100%+2rem)] -mx-4 sm:w-[calc(100%+3rem)] sm:-mx-6 md:mx-0 max-w-none md:max-w-190 lg:max-w-215 xl:max-w-240 aspect-5/4 sm:aspect-4/3 md:aspect-auto max-h-[300px] md:max-h-180 flex items-end select-none my-auto md:my-0 md:fixed md:bottom-0 md:left-0 md:w-[55vw] md:h-[75vh] pointer-events-none z-10">
+        <div class="relative w-[calc(100%+2rem)] -mx-4 sm:w-[calc(100%+3rem)] sm:-mx-6 md:mx-0 max-w-none md:max-w-190 lg:max-w-215 xl:max-w-240 aspect-5/4 sm:aspect-4/3 md:aspect-auto max-h-75 md:max-h-180 flex items-end select-none my-auto md:my-0 md:fixed md:bottom-0 md:left-0 md:w-[55vw] md:h-[75vh] pointer-events-none z-10">
             {{-- Male Barista with Espresso Machine --}}
             <img
                 src="{{ asset('assets/img/barista1.png') }}"
@@ -53,13 +53,13 @@
                     <img
                         src="{{ asset('assets/img/NongkrongId-blue.svg') }}"
                         alt="NONGKRONG.id"
-                        class="h-5 sm:h-6 lg:h-7 w-auto max-w-[180px] sm:max-w-[210px] object-contain inline-block select-none"
+                        class="h-5 sm:h-6 lg:h-7 w-auto max-w-45 sm:max-w-52.5 object-contain inline-block select-none"
                     />
                 </span>
             </h1>
 
             {{-- Subtitle --}}
-            <p class="mt-2.5 sm:mt-3 text-[11px] sm:text-xs text-neutral-400 font-sora max-w-[280px] sm:max-w-xs leading-relaxed">
+            <p class="mt-2.5 sm:mt-3 text-[11px] sm:text-xs text-neutral-400 font-sora max-w-70 sm:max-w-xs leading-relaxed">
                 Welcome to our cozy coffee corner, where every cup is a delightful for you.
             </p>
 
@@ -80,10 +80,10 @@
                     type="button"
                     id="btn-pesan-cepat"
                     wire:click="openTableSelection"
-                    class="w-full h-12 bg-[#004AAD] hover:bg-[#003da1] text-white font-bold text-sm rounded-full shadow-md shadow-[#004AAD]/25 transition-all active:scale-98 cursor-pointer flex items-center justify-center font-poppins"
+                    class="w-full h-12 bg-brand-blue hover:bg-[#003da1] text-white font-bold text-sm rounded-full shadow-md shadow-brand-blue/25 transition-all active:scale-98 cursor-pointer flex items-center justify-center font-poppins"
                 >
                     Pesan Cepat
-                </a>
+                </button>
             </div>
         </div>
     </main>
