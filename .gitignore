@@ -13,6 +13,7 @@
 /.vscode
 /.zed
 /auth.json
+/Hermes_data
 /node_modules
 /public/build
 /public/fonts-manifest.dev.json
@@ -25,3 +26,6 @@ _ide_helper.php
 Homestead.json
 Homestead.yaml
 Thumbs.db
+/findings.md
+/progress.md
+/task_plan.md
