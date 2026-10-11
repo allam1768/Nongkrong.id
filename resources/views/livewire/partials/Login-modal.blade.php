@@ -31,7 +31,7 @@
         x-transition:leave="ease-in duration-200"
         x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
         x-transition:leave-end="opacity-0 translate-y-full sm:translate-y-0 sm:scale-95"
-        class="relative w-full max-w-sm sm:max-w-md bg-white rounded-t-[28px] sm:rounded-3xl rounded-b-none sm:rounded-b-3xl pt-9 pb-8 px-6 sm:px-8 shadow-2xl border-t sm:border border-slate-100 z-10 transition-all select-auto"
+        class="relative w-full max-w-none sm:max-w-md bg-white rounded-t-[28px] sm:rounded-3xl rounded-b-none sm:rounded-b-3xl pt-9 pb-8 px-6 sm:px-8 shadow-2xl border-t sm:border border-slate-100 z-10 transition-all select-auto"
         @click.stop
     >
         {{-- Close Button --}}

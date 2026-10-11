@@ -75,11 +75,11 @@
                     Login Karyawan
                 </button>
 
-                {{-- Pesan Cepat Button (Direct to Table Selection) --}}
+                {{-- Pesan Cepat Button (Modal on Mobile, Direct to Table Selection on Desktop) --}}
                 <button
                     type="button"
                     id="btn-pesan-cepat"
-                    wire:click="openTableSelection"
+                    @click="if (window.innerWidth < 768) { $wire.openTableModal() } else { $wire.openTableSelection() }"
                     class="w-full h-12 bg-brand-blue hover:bg-[#003da1] text-white font-bold text-sm rounded-full shadow-md shadow-brand-blue/25 transition-all active:scale-98 cursor-pointer flex items-center justify-center font-poppins"
                 >
                     Pesan Cepat
@@ -90,6 +90,12 @@
 
     {{-- Employee Login Modal Popup (Separated into Partial) --}}
     @include('livewire.partials.Login-modal')
+
+    {{-- Mobile Table Selection Modal Popup (Separated into Partial) --}}
+    @include('livewire.partials.TableSelection-modal')
+
+    {{-- Quick Order Name Modal Popup (Separated into Partial) --}}
+    @include('livewire.partials.NameInput-modal')
 
     {{-- Subtle Minimal Footer --}}
     <footer class="w-full text-center py-2 text-[11px] text-neutral-300 font-sora z-30">

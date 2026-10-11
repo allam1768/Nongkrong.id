@@ -72,6 +72,72 @@
 
             {{-- Cart Footer Summary --}}
             <div class="p-5 border-t border-[#E2E8F0] bg-[#F8FAFC]">
+                {{-- Payment Method Selection (1: Cash, 2: QRIS) --}}
+                <div class="mb-4">
+                    <div class="flex items-center justify-between mb-2">
+                        <label class="text-xs font-bold text-slate-700">Pilihan Pembayaran</label>
+                        <span class="text-[11px] text-slate-400 font-medium">Pilih salah satu</span>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2.5">
+                        {{-- 1. Cash --}}
+                        <button
+                            type="button"
+                            wire:click="setPaymentMethod('cash')"
+                            class="flex items-center gap-2.5 p-2.5 rounded-xl border text-left transition-all cursor-pointer {{ $paymentMethod === 'cash' ? 'border-brand-blue bg-blue-50/80 text-brand-blue ring-1 ring-brand-blue' : 'border-slate-200 bg-white text-slate-700 hover:border-slate-300 hover:bg-slate-50' }}"
+                        >
+                            <div class="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 {{ $paymentMethod === 'cash' ? 'bg-brand-blue/10 text-brand-blue' : 'bg-slate-100 text-slate-500' }}">
+                                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <rect width="20" height="12" x="2" y="6" rx="2"/>
+                                    <circle cx="12" cy="12" r="2"/>
+                                    <path d="M6 12h.01M18 12h.01"/>
+                                </svg>
+                            </div>
+                            <div class="min-w-0 flex-1">
+                                <div class="text-xs font-bold leading-tight">Cash</div>
+                                <div class="text-[10px] {{ $paymentMethod === 'cash' ? 'text-brand-blue/80' : 'text-slate-400' }} leading-tight truncate">Bayar di Kasir</div>
+                            </div>
+                            <div class="w-3.5 h-3.5 rounded-full border flex items-center justify-center shrink-0 {{ $paymentMethod === 'cash' ? 'border-brand-blue' : 'border-slate-300' }}">
+                                @if ($paymentMethod === 'cash')
+                                    <div class="w-1.5 h-1.5 rounded-full bg-brand-blue"></div>
+                                @endif
+                            </div>
+                        </button>
+
+                        {{-- 2. QRIS --}}
+                        <button
+                            type="button"
+                            wire:click="setPaymentMethod('qris')"
+                            class="flex items-center gap-2.5 p-2.5 rounded-xl border text-left transition-all cursor-pointer {{ $paymentMethod === 'qris' ? 'border-brand-blue bg-blue-50/80 text-brand-blue ring-1 ring-brand-blue' : 'border-slate-200 bg-white text-slate-700 hover:border-slate-300 hover:bg-slate-50' }}"
+                        >
+                            <div class="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 {{ $paymentMethod === 'qris' ? 'bg-brand-blue/10 text-brand-blue' : 'bg-slate-100 text-slate-500' }}">
+                                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <rect width="5" height="5" x="3" y="3" rx="1"/>
+                                    <rect width="5" height="5" x="16" y="3" rx="1"/>
+                                    <rect width="5" height="5" x="3" y="16" rx="1"/>
+                                    <path d="M21 16h-3a2 2 0 0 0-2 2v3"/>
+                                    <path d="M21 21v.01"/>
+                                    <path d="M12 7v3a2 2 0 0 1-2 2H7"/>
+                                    <path d="M3 12h.01"/>
+                                    <path d="M12 3h.01"/>
+                                    <path d="M12 16v.01"/>
+                                    <path d="M16 12h1"/>
+                                    <path d="M21 12v.01"/>
+                                    <path d="M12 21v-1"/>
+                                </svg>
+                            </div>
+                            <div class="min-w-0 flex-1">
+                                <div class="text-xs font-bold leading-tight">QRIS</div>
+                                <div class="text-[10px] {{ $paymentMethod === 'qris' ? 'text-brand-blue/80' : 'text-slate-400' }} leading-tight truncate">Scan E-Wallet</div>
+                            </div>
+                            <div class="w-3.5 h-3.5 rounded-full border flex items-center justify-center shrink-0 {{ $paymentMethod === 'qris' ? 'border-brand-blue' : 'border-slate-300' }}">
+                                @if ($paymentMethod === 'qris')
+                                    <div class="w-1.5 h-1.5 rounded-full bg-brand-blue"></div>
+                                @endif
+                            </div>
+                        </button>
+                    </div>
+                </div>
+
                 <div class="flex justify-between text-xs text-[#64748B] mb-1.5 font-medium">
                     <span>Subtotal</span>
                     <span>{{ $formattedCartSubtotal }}</span>

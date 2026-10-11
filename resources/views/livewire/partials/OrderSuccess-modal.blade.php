@@ -53,6 +53,13 @@
                     </span>
                 </div>
 
+                <div class="flex justify-between items-center">
+                    <span class="text-slate-400">Metode Bayar</span>
+                    <span class="font-bold text-slate-800">
+                        {{ ($placedPaymentMethod ?? $paymentMethod) === 'cash' ? 'Cash (Kasir)' : 'QRIS' }}
+                    </span>
+                </div>
+
                 <div class="flex justify-between items-center pt-2 border-t border-slate-200">
                     <span class="text-slate-500 font-semibold">Total Tagihan</span>
                     <span class="font-black text-brand-blue text-sm">

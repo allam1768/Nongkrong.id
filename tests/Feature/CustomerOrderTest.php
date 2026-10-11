@@ -178,4 +178,40 @@ class CustomerOrderTest extends TestCase
             'quantity' => 1,
         ]);
     }
+
+    /**
+     * Test customer can select cash payment method and checkout successfully.
+     */
+    public function test_customer_can_select_cash_payment_method_and_checkout(): void
+    {
+        $table = Table::where('table_number', '01')->first();
+        session([
+            'customer_name' => 'Siti Rahma',
+            'table_id' => $table->id,
+            'table_number' => $table->table_number,
+        ]);
+
+        $menu = Menu::first();
+
+        $component = Livewire::test(CustomerOrder::class)
+            ->call('quickAddToCart', $menu->id)
+            ->call('setPaymentMethod', 'cash')
+            ->assertSet('paymentMethod', 'cash')
+            ->call('checkoutOrder')
+            ->assertSet('cartCount', 0)
+            ->assertSet('showOrderSuccessModal', true)
+            ->assertSet('placedPaymentMethod', 'cash');
+
+        $orderCode = $component->get('placedOrderCode');
+        $this->assertNotNull($orderCode);
+
+        $this->assertDatabaseHas('orders', [
+            'order_code' => $orderCode,
+            'table_id' => $table->id,
+            'customer_name' => 'Siti Rahma',
+            'order_status' => 'pending',
+            'payment_status' => 'unpaid',
+            'payment_method' => 'cash',
+        ]);
+    }
 }

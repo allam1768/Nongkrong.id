@@ -101,6 +101,8 @@ class CustomerOrder extends Component
 
     public array $placedOrderItems = [];
 
+    public ?string $placedPaymentMethod = null;
+
     // Barista AI Modal State
     public bool $showAiModal = false;
 
@@ -398,6 +400,16 @@ class CustomerOrder extends Component
     }
 
     /**
+     * Set payment method (cash or qris).
+     */
+    public function setPaymentMethod(string $method): void
+    {
+        if (in_array($method, ['cash', 'qris'], true)) {
+            $this->paymentMethod = $method;
+        }
+    }
+
+    /**
      * Submit and place the order to barista and database.
      */
     public function checkoutOrder(): void
@@ -456,6 +468,7 @@ class CustomerOrder extends Component
             $this->placedOrderTotal = (float) $order->total_amount;
             $this->formattedPlacedOrderTotal = 'Rp '.number_format($this->placedOrderTotal, 0, ',', '.');
             $this->placedOrderItems = array_values($this->cart);
+            $this->placedPaymentMethod = $this->paymentMethod;
         });
 
         // Clear cart after successful checkout

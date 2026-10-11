@@ -113,4 +113,74 @@ class PortalTest extends TestCase
 
         $this->assertAuthenticatedAs($employee);
     }
+
+    /**
+     * Test mobile modal flow: open table selection modal, connect table, transition to quick order name modal, and redirect to order.
+     */
+    public function test_portal_mobile_table_selection_modal_flow(): void
+    {
+        Livewire::test(Portal::class)
+            ->assertSet('showTableModal', false)
+            ->assertSet('showQuickOrderModal', false)
+            ->call('openTableModal')
+            ->assertSet('showTableModal', true)
+            ->assertSet('showQuickOrderModal', false)
+            ->set('tableCode', '00001')
+            ->call('confirmTableCode')
+            ->assertHasNoErrors()
+            ->assertSet('showTableModal', false)
+            ->assertSet('showQuickOrderModal', true)
+            ->assertSet('selectedTableNumber', '01')
+            ->assertSessionHas('table_number', '01')
+            ->set('customerName', 'Rian Pratama')
+            ->call('submitQuickOrder')
+            ->assertHasNoErrors()
+            ->assertSet('showQuickOrderModal', false)
+            ->assertSessionHas('customer_name', 'Rian Pratama')
+            ->assertRedirect(route('customer.order'));
+    }
+
+    /**
+     * Test mobile table selection modal validates invalid table code.
+     */
+    public function test_portal_mobile_table_selection_rejects_invalid_table(): void
+    {
+        Livewire::test(Portal::class)
+            ->call('openTableModal')
+            ->set('tableCode', '99999')
+            ->call('confirmTableCode')
+            ->assertHasErrors(['tableCode'])
+            ->assertSet('showTableModal', true)
+            ->assertSet('showQuickOrderModal', false);
+    }
+
+    /**
+     * Test scanQrTable directly resolves table and transitions to quick order modal.
+     */
+    public function test_portal_scan_qr_table_flow(): void
+    {
+        Livewire::test(Portal::class)
+            ->call('openTableModal')
+            ->call('scanQrTable', '01')
+            ->assertHasNoErrors()
+            ->assertSet('showTableModal', false)
+            ->assertSet('showQuickOrderModal', true)
+            ->assertSet('selectedTableNumber', '01')
+            ->assertSessionHas('table_number', '01');
+    }
+
+    /**
+     * Test returning from quick order back to table modal on mobile.
+     */
+    public function test_portal_back_to_table_modal_navigation(): void
+    {
+        Livewire::test(Portal::class)
+            ->call('openTableModal')
+            ->call('scanQrTable', '01')
+            ->assertSet('showTableModal', false)
+            ->assertSet('showQuickOrderModal', true)
+            ->call('backToTableModal')
+            ->assertSet('showTableModal', true)
+            ->assertSet('showQuickOrderModal', false);
+    }
 }

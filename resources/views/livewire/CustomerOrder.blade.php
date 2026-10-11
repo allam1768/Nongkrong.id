@@ -53,15 +53,13 @@
 
         {{-- Right Controls: Table Badge Pill & Mobile Cart Button --}}
         <div class="flex items-center gap-3 shrink-0">
-            {{-- Table Tag Pill (bg-brand-blue, white text, green dot) --}}
-            <div class="inline-flex items-center gap-2 bg-brand-blue text-white text-[13px] font-extrabold px-4 sm:px-4.5 py-2 rounded-full shadow-sm select-none">
-                <span class="w-2 h-2 rounded-full bg-[#22C55E]"></span>
-                <span>Meja {{ $tableNumber ?: '03' }} (Indoor)</span>
-                <span class="sr-only">{{ $customerName ?: 'Tamu' }}</span>
+            {{-- Table Tag Pill (bg-slate-100, text-slate-700) --}}
+            <div class="inline-flex items-center gap-2 bg-slate-100 border border-slate-200 text-slate-700 text-[13px] font-extrabold px-4 sm:px-4.5 py-2 rounded-full shadow-xs select-none">
+                <span>Meja {{ $tableNumber ?: '03' }}</span>
                 <button
                     type="button"
                     wire:click="changeTable"
-                    class="text-blue-200 hover:text-white ml-0.5 transition-colors cursor-pointer"
+                    class="text-slate-400 hover:text-slate-600 ml-0.5 transition-colors cursor-pointer"
                     title="Ganti Meja (Pelanggan: {{ $customerName ?: 'Tamu' }})"
                 >
                 </button>
@@ -71,12 +69,12 @@
             <button
                 type="button"
                 wire:click="openCart"
-                class="lg:hidden relative p-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 transition-colors cursor-pointer"
+                class="lg:hidden relative p-2 rounded-xl bg-brand-blue hover:bg-brand-blue/90 text-white transition-colors cursor-pointer shadow-sm"
                 title="Lihat Keranjang Pesanan"
             >
                 <span class="text-lg">🛒</span>
                 @if ($cartCount > 0)
-                    <span class="absolute -top-1 -right-1 bg-brand-blue text-white font-bold text-[10px] w-5 h-5 rounded-full flex items-center justify-center shadow-xs">
+                    <span class="absolute -top-1 -right-1 bg-white text-brand-blue font-bold text-[10px] w-5 h-5 rounded-full flex items-center justify-center shadow-xs">
                         {{ $cartCount }}
                     </span>
                 @endif
@@ -87,7 +85,6 @@
     {{-- Mobile Search Row (Screen < sm) --}}
     <div class="sm:hidden px-4 pt-3 pb-2 bg-white border-b border-[#E2E8F0]">
         <div class="w-full h-10 bg-[#F8FAFC] border-[1.5px] border-[#CBD5E1] rounded-full flex items-center px-4 gap-2">
-            <span class="text-xs text-slate-400">🔍</span>
             <input
                 type="text"
                 wire:model.live.debounce.300ms="searchQuery"
@@ -314,6 +311,72 @@
 
             {{-- Cart Summary Footer --}}
             <div class="p-5 px-6 border-t-[1.5px] border-[#E2E8F0] bg-[#F8FAFC]">
+                {{-- Payment Method Selection (1: Cash, 2: QRIS) --}}
+                <div class="mb-4">
+                    <div class="flex items-center justify-between mb-2">
+                        <label class="text-xs font-bold text-slate-700">Pilihan Pembayaran</label>
+                        <span class="text-[11px] text-slate-400 font-medium">Pilih salah satu</span>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2.5">
+                        {{-- 1. Cash --}}
+                        <button
+                            type="button"
+                            wire:click="setPaymentMethod('cash')"
+                            class="flex items-center gap-2.5 p-2.5 rounded-xl border text-left transition-all cursor-pointer {{ $paymentMethod === 'cash' ? 'border-brand-blue bg-blue-50/80 text-brand-blue ring-1 ring-brand-blue' : 'border-slate-200 bg-white text-slate-700 hover:border-slate-300 hover:bg-slate-50' }}"
+                        >
+                            <div class="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 {{ $paymentMethod === 'cash' ? 'bg-brand-blue/10 text-brand-blue' : 'bg-slate-100 text-slate-500' }}">
+                                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <rect width="20" height="12" x="2" y="6" rx="2"/>
+                                    <circle cx="12" cy="12" r="2"/>
+                                    <path d="M6 12h.01M18 12h.01"/>
+                                </svg>
+                            </div>
+                            <div class="min-w-0 flex-1">
+                                <div class="text-xs font-bold leading-tight">Cash</div>
+                                <div class="text-[10px] {{ $paymentMethod === 'cash' ? 'text-brand-blue/80' : 'text-slate-400' }} leading-tight truncate">Bayar di Kasir</div>
+                            </div>
+                            <div class="w-3.5 h-3.5 rounded-full border flex items-center justify-center shrink-0 {{ $paymentMethod === 'cash' ? 'border-brand-blue' : 'border-slate-300' }}">
+                                @if ($paymentMethod === 'cash')
+                                    <div class="w-1.5 h-1.5 rounded-full bg-brand-blue"></div>
+                                @endif
+                            </div>
+                        </button>
+
+                        {{-- 2. QRIS --}}
+                        <button
+                            type="button"
+                            wire:click="setPaymentMethod('qris')"
+                            class="flex items-center gap-2.5 p-2.5 rounded-xl border text-left transition-all cursor-pointer {{ $paymentMethod === 'qris' ? 'border-brand-blue bg-blue-50/80 text-brand-blue ring-1 ring-brand-blue' : 'border-slate-200 bg-white text-slate-700 hover:border-slate-300 hover:bg-slate-50' }}"
+                        >
+                            <div class="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 {{ $paymentMethod === 'qris' ? 'bg-brand-blue/10 text-brand-blue' : 'bg-slate-100 text-slate-500' }}">
+                                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <rect width="5" height="5" x="3" y="3" rx="1"/>
+                                    <rect width="5" height="5" x="16" y="3" rx="1"/>
+                                    <rect width="5" height="5" x="3" y="16" rx="1"/>
+                                    <path d="M21 16h-3a2 2 0 0 0-2 2v3"/>
+                                    <path d="M21 21v.01"/>
+                                    <path d="M12 7v3a2 2 0 0 1-2 2H7"/>
+                                    <path d="M3 12h.01"/>
+                                    <path d="M12 3h.01"/>
+                                    <path d="M12 16v.01"/>
+                                    <path d="M16 12h1"/>
+                                    <path d="M21 12v.01"/>
+                                    <path d="M12 21v-1"/>
+                                </svg>
+                            </div>
+                            <div class="min-w-0 flex-1">
+                                <div class="text-xs font-bold leading-tight">QRIS</div>
+                                <div class="text-[10px] {{ $paymentMethod === 'qris' ? 'text-brand-blue/80' : 'text-slate-400' }} leading-tight truncate">Scan E-Wallet</div>
+                            </div>
+                            <div class="w-3.5 h-3.5 rounded-full border flex items-center justify-center shrink-0 {{ $paymentMethod === 'qris' ? 'border-brand-blue' : 'border-slate-300' }}">
+                                @if ($paymentMethod === 'qris')
+                                    <div class="w-1.5 h-1.5 rounded-full bg-brand-blue"></div>
+                                @endif
+                            </div>
+                        </button>
+                    </div>
+                </div>
+
                 <div class="flex justify-between text-[13px] text-[#64748B] mb-2 font-medium">
                     <span>Subtotal</span>
                     <span>{{ $formattedCartSubtotal }}</span>
