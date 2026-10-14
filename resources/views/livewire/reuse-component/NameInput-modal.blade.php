@@ -106,27 +106,20 @@
                 @enderror
 
                 {{-- Primary CTA Full-Width Button --}}
-                <button
+                <x-button
                     type="submit"
                     id="btn-submit-quick-order"
-                    wire:loading.attr="disabled"
-                    class="w-full h-13 bg-brand-blue hover:bg-[#003da1] text-white font-bold font-poppins text-sm sm:text-base rounded-2xl shadow-lg shadow-brand-blue/20 active:scale-[0.98] transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-75 select-none mt-1"
+                    size="lg"
+                    loading="submitQuickOrder"
+                    loadingText="Menyiapkan Meja..."
+                    class="w-full h-13 font-bold text-sm sm:text-base shadow-lg shadow-brand-blue/20 mt-1"
                 >
-                    <span wire:loading.remove wire:target="submitQuickOrder" class="flex items-center gap-2">
-                        <span>Lanjut Pilih Menu</span>
-                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                            <line x1="5" y1="12" x2="19" y2="12"></line>
-                            <polyline points="12 5 19 12 12 19"></polyline>
-                        </svg>
-                    </span>
-                    <span wire:loading wire:target="submitQuickOrder" class="flex items-center gap-2 text-white">
-                        <svg class="w-5 h-5 animate-spin" viewBox="0 0 24 24" fill="none">
-                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                        </svg>
-                        <span>Menyiapkan Meja...</span>
-                    </span>
-                </button>
+                    <span>Lanjut Pilih Menu</span>
+                    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                        <polyline points="12 5 19 12 12 19"></polyline>
+                    </svg>
+                </x-button>
 
                 {{-- Trust / Session Indicator --}}
                 <div class="flex items-center justify-center gap-1.5 mt-1.5 text-xs text-slate-400 font-poppins select-none">

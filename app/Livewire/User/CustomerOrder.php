@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire;
+namespace App\Livewire\User;
 
 use App\Models\Category;
 use App\Models\Menu;
@@ -102,6 +102,16 @@ class CustomerOrder extends Component
     public array $placedOrderItems = [];
 
     public ?string $placedPaymentMethod = null;
+
+    public bool $placedOrderPaid = false;
+
+    public ?string $placedSnapToken = null;
+
+    public ?string $placedQrisUrl = null;
+
+    public ?string $placedQrString = null;
+
+    public ?string $placedCashQrUrl = null;
 
     // Barista AI Modal State
     public bool $showAiModal = false;
@@ -469,6 +479,7 @@ class CustomerOrder extends Component
             $this->formattedPlacedOrderTotal = 'Rp '.number_format($this->placedOrderTotal, 0, ',', '.');
             $this->placedOrderItems = array_values($this->cart);
             $this->placedPaymentMethod = $this->paymentMethod;
+            $this->placedOrderPaid = false;
         });
 
         // Clear cart after successful checkout
@@ -476,8 +487,138 @@ class CustomerOrder extends Component
         $this->orderNotes = '';
         $this->saveCart();
 
+        if ($this->placedPaymentMethod === 'qris' && $this->placedOrderCode) {
+            $order = Order::where('order_code', $this->placedOrderCode)->first();
+            if ($order) {
+                $midtransService = app(\App\Services\MidtransService::class);
+                $this->placedSnapToken = $midtransService->getOrCreateSnapToken($order);
+                $qrisData = $midtransService->getOrCreateQris($order);
+                if ($qrisData) {
+                    $this->placedQrisUrl = $qrisData['qr_url'] ?? null;
+                    $this->placedQrString = $qrisData['qr_string'] ?? null;
+                }
+            }
+        } elseif ($this->placedPaymentMethod === 'cash' && $this->placedOrderCode) {
+            $this->placedCashQrUrl = \App\Services\QrCodeService::generateForOrder($this->placedOrderCode);
+        }
+
         $this->showCartDrawer = false;
         $this->showOrderSuccessModal = true;
+    }
+
+    /**
+     * Polling method to automatically detect payment status updates from Midtrans or DB.
+     */
+    public function checkPaymentStatus(): void
+    {
+        if (! $this->showOrderSuccessModal || ! $this->placedOrderCode || $this->placedOrderPaid) {
+            return;
+        }
+
+        $order = Order::where('order_code', $this->placedOrderCode)->first();
+        if (! $order) {
+            return;
+        }
+
+        if ($order->payment_status === 'paid') {
+            $this->placedOrderPaid = true;
+            $msg = $this->placedPaymentMethod === 'cash' ? 'Pembayaran Tunai Diterima Kasir!' : 'Pembayaran QRIS Berhasil Diverifikasi!';
+            $this->triggerToast($msg);
+
+            return;
+        }
+
+        if ($this->placedPaymentMethod === 'qris') {
+            try {
+                $status = (object) \Midtrans\Transaction::status($this->placedOrderCode);
+                $txStatus = $status->transaction_status ?? null;
+
+                if (in_array($txStatus, ['settlement', 'capture'], true)) {
+                    $order->update([
+                        'payment_status' => 'paid',
+                        'order_status' => $order->order_status === 'pending' ? 'processing' : $order->order_status,
+                    ]);
+                    $this->placedOrderPaid = true;
+                    $this->triggerToast('Pembayaran QRIS Berhasil Diverifikasi!');
+                }
+            } catch (\Throwable $e) {
+                // Ignore during polling while payment is still pending
+            }
+        }
+    }
+
+    /**
+     * Trigger Midtrans Snap payment popup.
+     */
+    public function payWithMidtrans(): void
+    {
+        if (! $this->placedOrderCode) {
+            return;
+        }
+
+        $order = Order::where('order_code', $this->placedOrderCode)->first();
+        if (! $order) {
+            return;
+        }
+
+        if (empty($this->placedSnapToken)) {
+            $midtransService = app(\App\Services\MidtransService::class);
+            $this->placedSnapToken = $midtransService->getOrCreateSnapToken($order);
+        }
+
+        if ($this->placedSnapToken) {
+            $this->dispatch('open-midtrans-snap', token: $this->placedSnapToken);
+        }
+    }
+
+    /**
+     * Handle payment success callback from Midtrans Snap popup.
+     */
+    public function handleMidtransSuccess(): void
+    {
+        if (! $this->placedOrderCode) {
+            return;
+        }
+
+        $order = Order::where('order_code', $this->placedOrderCode)->first();
+        if ($order) {
+            $order->update([
+                'payment_status' => 'paid',
+                'order_status' => $order->order_status === 'pending' ? 'processing' : $order->order_status,
+            ]);
+            $this->placedOrderPaid = true;
+            $this->triggerToast('Pembayaran Midtrans Berhasil Diverifikasi!');
+        }
+    }
+
+    /**
+     * Simulate payment success for QRIS order.
+     */
+    public function simulatePaymentSuccess(): void
+    {
+        if (! $this->placedOrderCode) {
+            return;
+        }
+
+        $order = Order::where('order_code', $this->placedOrderCode)->first();
+        if ($order) {
+            $order->update([
+                'payment_status' => 'paid',
+                'order_status' => 'processing',
+            ]);
+            $this->placedOrderPaid = true;
+            $this->triggerToast('Pembayaran QRIS Berhasil Diverifikasi!');
+        }
+    }
+
+    /**
+     * Redirect customer to real-time live order tracking.
+     */
+    public function goToTracking(): void
+    {
+        if ($this->placedOrderCode) {
+            $this->redirectRoute('order.tracking', ['code' => $this->placedOrderCode], navigate: true);
+        }
     }
 
     /**
@@ -768,7 +909,7 @@ class CustomerOrder extends Component
             return $menu;
         });
 
-        return view('livewire.CustomerOrder', [
+        return view('livewire.user.CustomerOrder', [
             'categories' => $categories,
             'menus' => $menus,
         ]);

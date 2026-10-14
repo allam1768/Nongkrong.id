@@ -3,10 +3,10 @@
     {{-- Desktop Header (md and up): Horizontal Logo --}}
     <header class="w-full hidden md:flex justify-center pt-2 sm:pt-4 pb-2 z-30">
         <a href="{{ route('splash') }}" wire:navigate class="inline-block transition-transform duration-200 hover:scale-105 focus:outline-none" title="NONGKRONG.id">
-            <img
-                src="{{ asset('assets/img/NongkrongId-blue.svg') }}"
-                alt="NONGKRONG.id"
-                class="h-8 sm:h-12 md:h-16 w-auto object-contain select-none"
+            <x-icon
+                name="icont_noks"
+                size="h-8 sm:h-12 md:h-16 w-auto"
+                class="text-brand-blue select-none"
             />
         </a>
     </header>
@@ -14,10 +14,10 @@
     {{-- Mobile Header (< md): Mascot on Top + NONGKRONG.id below (Identik Mockup) --}}
     <header class="w-full flex md:hidden flex-col items-center justify-center pt-3 pb-2 z-30 select-none">
         <a href="{{ route('splash') }}" wire:navigate class="flex flex-col items-center group focus:outline-none" title="NONGKRONG.id">
-            <img
-                src="{{ asset('assets/img/icont_noks-blue.svg') }}"
-                alt="Icon Nongkrong.id"
-                class="w-11 h-11 object-contain transition-transform group-hover:scale-105 mb-1.5 select-none"
+            <x-icon
+                name="icont_noks"
+                size="h-12 sm:h-12 md:h-16 w-auto"
+                class="text-brand-blue select-none"
             />
         </a>
     </header>
@@ -51,7 +51,7 @@
                 <span class="inline-flex items-center justify-center gap-1.5 flex-wrap font-poppins mt-0.5">
                     <span>Coffee in</span>
                     <img
-                        src="{{ asset('assets/img/NongkrongId-blue.svg') }}"
+                        src="{{ asset('assets/img/NongkrongId.svg') }}"
                         alt="NONGKRONG.id"
                         class="h-5 sm:h-6 lg:h-7 w-auto max-w-45 sm:max-w-52.5 object-contain inline-block select-none"
                     />
@@ -89,13 +89,13 @@
     </main>
 
     {{-- Employee Login Modal Popup (Separated into Partial) --}}
-    @include('livewire.partials.Login-modal')
+    @include('livewire.reuse-component.Login-modal')
 
     {{-- Mobile Table Selection Modal Popup (Separated into Partial) --}}
-    @include('livewire.partials.TableSelection-modal')
+    @include('livewire.reuse-component.TableSelection-modal')
 
     {{-- Quick Order Name Modal Popup (Separated into Partial) --}}
-    @include('livewire.partials.NameInput-modal')
+    @include('livewire.reuse-component.NameInput-modal')
 
     {{-- Subtle Minimal Footer --}}
     <footer class="w-full text-center py-2 text-[11px] text-neutral-300 font-sora z-30">

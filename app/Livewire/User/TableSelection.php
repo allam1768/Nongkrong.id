@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire;
+namespace App\Livewire\User;
 
 use App\Models\Table;
 use Livewire\Attributes\Layout;
@@ -330,7 +330,7 @@ class TableSelection extends Component
             ->orderBy('table_number')
             ->get();
 
-        return view('livewire.TableSelection', [
+        return view('livewire.user.TableSelection', [
             'availableTables' => $availableTables,
             'tables' => $availableTables,
             'currentYear' => date('Y'),

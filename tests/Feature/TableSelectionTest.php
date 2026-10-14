@@ -2,7 +2,7 @@
 
 namespace Tests\Feature;
 
-use App\Livewire\TableSelection;
+use App\Livewire\User\TableSelection;
 use App\Models\Table;
 use Database\Seeders\DatabaseSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;

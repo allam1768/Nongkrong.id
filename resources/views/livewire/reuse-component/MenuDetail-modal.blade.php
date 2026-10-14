@@ -15,6 +15,8 @@
             class="relative w-full max-w-lg bg-white rounded-t-3xl sm:rounded-3xl p-6 sm:p-8 shadow-2xl border border-slate-100 z-10 max-h-[92vh] overflow-y-auto"
             @click.stop
         >
+            {{-- Mobile Drag Handle --}}
+            <div class="sm:hidden w-12 h-1.5 bg-slate-200 rounded-full mx-auto -mt-2 mb-4 shrink-0"></div>
             <button
                 type="button"
                 wire:click="closeDetail"

@@ -22,6 +22,10 @@ class Menu extends Model
         'taste_profile',
     ];
 
+    protected $appends = [
+        'image_url',
+    ];
+
     protected function casts(): array
     {
         return [
@@ -29,6 +33,19 @@ class Menu extends Model
             'is_available' => 'boolean',
             'taste_profile' => 'array',
         ];
+    }
+
+    public function getImageUrlAttribute(): ?string
+    {
+        if (empty($this->image)) {
+            return null;
+        }
+
+        if (str_starts_with($this->image, 'http://') || str_starts_with($this->image, 'https://')) {
+            return $this->image;
+        }
+
+        return asset($this->image);
     }
 
     public function category(): BelongsTo

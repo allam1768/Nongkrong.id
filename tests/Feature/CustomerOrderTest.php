@@ -2,7 +2,7 @@
 
 namespace Tests\Feature;
 
-use App\Livewire\CustomerOrder;
+use App\Livewire\User\CustomerOrder;
 use App\Models\Menu;
 use App\Models\Order;
 use App\Models\Table;

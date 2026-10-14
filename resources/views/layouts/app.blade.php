@@ -22,6 +22,12 @@
     <body class="antialiased min-h-screen bg-white text-slate-900 selection:bg-brand-blue selection:text-white font-sans">
         {{ $slot }}
 
+        <!-- Midtrans Snap JS (Sandbox / Production) -->
+        <script
+            src="{{ config('services.midtrans.is_production') ? 'https://app.midtrans.com/snap/snap.js' : 'https://app.sandbox.midtrans.com/snap/snap.js' }}"
+            data-client-key="{{ config('services.midtrans.client_key') }}"
+        ></script>
+
         @livewireScripts
     </body>
 </html>

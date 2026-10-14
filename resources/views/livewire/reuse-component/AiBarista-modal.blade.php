@@ -19,7 +19,7 @@
             <div class="sm:hidden w-12 h-1.5 bg-slate-200 rounded-full mx-auto mt-3 -mb-1 shrink-0"></div>
 
             {{-- AI Modal Header --}}
-            <div class="p-5 px-6 border-b border-[#E2E8F0] bg-[#F8FAFC] flex items-center justify-between">
+            <div class="p-5 px-6 border-b border-[#E2E8F0] flex items-center justify-between">
                 <div class="flex items-center gap-3">
                     <div class="w-10 h-10 rounded-2xl bg-brand-blue text-white flex items-center justify-center text-xl shadow-sm">
                         ☕

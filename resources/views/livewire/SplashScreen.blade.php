@@ -25,13 +25,11 @@
         x-init="setTimeout(() => visible = true, 50)"
         :class="visible ? 'opacity-100 scale-100' : 'opacity-0 scale-95'"
     >
-        <img
-            src="{{ asset('assets/img/NongkrongId.svg') }}"
-            alt="Nongkrong.id"
-            class="w-64 sm:w-80 md:w-96 lg:w-105 max-w-[85vw] h-auto drop-shadow-sm pointer-events-none"
-            loading="eager"
-            fetchpriority="high"
-        />
+        <x-icon
+                name="nongkrong-id"
+                size="h-8 sm:h-12 md:h-16 w-auto"
+                class="text-white select-none"
+            />
     </div>
 </div>
 
