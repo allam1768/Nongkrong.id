@@ -171,7 +171,8 @@
         }
     }
 
-    $effectiveSize = $size ?? ($icon['size'] ?? 'w-5 h-5');
+    $hasExplicitDimension = $attributes->has('class') && preg_match('/(^|\s)(w-|h-|size-)/', (string) $attributes->get('class'));
+    $effectiveSize = $size ?? ($hasExplicitDimension ? '' : ($icon['size'] ?? 'w-5 h-5'));
     $renderType = $type ?? ($icon['type'] ?? 'stroke');
 @endphp
 
