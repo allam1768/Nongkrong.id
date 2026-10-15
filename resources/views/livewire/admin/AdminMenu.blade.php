@@ -19,20 +19,21 @@
                 wire:click="openCreateModal"
                 class="px-4 py-2.5 bg-brand-blue hover:bg-[#003da1] text-white rounded-xl text-xs font-bold transition flex items-center gap-2 shadow-xs cursor-pointer"
             >
-                <span>+ Tambah Menu Baru</span>
+                <x-icon name="plus" class="w-4 h-4 text-white" />
+                <span>Tambah Menu Baru</span>
             </button>
         </div>
 
         {{-- Filters & Search --}}
         <div class="mt-6 flex flex-col sm:flex-row gap-3 items-center justify-between">
-            <div class="relative w-full sm:w-80">
+            <div class="relative w-full sm:w-80 flex items-center">
                 <input
                     type="text"
                     wire:model.live.debounce.300ms="search"
                     placeholder="Cari nama menu..."
                     class="w-full h-10 pl-9 pr-4 bg-white border-2 border-slate-200 rounded-xl text-xs font-bold text-slate-800 focus:outline-none focus:border-brand-blue"
                 />
-                <span class="absolute left-3 top-2.5 text-slate-400 text-xs">🔍</span>
+                <x-icon name="search" class="w-4 h-4 text-slate-400 absolute left-3 pointer-events-none" />
             </div>
 
             <div class="w-full sm:w-auto">
@@ -63,7 +64,7 @@
                                             @if ($m->image_url)
                                                 <img src="{{ $m->image_url }}" alt="{{ $m->name }}" class="w-full h-full object-cover"/>
                                             @else
-                                                <span class="text-base">☕</span>
+                                                <x-icon name="coffee" class="w-5 h-5 text-slate-400" />
                                             @endif
                                         </div>
                                         <div>
@@ -93,7 +94,7 @@
                                         wire:click="toggleAvailability({{ $m->id }})"
                                         class="px-3 py-1 rounded-full text-[11px] font-bold transition cursor-pointer {{ $m->is_available ? 'bg-emerald-100 text-emerald-800 hover:bg-emerald-200' : 'bg-red-100 text-red-800 hover:bg-red-200' }}"
                                     >
-                                        {{ $m->is_available ? '✓ Tersedia' : '✕ Habis' }}
+                                        {{ $m->is_available ? 'Tersedia' : 'Habis' }}
                                     </button>
                                 </td>
                                 <td class="py-3.5 px-4 text-right">

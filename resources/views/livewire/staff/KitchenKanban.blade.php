@@ -12,7 +12,7 @@
                     class="w-9 h-9 rounded-xl border-2 border-slate-200 bg-white flex items-center justify-center text-slate-700 hover:border-brand-blue hover:text-brand-blue transition font-black text-sm"
                     title="Ke Portal Karyawan"
                 >
-                    ←
+                    <x-icon name="arrow-left" class="w-4 h-4" />
                 </a>
                 <div>
                     <div class="flex items-center gap-2">
@@ -33,14 +33,16 @@
                     wire:navigate
                     class="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-bold transition flex items-center gap-2 shadow-xs"
                 >
-                    <span>🖥️ Kasir POS Walk-in</span>
+                    <x-icon name="monitor" class="w-4 h-4 text-white" />
+                    <span>Kasir POS Walk-in</span>
                 </a>
                 <a
                     href="{{ route('admin.dashboard') }}"
                     wire:navigate
                     class="px-4 py-2 bg-brand-blue hover:bg-[#003da1] text-white rounded-xl text-xs font-bold transition flex items-center gap-2 shadow-xs"
                 >
-                    <span>📊 Admin Analytics</span>
+                    <x-icon name="trending-up" class="w-4 h-4 text-white" />
+                    <span>Admin Analytics</span>
                 </a>
                 <form method="POST" action="{{ route('logout') }}" class="inline">
                     @csrf
@@ -49,7 +51,8 @@
                         class="px-3.5 py-2 bg-rose-50 hover:bg-rose-100 border border-rose-200 text-rose-700 rounded-xl text-xs font-bold transition flex items-center gap-1.5 cursor-pointer shadow-xs"
                         title="Logout Staf"
                     >
-                        <span>🚪 Logout</span>
+                        <x-icon name="logout" class="w-3.5 h-3.5 text-inherit" />
+                        <span>Logout</span>
                     </button>
                 </form>
             </div>
@@ -98,7 +101,9 @@
                                         </span>
                                     </div>
                                     @if ($item->item_notes)
-                                        <div class="text-[10px] text-amber-700 italic pl-4">📝 {{ $item->item_notes }}</div>
+                                        <div class="text-[10px] text-amber-700 italic pl-2 border-l-2 border-amber-300">
+                                            Catatan: {{ $item->item_notes }}
+                                        </div>
                                     @endif
                                 @endforeach
                             </div>
@@ -108,11 +113,11 @@
                                 <span class="text-slate-400 font-bold">Pembayaran:</span>
                                 @if ($order->payment_status === 'paid')
                                     <span class="px-2 py-0.5 bg-emerald-100 text-emerald-800 rounded-full font-bold text-[10px]">
-                                        ✓ LUNAS ({{ strtoupper($order->payment_method) }})
+                                        Lunas ({{ strtoupper($order->payment_method) }})
                                     </span>
                                 @else
                                     <span class="px-2 py-0.5 bg-amber-100 text-amber-800 rounded-full font-bold text-[10px]">
-                                        ⏳ BELUM BAYAR ({{ strtoupper($order->payment_method) }})
+                                        Belum Bayar ({{ strtoupper($order->payment_method) }})
                                     </span>
                                 @endif
                             </div>
@@ -125,7 +130,8 @@
                                         wire:click="confirmPayment({{ $order->id }})"
                                         class="w-full h-8 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 shadow-xs cursor-pointer"
                                     >
-                                        💵 Terima Tunai & Kirim Barista
+                                        <x-icon name="banknote" class="w-3.5 h-3.5 text-white" />
+                                        <span>Terima Tunai & Kirim Barista</span>
                                     </button>
                                 @else
                                     <button
@@ -133,7 +139,8 @@
                                         wire:click="sendToKitchen({{ $order->id }})"
                                         class="w-full h-8 bg-brand-blue hover:bg-[#003da1] text-white rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 shadow-xs cursor-pointer"
                                     >
-                                        Kirim ke Barista ➔
+                                        <span>Kirim ke Barista</span>
+                                        <x-icon name="arrow-right" class="w-3.5 h-3.5 text-white" />
                                     </button>
                                 @endif
                             </div>
@@ -171,8 +178,9 @@
                                     </div>
                                     <h3 class="text-sm font-black text-slate-900 mt-0.5">{{ $order->customer_name }}</h3>
                                 </div>
-                                <span class="text-[11px] font-bold text-blue-600 font-mono">
-                                    ☕ Diramu
+                                <span class="text-[11px] font-bold text-blue-600 font-mono flex items-center gap-1">
+                                    <x-icon name="coffee" class="w-3.5 h-3.5 text-blue-600" />
+                                    <span>Diramu</span>
                                 </span>
                             </div>
 
@@ -185,7 +193,9 @@
                                         </span>
                                     </div>
                                     @if ($item->item_notes)
-                                        <div class="text-[10px] text-amber-700 italic pl-4">📝 {{ $item->item_notes }}</div>
+                                        <div class="text-[10px] text-amber-700 italic pl-2 border-l-2 border-amber-300">
+                                            Catatan: {{ $item->item_notes }}
+                                        </div>
                                     @endif
                                 @endforeach
                             </div>
@@ -196,7 +206,8 @@
                                 wire:click="markReady({{ $order->id }})"
                                 class="w-full h-9 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 shadow-xs cursor-pointer"
                             >
-                                ✓ Selesai Racik ➔ Meja Saji
+                                <x-icon name="check" class="w-3.5 h-3.5 text-white" />
+                                <span>Selesai Racik & Antar ke Meja Saji</span>
                             </button>
                         </div>
                     @empty
@@ -232,8 +243,9 @@
                                     </div>
                                     <h3 class="text-sm font-black text-slate-900 mt-0.5">{{ $order->customer_name }}</h3>
                                 </div>
-                                <span class="text-[11px] font-bold text-emerald-600 font-mono">
-                                    🍽️ Siap Antar
+                                <span class="text-[11px] font-bold text-emerald-600 font-mono flex items-center gap-1">
+                                    <x-icon name="utensils" class="w-3.5 h-3.5 text-emerald-600" />
+                                    <span>Siap Antar</span>
                                 </span>
                             </div>
 
@@ -251,7 +263,8 @@
                                 wire:click="markCompleted({{ $order->id }})"
                                 class="w-full h-9 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 shadow-xs cursor-pointer"
                             >
-                                Antarkan ke Meja ➔ Selesai ✓
+                                <x-icon name="check" class="w-3.5 h-3.5 text-white" />
+                                <span>Antarkan ke Meja (Selesai)</span>
                             </button>
                         </div>
                     @empty
@@ -284,7 +297,10 @@
                             <div class="text-xs font-bold text-slate-800">{{ $order->customer_name }}</div>
                             <div class="text-[11px] text-slate-400 flex items-center justify-between pt-1 border-t border-slate-100">
                                 <span>{{ $order->items->count() }} item</span>
-                                <span class="font-bold text-emerald-600">✓ Selesai</span>
+                                <span class="font-bold text-emerald-600 flex items-center gap-1">
+                                    <x-icon name="check" class="w-3 h-3 text-emerald-600" />
+                                    <span>Selesai</span>
+                                </span>
                             </div>
                         </div>
                     @empty

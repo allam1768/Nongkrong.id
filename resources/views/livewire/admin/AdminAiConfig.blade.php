@@ -121,7 +121,8 @@
                     wire:click="saveConfig"
                     class="w-full h-11 bg-brand-blue hover:bg-[#003da1] text-white rounded-2xl font-black text-xs transition cursor-pointer shadow-xs flex items-center justify-center gap-2"
                 >
-                    💾 Simpan Perubahan Prompt
+                    <x-icon name="save" class="w-4 h-4 text-white" />
+                    <span>Simpan Perubahan Prompt</span>
                 </button>
             </div>
 
@@ -130,7 +131,9 @@
                 {{-- Simulator Header --}}
                 <div class="flex items-center justify-between pb-3 border-b border-slate-100 mb-3">
                     <div class="flex items-center gap-2">
-                        <span class="w-8 h-8 rounded-xl bg-blue-50 text-brand-blue flex items-center justify-center text-sm">🤖</span>
+                        <span class="w-8 h-8 rounded-xl bg-blue-50 text-brand-blue flex items-center justify-center">
+                            <x-icon name="sparkles" class="w-4 h-4 text-brand-blue" />
+                        </span>
                         <div>
                             <h2 class="text-xs font-black text-slate-900">Live Simulator Persona AI</h2>
                             <span class="text-[10px] text-emerald-600 font-bold">● Interactive Preview</span>
@@ -157,8 +160,8 @@
                             </div>
                         @else
                             <div class="flex justify-start gap-2 items-start">
-                                <span class="w-7 h-7 rounded-xl bg-slate-100 border border-slate-200 text-xs flex items-center justify-center shrink-0">
-                                    ☕
+                                <span class="w-7 h-7 rounded-xl bg-slate-100 border border-slate-200 flex items-center justify-center shrink-0">
+                                    <x-icon name="coffee" class="w-4 h-4 text-slate-600" />
                                 </span>
                                 <div class="max-w-[85%] bg-slate-100 text-slate-800 p-3 rounded-2xl rounded-tl-xs font-medium border border-slate-200/80 leading-relaxed">
                                     {!! nl2br(e($msg['message'])) !!}
@@ -175,21 +178,21 @@
                         wire:click="$set('testInput', 'Lagi ngantuk berat, butuh kopi yang strong!')"
                         class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg whitespace-nowrap cursor-pointer"
                     >
-                        😴 Butuh Kopi Strong
+                        Butuh Kopi Strong
                     </button>
                     <button
                         type="button"
                         wire:click="$set('testInput', 'Pengen kopi yang manis dan creamy banget')"
                         class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg whitespace-nowrap cursor-pointer"
                     >
-                        🍨 Manis & Creamy
+                        Manis & Creamy
                     </button>
                     <button
                         type="button"
                         wire:click="$set('testInput', 'Ada rekomendasi minuman non-kopi yang segar?')"
                         class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg whitespace-nowrap cursor-pointer"
                     >
-                        🍵 Non-Kopi Segar
+                        Non-Kopi Segar
                     </button>
                 </div>
 
@@ -203,9 +206,10 @@
                     />
                     <button
                         type="submit"
-                        class="px-4 h-10 bg-brand-blue hover:bg-[#003da1] text-white rounded-xl text-xs font-bold transition cursor-pointer shadow-xs"
+                        class="px-4 h-10 bg-brand-blue hover:bg-[#003da1] text-white rounded-xl text-xs font-bold transition cursor-pointer shadow-xs flex items-center gap-1.5"
                     >
-                        Kirim ➔
+                        <span>Kirim</span>
+                        <x-icon name="arrow-right" class="w-3.5 h-3.5 text-white" />
                     </button>
                 </form>
             </div>

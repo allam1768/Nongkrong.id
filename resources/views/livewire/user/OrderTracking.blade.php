@@ -84,11 +84,11 @@
                         @if ($orderStatus === 'pending')
                             Pesanan Diterima • Menunggu Dapur
                         @elseif ($orderStatus === 'processing')
-                            Sedang Diracik Barista ☕
+                            Sedang Diracik Barista
                         @elseif ($orderStatus === 'ready')
-                            Pesanan Siap Saji! 🍽️
+                            Pesanan Siap Saji!
                         @elseif ($orderStatus === 'completed')
-                            Pesanan Selesai • Selamat Menikmati! ✨
+                            Pesanan Selesai • Selamat Menikmati!
                         @else
                             Status: {{ ucfirst($orderStatus) }}
                         @endif
@@ -128,7 +128,7 @@
                     {{-- Step 1 --}}
                     <div class="flex flex-col items-center">
                         <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-2xl flex items-center justify-center font-bold text-xs sm:text-sm mb-2 {{ $this->currentStep >= 1 ? 'bg-brand-blue text-white' : 'bg-slate-100 text-slate-400 border border-slate-200' }}">
-                            @if ($this->currentStep > 1) ✓ @else 1 @endif
+                            @if ($this->currentStep > 1) <x-icon name="check" class="w-4 h-4 text-white" /> @else 1 @endif
                         </div>
                         <span class="text-[11px] sm:text-xs font-black {{ $this->currentStep >= 1 ? 'text-brand-blue' : 'text-slate-400' }}">Masuk</span>
                         <span class="text-[10px] text-slate-400 hidden sm:block">Diterima</span>
@@ -137,7 +137,7 @@
                     {{-- Step 2 --}}
                     <div class="flex flex-col items-center">
                         <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-2xl flex items-center justify-center font-bold text-xs sm:text-sm mb-2 {{ $this->currentStep >= 2 ? 'bg-brand-blue text-white' : 'bg-slate-100 text-slate-400 border border-slate-200' }}">
-                            @if ($this->currentStep > 2) ✓ @else 2 @endif
+                            @if ($this->currentStep > 2) <x-icon name="check" class="w-4 h-4 text-white" /> @else 2 @endif
                         </div>
                         <span class="text-[11px] sm:text-xs font-black {{ $this->currentStep >= 2 ? 'text-brand-blue' : 'text-slate-400' }}">Racik</span>
                         <span class="text-[10px] text-slate-400 hidden sm:block">Di Dapur</span>
@@ -146,7 +146,7 @@
                     {{-- Step 3 --}}
                     <div class="flex flex-col items-center">
                         <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-2xl flex items-center justify-center font-bold text-xs sm:text-sm mb-2 {{ $this->currentStep >= 3 ? 'bg-brand-blue text-white' : 'bg-slate-100 text-slate-400 border border-slate-200' }}">
-                            @if ($this->currentStep > 3) ✓ @else 3 @endif
+                            @if ($this->currentStep > 3) <x-icon name="check" class="w-4 h-4 text-white" /> @else 3 @endif
                         </div>
                         <span class="text-[11px] sm:text-xs font-black {{ $this->currentStep >= 3 ? 'text-brand-blue' : 'text-slate-400' }}">Siap</span>
                         <span class="text-[10px] text-slate-400 hidden sm:block">Di Meja Saji</span>
@@ -155,7 +155,7 @@
                     {{-- Step 4 --}}
                     <div class="flex flex-col items-center">
                         <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-2xl flex items-center justify-center font-bold text-xs sm:text-sm mb-2 {{ $this->currentStep >= 4 ? 'bg-emerald-600 text-white' : 'bg-slate-100 text-slate-400 border border-slate-200' }}">
-                            @if ($this->currentStep >= 4) ✓ @else 4 @endif
+                            @if ($this->currentStep >= 4) <x-icon name="check" class="w-4 h-4 text-white" /> @else 4 @endif
                         </div>
                         <span class="text-[11px] sm:text-xs font-black {{ $this->currentStep >= 4 ? 'text-emerald-600' : 'text-slate-400' }}">Selesai</span>
                         <span class="text-[10px] text-slate-400 hidden sm:block">Di Meja</span>
@@ -175,8 +175,12 @@
         {{-- Payment Status Box --}}
         <div class="bg-white border-2 border-slate-200 rounded-3xl p-5 sm:p-6 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div class="flex items-center gap-3">
-                <div class="w-12 h-12 rounded-2xl {{ $paymentStatus === 'paid' ? 'bg-emerald-50 text-emerald-600 border-2 border-emerald-200' : 'bg-amber-50 text-amber-600 border-2 border-amber-200' }} flex items-center justify-center text-xl shrink-0">
-                    {{ $paymentStatus === 'paid' ? '💳' : '⏳' }}
+                <div class="w-12 h-12 rounded-2xl {{ $paymentStatus === 'paid' ? 'bg-emerald-50 text-emerald-600 border-2 border-emerald-200' : 'bg-amber-50 text-amber-600 border-2 border-amber-200' }} flex items-center justify-center shrink-0">
+                    @if ($paymentStatus === 'paid')
+                        <x-icon name="check" class="w-6 h-6 text-emerald-600" />
+                    @else
+                        <x-icon name="clock" class="w-6 h-6 text-amber-600" />
+                    @endif
                 </div>
                 <div>
                     <div class="flex items-center gap-2">
@@ -207,7 +211,8 @@
                 @endif
             @else
                 <span class="text-xs font-bold text-emerald-600 bg-emerald-50 px-3 py-1.5 rounded-xl border border-emerald-200 flex items-center gap-1.5">
-                    <span>✓</span> Transaksi Selesai & Terverifikasi
+                    <x-icon name="check" class="w-3.5 h-3.5 text-emerald-600" />
+                    <span>Transaksi Selesai & Terverifikasi</span>
                 </span>
             @endif
         </div>
@@ -230,7 +235,7 @@
                                 <h4 class="text-sm font-bold text-slate-900">{{ $item['name'] }}</h4>
                                 @if (!empty($item['notes']))
                                     <p class="text-xs text-slate-400 mt-0.5">
-                                        📝 {{ $item['notes'] }}
+                                        Catatan: {{ $item['notes'] }}
                                     </p>
                                 @endif
                                 <span class="text-xs text-slate-400">{{ $item['formatted_price'] }} / item</span>

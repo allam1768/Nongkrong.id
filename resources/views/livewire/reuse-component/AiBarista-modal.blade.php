@@ -20,14 +20,8 @@
             <div class="flex items-center gap-3">
                 {{-- Barista Mascot / AI Avatar with Pulsing Online Dot --}}
                 <div class="relative">
-                    <div class="w-10 h-10 rounded-full bg-linear-to-tr from-brand-blue to-blue-500 text-white flex items-center justify-center shadow-md shadow-brand-blue/20">
-                        <svg class="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M18 8h1a4 4 0 0 1 0 8h-1"></path>
-                            <path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"></path>
-                            <line x1="6" y1="1" x2="6" y2="4"></line>
-                            <line x1="10" y1="1" x2="10" y2="4"></line>
-                            <line x1="14" y1="1" x2="14" y2="4"></line>
-                        </svg>
+                    <div class="w-10 h-10 rounded-full bg-brand-blue text-white flex items-center justify-center shadow-md shadow-brand-blue/20">
+                        <x-icon name="coffee" class="w-5 h-5 text-white" />
                     </div>
                     <span class="absolute bottom-0 right-0 w-3 h-3 rounded-full bg-emerald-500 border-2 border-white"></span>
                 </div>
@@ -75,8 +69,8 @@
                         :class="msg.sender === 'user' ? 'flex-row-reverse' : 'flex-row'">
 
                         <template x-if="msg.sender === 'ai'">
-                            <div class="w-7 h-7 rounded-full bg-brand-blue text-white flex items-center justify-center shrink-0 mb-1 text-[11px] shadow-2xs font-bold font-poppins">
-                                ☕
+                            <div class="w-7 h-7 rounded-full bg-brand-blue text-white flex items-center justify-center shrink-0 mb-1 shadow-2xs">
+                                <x-icon name="sparkles" class="w-3.5 h-3.5 text-white" />
                             </div>
                         </template>
 
@@ -110,8 +104,8 @@
 
             {{-- Typing Indicator --}}
             <div x-show="isTyping" class="flex items-center gap-2 text-slate-400 text-xs py-1">
-                <div class="w-7 h-7 rounded-full bg-slate-200 text-slate-500 flex items-center justify-center shrink-0 text-[11px]">
-                    ☕
+                <div class="w-7 h-7 rounded-full bg-slate-200 text-slate-500 flex items-center justify-center shrink-0">
+                    <x-icon name="sparkles" class="w-3.5 h-3.5 text-slate-500" />
                 </div>
                 <div class="bg-white border border-slate-200 rounded-2xl px-3.5 py-2.5 flex items-center gap-1.5 shadow-2xs">
                     <span class="w-1.5 h-1.5 bg-brand-blue rounded-full animate-bounce"></span>

@@ -56,7 +56,7 @@
                             </div>
                         @else
                             <div class="w-48 sm:w-56 h-48 sm:h-56 mx-auto bg-slate-50 p-4 border-2 border-dashed border-slate-300 rounded-2xl flex flex-col items-center justify-center gap-2 text-slate-500">
-                                <span class="text-3xl animate-bounce">📱</span>
+                                <x-icon name="smartphone" class="w-10 h-10 text-brand-blue animate-pulse" />
                                 <span class="text-xs font-bold text-center">Memuat Barcode QRIS...</span>
                             </div>
                         @endif
@@ -193,7 +193,7 @@
                             </div>
                         @else
                             <div class="w-48 sm:w-56 h-48 sm:h-56 mx-auto bg-slate-50 p-4 border-2 border-dashed border-slate-300 rounded-2xl flex flex-col items-center justify-center gap-2 text-slate-500">
-                                <span class="text-3xl animate-bounce">🎫</span>
+                                <x-icon name="ticket" class="w-10 h-10 text-amber-600 animate-pulse" />
                                 <span class="text-xs font-bold text-center">Membuat Barcode Tiket...</span>
                             </div>
                         @endif
@@ -330,7 +330,7 @@
                     <div class="flex justify-between items-center">
                         <span class="text-slate-400 font-bold">Metode Bayar</span>
                         <span class="font-bold {{ ($placedPaymentMethod ?? $paymentMethod) === 'cash' ? 'text-amber-600' : 'text-emerald-600' }}">
-                            {{ ($placedPaymentMethod ?? $paymentMethod) === 'cash' ? '💵 Tunai di Kasir' : '💳 QRIS Lunas' }}
+                            {{ ($placedPaymentMethod ?? $paymentMethod) === 'cash' ? 'Tunai di Kasir' : 'QRIS Lunas' }}
                         </span>
                     </div>
 

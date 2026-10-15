@@ -12,15 +12,17 @@
             </div>
 
             <div class="flex items-center gap-2">
-                <span class="px-3.5 py-1.5 bg-white border-2 border-slate-200 rounded-xl text-xs font-bold text-slate-600">
-                    📅 {{ now()->translatedFormat('d F Y') }}
+                <span class="px-3.5 py-1.5 bg-white border-2 border-slate-200 rounded-xl text-xs font-bold text-slate-600 flex items-center gap-1.5">
+                    <x-icon name="calendar" class="w-3.5 h-3.5 text-slate-500" />
+                    <span>{{ now()->translatedFormat('d F Y') }}</span>
                 </span>
                 <a
                     href="{{ route('staff.kitchen-board') }}"
                     wire:navigate
-                    class="px-4 py-2 bg-brand-blue hover:bg-[#003da1] text-white rounded-xl text-xs font-bold transition shadow-xs"
+                    class="px-4 py-2 bg-brand-blue hover:bg-[#003da1] text-white rounded-xl text-xs font-bold transition shadow-xs flex items-center gap-1.5"
                 >
-                    Lihat KDS Dapur ➔
+                    <span>Lihat KDS Dapur</span>
+                    <x-icon name="arrow-right" class="w-3.5 h-3.5 text-white" />
                 </a>
             </div>
         </div>
@@ -31,13 +33,15 @@
             <div class="bg-white p-5 rounded-3xl border-2 border-slate-200 shadow-xs">
                 <div class="flex items-center justify-between mb-2">
                     <span class="text-xs font-bold text-slate-400">Total Omzet Lunas</span>
-                    <span class="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold text-sm">💰</span>
+                    <span class="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold">
+                        <x-icon name="banknote" class="w-4 h-4 text-emerald-600" />
+                    </span>
                 </div>
                 <div class="text-xl sm:text-2xl font-black text-slate-900 font-mono">
                     {{ $formattedTotalRevenue }}
                 </div>
                 <div class="mt-2 text-[11px] text-emerald-600 font-bold flex items-center gap-1">
-                    <span>↑ +18.4%</span>
+                    <span>+18.4%</span>
                     <span class="text-slate-400 font-normal">vs minggu lalu</span>
                 </div>
             </div>
@@ -46,13 +50,15 @@
             <div class="bg-white p-5 rounded-3xl border-2 border-slate-200 shadow-xs">
                 <div class="flex items-center justify-between mb-2">
                     <span class="text-xs font-bold text-slate-400">Total Transaksi</span>
-                    <span class="w-8 h-8 rounded-xl bg-blue-50 text-brand-blue flex items-center justify-center font-bold text-sm">🧾</span>
+                    <span class="w-8 h-8 rounded-xl bg-blue-50 text-brand-blue flex items-center justify-center font-bold">
+                        <x-icon name="receipt" class="w-4 h-4 text-brand-blue" />
+                    </span>
                 </div>
                 <div class="text-xl sm:text-2xl font-black text-slate-900 font-mono">
                     {{ $formattedTotalOrders }}
                 </div>
                 <div class="mt-2 text-[11px] text-blue-600 font-bold flex items-center gap-1">
-                    <span>↑ +12 Pesanan</span>
+                    <span>+12 Pesanan</span>
                     <span class="text-slate-400 font-normal">hari ini</span>
                 </div>
             </div>
@@ -61,7 +67,9 @@
             <div class="bg-white p-5 rounded-3xl border-2 border-slate-200 shadow-xs">
                 <div class="flex items-center justify-between mb-2">
                     <span class="text-xs font-bold text-slate-400">Item Terjual</span>
-                    <span class="w-8 h-8 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center font-bold text-sm">☕</span>
+                    <span class="w-8 h-8 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center font-bold">
+                        <x-icon name="coffee" class="w-4 h-4 text-purple-600" />
+                    </span>
                 </div>
                 <div class="text-xl sm:text-2xl font-black text-slate-900 font-mono">
                     {{ $formattedTotalItemsSold }}
@@ -76,7 +84,9 @@
             <div class="bg-white p-5 rounded-3xl border-2 border-slate-200 shadow-xs">
                 <div class="flex items-center justify-between mb-2">
                     <span class="text-xs font-bold text-slate-400">Konversi AI Barista</span>
-                    <span class="w-8 h-8 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center font-bold text-sm">🤖</span>
+                    <span class="w-8 h-8 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center font-bold">
+                        <x-icon name="sparkles" class="w-4 h-4 text-amber-600" />
+                    </span>
                 </div>
                 <div class="text-xl sm:text-2xl font-black text-brand-blue font-mono">
                     {{ $aiConversionRate }}%
@@ -158,9 +168,10 @@
                 <a
                     href="{{ route('staff.kitchen-board') }}"
                     wire:navigate
-                    class="text-xs font-bold text-brand-blue hover:underline"
+                    class="text-xs font-bold text-brand-blue hover:underline flex items-center gap-1"
                 >
-                    Lihat Semua di KDS ➔
+                    <span>Lihat Semua di KDS</span>
+                    <x-icon name="arrow-right" class="w-3 h-3 text-brand-blue" />
                 </a>
             </div>
 

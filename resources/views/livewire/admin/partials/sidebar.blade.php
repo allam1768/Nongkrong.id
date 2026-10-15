@@ -19,7 +19,7 @@
                 wire:navigate
                 class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition {{ request()->routeIs('admin.dashboard') ? 'bg-brand-blue text-white shadow-sm' : 'hover:bg-slate-800/80 text-slate-300' }}"
             >
-                <span class="text-base">📊</span>
+                <x-icon name="trending-up" class="w-4 h-4 shrink-0 text-inherit" />
                 <span>Executive Dashboard</span>
             </a>
 
@@ -28,7 +28,7 @@
                 wire:navigate
                 class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition {{ request()->routeIs('admin.menus') ? 'bg-brand-blue text-white shadow-sm' : 'hover:bg-slate-800/80 text-slate-300' }}"
             >
-                <span class="text-base">☕</span>
+                <x-icon name="coffee" class="w-4 h-4 shrink-0 text-inherit" />
                 <span>Manajemen Menu</span>
             </a>
 
@@ -37,7 +37,7 @@
                 wire:navigate
                 class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition {{ request()->routeIs('admin.ai-config') ? 'bg-brand-blue text-white shadow-sm' : 'hover:bg-slate-800/80 text-slate-300' }}"
             >
-                <span class="text-base">🤖</span>
+                <x-icon name="sparkles" class="w-4 h-4 shrink-0 text-inherit" />
                 <span>AI Barista Tuner</span>
             </a>
 
@@ -50,7 +50,7 @@
                 wire:navigate
                 class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl hover:bg-slate-800/80 text-slate-300 transition"
             >
-                <span class="text-base">📋</span>
+                <x-icon name="kanban" class="w-4 h-4 shrink-0 text-inherit" />
                 <span>Kitchen Kanban KDS</span>
             </a>
 
@@ -59,7 +59,7 @@
                 wire:navigate
                 class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl hover:bg-slate-800/80 text-slate-300 transition"
             >
-                <span class="text-base">🖥️</span>
+                <x-icon name="monitor" class="w-4 h-4 shrink-0 text-inherit" />
                 <span>Kasir Walk-in POS</span>
             </a>
         </nav>
@@ -73,7 +73,10 @@
             </div>
             <div class="min-w-0 flex-1">
                 <div class="text-xs font-bold text-white truncate">Administrator</div>
-                <div class="text-[10px] text-emerald-400 font-semibold">● Aktif</div>
+                <div class="text-[10px] text-emerald-400 font-semibold flex items-center gap-1.5">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 inline-block"></span>
+                    Aktif
+                </div>
             </div>
         </div>
 
@@ -81,10 +84,11 @@
             @csrf
             <button
                 type="submit"
-                class="w-full py-2.5 bg-rose-950/40 hover:bg-rose-900/60 border border-rose-800/40 text-rose-200 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 cursor-pointer shadow-xs"
+                class="w-full py-2.5 bg-rose-950/40 hover:bg-rose-900/60 border border-rose-800/40 text-rose-200 rounded-xl text-xs font-bold transition flex items-center justify-center gap-2 cursor-pointer shadow-xs"
                 title="Logout Resmi Admin"
             >
-                <span>🚪 Logout Resmi</span>
+                <x-icon name="logout" class="w-4 h-4 shrink-0 text-inherit" />
+                <span>Logout Resmi</span>
             </button>
         </form>
     </div>

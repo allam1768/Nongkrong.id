@@ -49,7 +49,7 @@
         <div class="flex-1 max-w-110 mx-4 hidden sm:flex items-center">
             <div
                 class="w-full h-10 bg-[#F8FAFC] border-[1.5px] border-[#CBD5E1] rounded-full flex items-center px-4 gap-2.5 focus-within:border-brand-blue focus-within:bg-white transition-all">
-                <span class="text-sm text-slate-400 select-none">🔍</span>
+                <x-icon name="search" class="w-4 h-4 text-slate-400 select-none shrink-0" />
                 <input type="text" wire:model.live.debounce.300ms="searchQuery" id="input-search-menu"
                     placeholder="Cari kopi, tea, makanan, atau snack..."
                     class="w-full bg-transparent border-none text-[13px] text-slate-800 placeholder-slate-400 focus:outline-none"
@@ -248,7 +248,7 @@
             {{-- Cart Header --}}
             <div class="p-5 px-6 border-b-[1.5px] border-slate-100 flex items-center justify-between">
                 <div class="text-[16px] font-extrabold text-[#0F172A] flex items-center gap-2">
-                    <span>🛒</span>
+                    <x-icon name="shopping-bag" class="w-4 h-4 text-brand-blue" />
                     <span>Pesanan Meja {{ $tableNumber ?: '03' }}</span>
                 </div>
                 <span class="text-[12px] font-bold text-brand-blue bg-[#DBEAFE] px-2 py-0.5 rounded-md">
@@ -296,7 +296,9 @@
                     </div>
                 @empty
                     <div class="py-20 text-center text-slate-400">
-                        <div class="text-4xl mb-2">🛒</div>
+                        <div class="w-12 h-12 mx-auto mb-2 rounded-2xl bg-slate-100 flex items-center justify-center text-slate-400">
+                            <x-icon name="shopping-bag" class="w-6 h-6 text-slate-400" />
+                        </div>
                         <p class="text-xs font-bold text-slate-600">Keranjang Masih Kosong</p>
                         <p class="text-[11px] text-slate-400 mt-0.5">Pilih menu favorit Anda dengan menekan tombol (+)
                         </p>
@@ -373,7 +375,10 @@
 
                 <button type="button" wire:click="checkoutOrder" wire:loading.attr="disabled" @disabled(empty($cart)) id="btn-checkout-cart"
                     class="w-full h-12 bg-brand-blue hover:bg-[#003da1] disabled:opacity-40 text-white rounded-full text-[14px] font-extrabold flex items-center justify-center gap-2 mt-4 transition-all shadow-md active:scale-98 cursor-pointer disabled:cursor-not-allowed">
-                    <span wire:loading.remove wire:target="checkoutOrder">Lanjut ke Checkout ➔</span>
+                    <span wire:loading.remove wire:target="checkoutOrder" class="inline-flex items-center gap-1.5">
+                        <span>Lanjut ke Checkout</span>
+                        <x-icon name="arrow-right" class="w-4 h-4" />
+                    </span>
                     <span wire:loading.inline-flex wire:target="checkoutOrder" class="inline-flex items-center gap-2 whitespace-nowrap">
                         <svg class="w-4 h-4 animate-spin text-white shrink-0 inline-block" viewBox="0 0 24 24" fill="none">
                             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
@@ -402,7 +407,7 @@
                 </div>
                 <div class="flex items-center gap-1.5 text-sm">
                     <span>{{ $formattedCartTotal }}</span>
-                    <span>➔</span>
+                    <x-icon name="arrow-right" class="w-4 h-4" />
                 </div>
             </button>
         </aside>
@@ -425,7 +430,7 @@
         x-transition:enter-end="opacity-100 translate-y-0" x-transition:leave="ease-in duration-200"
         x-transition:leave-start="opacity-100 translate-y-0" x-transition:leave-end="opacity-0 translate-y-2" x-cloak
         class="fixed top-5 right-5 z-60 max-w-sm bg-slate-900 text-white text-xs px-4 py-3 rounded-2xl shadow-xl flex items-center gap-2.5 pointer-events-none">
-        <span class="text-emerald-400 text-base">✓</span>
+        <x-icon name="check" class="w-4 h-4 text-emerald-400" />
         <span x-text="toastMsg" class="font-medium"></span>
     </div>
 </div>

@@ -2,15 +2,15 @@
 <div
     x-data="{
         open: @entangle('showQuickOrderModal'),
-        quickTags: ['☕ Kak ', '⚡ Bos Kopi', '🥐 Si Santai', '🎧 Chill Mode'],
+        quickTags: ['+Kak ', 'Bos Kopi', 'Si Santai', 'Chill Mode'],
         selectTag(tag) {
             let current = $wire.get('customerName') || '';
-            if (tag.startsWith('☕ Kak ')) {
+            if (tag.startsWith('+Kak ')) {
                 if (!current.startsWith('Kak ')) {
                     $wire.set('customerName', ('Kak ' + current).trim());
                 }
             } else {
-                $wire.set('customerName', tag.replace(/^[^\s]+\s/, ''));
+                $wire.set('customerName', tag.trim());
             }
         }
     }"
@@ -47,12 +47,12 @@
         class="relative w-full h-full sm:h-auto min-h-dvh sm:min-h-0 sm:max-w-md bg-white rounded-none sm:rounded-3xl shadow-none sm:shadow-2xl sm:border-2 border-slate-200 z-10 transition-all select-auto flex flex-col justify-between p-5 sm:p-7 overflow-y-auto"
         @click.stop
     >
-        {{-- Subtle Flat Decorative Star Accents (Pure Flat Solid #004AAD, Zero Gradient) --}}
-        <div class="absolute -top-3 -right-3 w-16 h-16 pointer-events-none opacity-20 select-none hidden sm:block rotate-12">
-            <img src="{{ asset('assets/img/Star-ic.svg') }}" alt="" class="w-full h-full" />
+        {{-- Subtle Flat Decorative Star Accents --}}
+        <div class="absolute -top-3 -right-3 w-16 h-16 pointer-events-none opacity-20 select-none hidden sm:block rotate-12 text-brand-blue">
+            <x-icon name="star" class="w-full h-full text-brand-blue" />
         </div>
-        <div class="absolute -bottom-4 -left-4 w-20 h-20 pointer-events-none opacity-15 select-none hidden sm:block -rotate-12">
-            <img src="{{ asset('assets/img/Star-ic.svg') }}" alt="" class="w-full h-full" />
+        <div class="absolute -bottom-4 -left-4 w-20 h-20 pointer-events-none opacity-15 select-none hidden sm:block -rotate-12 text-brand-blue">
+            <x-icon name="star" class="w-full h-full text-brand-blue" />
         </div>
 
         {{-- Top Navigation Bar --}}
@@ -65,10 +65,7 @@
                     class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 active:scale-95 transition-all cursor-pointer font-poppins text-xs font-semibold whitespace-nowrap border border-slate-200"
                     aria-label="Ganti Meja"
                 >
-                    <svg class="w-3.5 h-3.5 text-slate-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                        <line x1="19" y1="12" x2="5" y2="12"></line>
-                        <polyline points="12 19 5 12 12 5"></polyline>
-                    </svg>
+                    <x-icon name="arrow-left" class="w-3.5 h-3.5 text-slate-600" />
                     <span>Ganti Meja</span>
                 </button>
             </div>
@@ -111,8 +108,14 @@
                     </span>
                 </div>
                 <div class="flex items-center gap-1.5 text-[10px] font-semibold text-slate-600 font-poppins">
-                    <span class="bg-white px-2 py-0.5 rounded-lg border border-slate-200">📶 Free WiFi</span>
-                    <span class="bg-white px-2 py-0.5 rounded-lg border border-slate-200">⚡ Stopkontak</span>
+                    <span class="bg-white px-2 py-0.5 rounded-lg border border-slate-200 inline-flex items-center gap-1">
+                        <x-icon name="wifi" class="w-3 h-3 text-brand-blue" />
+                        <span>Free WiFi</span>
+                    </span>
+                    <span class="bg-white px-2 py-0.5 rounded-lg border border-slate-200 inline-flex items-center gap-1">
+                        <x-icon name="zap" class="w-3 h-3 text-amber-500" />
+                        <span>Stopkontak</span>
+                    </span>
                 </div>
             </div>
 
@@ -124,13 +127,13 @@
                         class="w-8 h-8 object-contain text-brand-blue"
                     />
                     {{-- Mini Star on Mascot --}}
-                    <div class="absolute -top-1.5 -right-1.5 w-4 h-4">
-                        <img src="{{ asset('assets/img/Star-ic.svg') }}" alt="" class="w-full h-full" />
+                    <div class="absolute -top-1.5 -right-1.5 w-4 h-4 text-brand-blue">
+                        <x-icon name="sparkles" class="w-full h-full text-brand-blue" />
                     </div>
                 </div>
                 <div class="flex-1 text-left">
                     <div class="flex items-center gap-1 text-[10px] font-extrabold text-brand-blue font-poppins uppercase tracking-wider">
-                        <span>✨ Mas Nongki (Barista AI)</span>
+                        <span>Mas Nongki (Barista AI)</span>
                     </div>
                     <p class="text-xs font-semibold text-slate-800 font-poppins leading-snug mt-0.5">
                         "Kenalan dulu yuk! Nama kamu siapa? Biar pesanan kopimu gak ketukar."
@@ -178,12 +181,11 @@
                         class="absolute right-2 w-9 h-9 rounded-xl bg-brand-blue hover:bg-[#003da1] text-white flex items-center justify-center active:scale-95 transition-all cursor-pointer shadow-sm select-none"
                         title="Kirim"
                     >
-                        <img
-                            src="{{ asset('assets/icn/ci_paper-plane.svg') }}"
-                            alt="Kirim"
+                        <x-icon
+                            name="send"
                             wire:loading.remove
                             wire:target="submitQuickOrder"
-                            class="w-4 h-4 select-none brightness-0 invert"
+                            class="w-4 h-4 select-none text-white"
                         />
                         <svg
                             wire:loading
@@ -209,36 +211,36 @@
                 {{-- Fun Interactive Chips (Panggilan Cepat) --}}
                 <div class="w-full flex flex-col items-start gap-1.5 pt-0.5">
                     <span class="text-[11px] font-bold text-slate-600 font-poppins flex items-center gap-1">
-                        <span>💡 Panggilan Cepat:</span>
+                        <span>Panggilan Cepat:</span>
                     </span>
                     <div class="flex items-center gap-1.5 w-full overflow-x-auto pb-1 no-scrollbar">
                         <button
                             type="button"
-                            @click="selectTag('☕ Kak ')"
+                            @click="selectTag('+Kak ')"
                             class="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl bg-slate-50 hover:bg-blue-50 border-1.5 border-slate-200 hover:border-brand-blue text-xs font-semibold text-slate-700 hover:text-brand-blue transition-all shrink-0 cursor-pointer"
                         >
-                            <span>☕ +Kak</span>
+                            <span>+Kak</span>
                         </button>
                         <button
                             type="button"
                             @click="$wire.set('customerName', 'Bos Kopi')"
                             class="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl bg-slate-50 hover:bg-blue-50 border-1.5 border-slate-200 hover:border-brand-blue text-xs font-semibold text-slate-700 hover:text-brand-blue transition-all shrink-0 cursor-pointer"
                         >
-                            <span>⚡ Bos Kopi</span>
+                            <span>Bos Kopi</span>
                         </button>
                         <button
                             type="button"
                             @click="$wire.set('customerName', 'Si Santai')"
                             class="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl bg-slate-50 hover:bg-blue-50 border-1.5 border-slate-200 hover:border-brand-blue text-xs font-semibold text-slate-700 hover:text-brand-blue transition-all shrink-0 cursor-pointer"
                         >
-                            <span>🥐 Si Santai</span>
+                            <span>Si Santai</span>
                         </button>
                         <button
                             type="button"
                             @click="$wire.set('customerName', 'Chill Mode')"
                             class="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl bg-slate-50 hover:bg-blue-50 border-1.5 border-slate-200 hover:border-brand-blue text-xs font-semibold text-slate-700 hover:text-brand-blue transition-all shrink-0 cursor-pointer"
                         >
-                            <span>🎧 Chill</span>
+                            <span>Chill Mode</span>
                         </button>
                     </div>
                 </div>

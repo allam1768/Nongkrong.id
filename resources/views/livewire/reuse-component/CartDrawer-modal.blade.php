@@ -21,7 +21,7 @@
             {{-- Cart Header --}}
             <div class="p-5 border-b border-slate-100 flex items-center justify-between">
                 <div class="flex items-center gap-2">
-                    <span class="text-xl">🛒</span>
+                    <x-icon name="shopping-bag" class="w-5 h-5 text-brand-blue" />
                     <h3 class="font-bold text-base text-slate-900">
                         Pesanan Meja {{ $tableNumber ?: '03' }}
                     </h3>
@@ -34,7 +34,7 @@
                     wire:click="closeCart"
                     class="text-slate-400 hover:text-slate-600 p-2 rounded-full hover:bg-slate-100 transition-colors cursor-pointer"
                 >
-                    ✕
+                    <x-icon name="close" class="w-4 h-4" />
                 </button>
             </div>
 
@@ -63,7 +63,9 @@
                     </div>
                 @empty
                     <div class="py-16 text-center text-slate-400">
-                        <div class="text-4xl mb-2">🛒</div>
+                        <div class="w-12 h-12 mx-auto mb-2 rounded-2xl bg-slate-100 flex items-center justify-center text-slate-400">
+                            <x-icon name="shopping-bag" class="w-6 h-6 text-slate-400" />
+                        </div>
                         <p class="text-xs font-bold text-slate-600">Keranjang Masih Kosong</p>
                         <p class="text-[11px] text-slate-400 mt-0.5">Pilih menu favorit Anda dengan menekan tombol (+)</p>
                     </div>
@@ -86,11 +88,7 @@
                             class="flex items-center gap-2.5 p-2.5 rounded-xl border text-left transition-all cursor-pointer {{ $paymentMethod === 'cash' ? 'border-brand-blue bg-blue-50/80 text-brand-blue ring-1 ring-brand-blue' : 'border-slate-200 bg-white text-slate-700 hover:border-slate-300 hover:bg-slate-50' }}"
                         >
                             <div class="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 {{ $paymentMethod === 'cash' ? 'bg-brand-blue/10 text-brand-blue' : 'bg-slate-100 text-slate-500' }}">
-                                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <rect width="20" height="12" x="2" y="6" rx="2"/>
-                                    <circle cx="12" cy="12" r="2"/>
-                                    <path d="M6 12h.01M18 12h.01"/>
-                                </svg>
+                                <x-icon name="banknote" class="w-4 h-4" />
                             </div>
                             <div class="min-w-0 flex-1">
                                 <div class="text-xs font-bold leading-tight">Cash</div>
@@ -110,20 +108,7 @@
                             class="flex items-center gap-2.5 p-2.5 rounded-xl border text-left transition-all cursor-pointer {{ $paymentMethod === 'qris' ? 'border-brand-blue bg-blue-50/80 text-brand-blue ring-1 ring-brand-blue' : 'border-slate-200 bg-white text-slate-700 hover:border-slate-300 hover:bg-slate-50' }}"
                         >
                             <div class="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 {{ $paymentMethod === 'qris' ? 'bg-brand-blue/10 text-brand-blue' : 'bg-slate-100 text-slate-500' }}">
-                                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <rect width="5" height="5" x="3" y="3" rx="1"/>
-                                    <rect width="5" height="5" x="16" y="3" rx="1"/>
-                                    <rect width="5" height="5" x="3" y="16" rx="1"/>
-                                    <path d="M21 16h-3a2 2 0 0 0-2 2v3"/>
-                                    <path d="M21 21v.01"/>
-                                    <path d="M12 7v3a2 2 0 0 1-2 2H7"/>
-                                    <path d="M3 12h.01"/>
-                                    <path d="M12 3h.01"/>
-                                    <path d="M12 16v.01"/>
-                                    <path d="M16 12h1"/>
-                                    <path d="M21 12v.01"/>
-                                    <path d="M12 21v-1"/>
-                                </svg>
+                                <x-icon name="qr-code" class="w-4 h-4" />
                             </div>
                             <div class="min-w-0 flex-1">
                                 <div class="text-xs font-bold leading-tight">QRIS</div>
@@ -157,7 +142,10 @@
                     @disabled(empty($cart))
                     class="w-full h-11 bg-brand-blue hover:bg-[#003da1] disabled:opacity-40 text-white rounded-full text-xs font-extrabold flex items-center justify-center gap-2 mt-4 cursor-pointer transition-all shadow-md active:scale-98 disabled:cursor-not-allowed"
                 >
-                    <span wire:loading.remove wire:target="checkoutOrder">Lanjut ke Checkout ➔</span>
+                    <span wire:loading.remove wire:target="checkoutOrder" class="inline-flex items-center gap-1.5">
+                        <span>Lanjut ke Checkout</span>
+                        <x-icon name="arrow-right" class="w-4 h-4" />
+                    </span>
                     <span wire:loading.inline-flex wire:target="checkoutOrder" class="inline-flex items-center gap-2 whitespace-nowrap">
                         <svg class="w-4 h-4 animate-spin text-white shrink-0 inline-block" viewBox="0 0 24 24" fill="none">
                             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>

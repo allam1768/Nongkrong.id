@@ -92,7 +92,7 @@
     @if (session()->has('warning') || session()->has('alert') || session()->has('error'))
         <div class="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-full max-w-md px-4 pointer-events-auto">
             <div class="p-3.5 rounded-2xl bg-amber-50 border border-amber-200 text-amber-900 shadow-xl flex items-center gap-3 text-xs font-poppins font-semibold">
-                <span class="text-base text-amber-600 shrink-0">⚠️</span>
+                <x-icon name="alert-circle" class="w-4 h-4 text-amber-600 shrink-0" />
                 <span class="flex-1">{{ session('warning') ?? session('alert') ?? session('error') }}</span>
             </div>
         </div>
@@ -218,17 +218,17 @@
                 messages: [
                     {
                         sender: 'ai',
-                        text: 'Halo! Saya **AI Barista Nongkrong.id** ☕\nBingung mau pesan apa hari ini? Ceritakan seleramu (misal: kopi manis creamy, strong melek, atau non-kopi segar), atau pilih opsi cepat di bawah!',
+                        text: 'Halo! Saya **AI Barista Nongkrong.id**\nBingung mau pesan apa hari ini? Ceritakan seleramu (misal: kopi manis creamy, strong melek, atau non-kopi segar), atau pilih opsi cepat di bawah!',
                         time: 'Baru saja',
                         showCta: false
                     }
                 ],
                 quickPrompts: [
-                    '☕ Kopi Manis & Creamy',
-                    '⚡ Kopi Strong / Melek',
-                    '🍃 Minuman Segar Non-Kopi',
-                    '🥐 Rekomendasi Cemilan',
-                    '📍 Cara Pesan ke Meja'
+                    'Kopi Manis & Creamy',
+                    'Kopi Strong / Melek',
+                    'Minuman Segar Non-Kopi',
+                    'Rekomendasi Cemilan',
+                    'Cara Pesan ke Meja'
                 ],
                 sendUserMessage(text) {
                     let msg = (text || this.inputMessage || '').trim();
@@ -267,25 +267,25 @@
                     let q = query.toLowerCase();
                     if (q.includes('manis') || q.includes('creamy') || q.includes('susu') || q.includes('aren') || q.includes('caramel')) {
                         return {
-                            text: 'Rekomendasi terbaik buat kamu:\n1. 🍯 **Es Kopi Susu Gula Aren** (Best Seller — manis legit gurih)\n2. 🍮 **Caramel Macchiato** (Espresso lembut berpadu saus karamel)\n\nKeduanya menggunakan susu segar pilihan yang creamy banget!',
+                            text: 'Rekomendasi terbaik buat kamu:\n1. **Es Kopi Susu Gula Aren** (Best Seller — manis legit gurih)\n2. **Caramel Macchiato** (Espresso lembut berpadu saus karamel)\n\nKeduanya menggunakan susu segar pilihan yang creamy banget!',
                             showCta: true
                         };
                     }
                     if (q.includes('strong') || q.includes('melek') || q.includes('kerja') || q.includes('begadang') || q.includes('pahit') || q.includes('americano') || q.includes('espresso')) {
                         return {
-                            text: 'Pilihan paling pas untuk booster energi:\n1. ⚡ **Double Shot Americano** (Bold, aromatic, zero sugar)\n2. ☕ **V60 Single Origin Aceh Gayo** (Manual brew aroma fruity & floral)\n\nDijamin fokus seharian!',
+                            text: 'Pilihan paling pas untuk booster energi:\n1. **Double Shot Americano** (Bold, aromatic, zero sugar)\n2. **V60 Single Origin Aceh Gayo** (Manual brew aroma fruity & floral)\n\nDijamin fokus seharian!',
                             showCta: true
                         };
                     }
                     if (q.includes('non') || q.includes('segar') || q.includes('teh') || q.includes('matcha') || q.includes('cokelat') || q.includes('berry')) {
                         return {
-                            text: 'Menu non-kopi segar favorit:\n1. 🍃 **Matcha Latte Ice Premium** (Uji matcha kental kaya rasa)\n2. 🍓 **Sparkling Berry Mojito** (Soda dingin dengan sari buah beri asli)\n\nSegar dan dingin untuk menemani harimu!',
+                            text: 'Menu non-kopi segar favorit:\n1. **Matcha Latte Ice Premium** (Uji matcha kental kaya rasa)\n2. **Sparkling Berry Mojito** (Soda dingin dengan sari buah beri asli)\n\nSegar dan dingin untuk menemani harimu!',
                             showCta: true
                         };
                     }
                     if (q.includes('cemilan') || q.includes('makan') || q.includes('roti') || q.includes('snack') || q.includes('croissant') || q.includes('toast')) {
                         return {
-                            text: 'Pasangan ngopi paling pas:\n1. 🥐 **Butter Croissant** hangat & renyah\n2. 🍫 **Choco Lava Toast** lumeran cokelat hangat\n3. 🍟 **Truffle French Fries** untuk cemilan gurih!',
+                            text: 'Pasangan ngopi paling pas:\n1. **Butter Croissant** hangat & renyah\n2. **Choco Lava Toast** lumeran cokelat hangat\n3. **Truffle French Fries** untuk cemilan gurih!',
                             showCta: true
                         };
                     }
@@ -308,7 +308,7 @@
                     this.messages = [
                         {
                             sender: 'ai',
-                            text: 'Halo! Saya **AI Barista Nongkrong.id** ☕\nBingung mau pesan apa hari ini? Ceritakan seleramu atau pilih opsi cepat di bawah!',
+                            text: 'Halo! Saya **AI Barista Nongkrong.id**\nBingung mau pesan apa hari ini? Ceritakan seleramu atau pilih opsi cepat di bawah!',
                             time: 'Baru saja',
                             showCta: false
                         }

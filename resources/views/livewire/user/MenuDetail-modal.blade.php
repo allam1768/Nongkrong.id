@@ -54,7 +54,8 @@
                                 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50' => $detailTemperature !== 'cold',
                             ])
                         >
-                            <span>🧊 Dingin (Iced)</span>
+                            <x-icon name="snowflake" class="w-4 h-4 text-inherit" />
+                            <span>Dingin (Iced)</span>
                         </button>
                         <button
                             type="button"
@@ -65,7 +66,8 @@
                                 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50' => $detailTemperature !== 'hot',
                             ])
                         >
-                            <span>♨️ Panas (Hot)</span>
+                            <x-icon name="flame" class="w-4 h-4 text-inherit" />
+                            <span>Panas (Hot)</span>
                         </button>
                     </div>
                 </div>

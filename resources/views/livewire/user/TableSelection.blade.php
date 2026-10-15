@@ -91,7 +91,7 @@
             >
                 {{-- Decorative Interactive QR Laser Scan Line --}}
                 <div
-                    class="absolute inset-x-6 top-6 h-0.5 bg-linear-to-r from-transparent via-brand-blue to-transparent opacity-75 animate-pulse pointer-events-none"
+                    class="absolute inset-x-6 top-6 h-0.5 bg-brand-blue opacity-75 animate-pulse pointer-events-none"
                     style="animation: scanMove 3s ease-in-out infinite alternate;"
                 ></div>
 
@@ -329,12 +329,11 @@
                 {{-- Handle Bar for Mobile Sheet --}}
                 <div class="w-10 h-1 bg-slate-200 rounded-full mx-auto mb-4 block sm:hidden"></div>
 
-                {{-- Success Icon with Star Accent --}}
+                {{-- Success Icon --}}
                 <div class="w-14 h-14 sm:w-16 sm:h-16 mx-auto rounded-3xl bg-blue-50 border-2 border-brand-blue/20 flex items-center justify-center mb-3 sm:mb-4 relative">
-                    <img
-                        src="{{ asset('assets/img/Star-ic.svg') }}"
-                        alt=""
-                        class="w-8 h-8 sm:w-10 sm:h-10 animate-bounce"
+                    <x-icon
+                        name="check"
+                        class="w-7 h-7 sm:w-8 sm:h-8 text-brand-blue"
                     />
                 </div>
 

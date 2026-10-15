@@ -37,7 +37,7 @@
                     class="w-9 h-9 rounded-xl border-2 border-slate-200 bg-white flex items-center justify-center text-slate-700 hover:border-brand-blue hover:text-brand-blue transition font-black text-sm"
                     title="Ke Kitchen Kanban"
                 >
-                    ←
+                    <x-icon name="arrow-left" class="w-4 h-4" />
                 </a>
                 <div>
                     <span class="text-xs font-black text-brand-blue tracking-wide">POINT OF SALE (POS)</span>
@@ -51,14 +51,16 @@
                     wire:navigate
                     class="px-3.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-800 rounded-xl text-xs font-bold transition flex items-center gap-1.5"
                 >
-                    <span>📋 Kanban Dapur</span>
+                    <x-icon name="kanban" class="w-3.5 h-3.5 text-inherit" />
+                    <span>Kanban Dapur</span>
                 </a>
                 <a
                     href="{{ route('admin.dashboard') }}"
                     wire:navigate
                     class="px-3.5 py-1.5 bg-brand-blue hover:bg-[#003da1] text-white rounded-xl text-xs font-bold transition flex items-center gap-1.5"
                 >
-                    <span>📊 Admin</span>
+                    <x-icon name="trending-up" class="w-3.5 h-3.5 text-inherit" />
+                    <span>Admin</span>
                 </a>
                 <form method="POST" action="{{ route('logout') }}" class="inline">
                     @csrf
@@ -67,7 +69,8 @@
                         class="px-3.5 py-1.5 bg-rose-50 hover:bg-rose-100 border border-rose-200 text-rose-700 rounded-xl text-xs font-bold transition flex items-center gap-1.5 cursor-pointer shadow-xs"
                         title="Logout Kasir"
                     >
-                        <span>🚪 Logout</span>
+                        <x-icon name="logout" class="w-3.5 h-3.5 text-inherit" />
+                        <span>Logout</span>
                     </button>
                 </form>
             </div>
@@ -81,14 +84,14 @@
             <div class="lg:col-span-7 space-y-4">
                 {{-- Search & Category Filter --}}
                 <div class="bg-white p-4 rounded-3xl border-2 border-slate-200 shadow-xs space-y-3">
-                    <div class="relative">
+                    <div class="relative flex items-center">
                         <input
                             type="text"
                             wire:model.live.debounce.300ms="search"
                             placeholder="Cari menu kopi, matcha, makanan..."
                             class="w-full h-11 pl-10 pr-4 bg-slate-50 border-2 border-slate-200 rounded-2xl text-xs font-bold text-slate-800 placeholder-slate-400 focus:outline-none focus:border-brand-blue"
                         />
-                        <span class="absolute left-3.5 top-3 text-slate-400 text-sm">🔍</span>
+                        <x-icon name="search" class="w-4 h-4 text-slate-400 absolute left-3.5 pointer-events-none" />
                     </div>
 
                     {{-- Category Chips --}}
@@ -107,7 +110,7 @@
                                     @if ($menu->image_url)
                                         <img src="{{ $menu->image_url }}" alt="{{ $menu->name }}" class="w-full h-full object-cover"/>
                                     @else
-                                        <span class="text-3xl">☕</span>
+                                        <x-icon name="coffee" class="w-8 h-8 text-slate-300" />
                                     @endif
                                 </div>
                                 <h3 class="text-xs font-black text-slate-900 group-hover:text-brand-blue transition line-clamp-1">{{ $menu->name }}</h3>
@@ -116,7 +119,9 @@
 
                             <div class="mt-3 pt-2 border-t border-slate-100 flex items-center justify-between">
                                 <span class="text-xs font-black text-brand-blue font-mono">{{ $menu->formatted_price }}</span>
-                                <span class="w-6 h-6 rounded-lg bg-blue-50 text-brand-blue text-xs font-black flex items-center justify-center group-hover:bg-brand-blue group-hover:text-white transition">+</span>
+                                <span class="w-6 h-6 rounded-lg bg-blue-50 text-brand-blue text-xs font-black flex items-center justify-center group-hover:bg-brand-blue group-hover:text-white transition">
+                                    <x-icon name="plus" class="w-3.5 h-3.5 text-inherit" />
+                                </span>
                             </div>
                         </div>
                     @empty
@@ -152,71 +157,74 @@
                         <input
                             type="text"
                             wire:model.live="customerName"
-                            class="w-full h-9 px-3 bg-slate-50 border border-slate-200 rounded-xl font-bold text-slate-800 focus:outline-none focus:border-brand-blue"
+                            placeholder="Contoh: Budi"
+                            class="w-full h-9 px-3 bg-slate-50 border border-slate-200 rounded-xl font-bold text-slate-800 placeholder-slate-400 focus:outline-none focus:border-brand-blue"
                         />
                     </div>
+
                     <div>
-                        <label class="block text-slate-400 font-bold mb-1">Pilih Meja</label>
-                        <select
-                            wire:model.live="selectedTableId"
-                            class="w-full h-9 px-2 bg-slate-50 border border-slate-200 rounded-xl font-bold text-slate-800 focus:outline-none focus:border-brand-blue"
-                        >
-                            @foreach ($tables as $tbl)
-                                <option value="{{ $tbl->id }}">Meja {{ $tbl->table_number }}</option>
-                            @endforeach
-                        </select>
+                        <label class="block text-slate-400 font-bold mb-1">Nomor Meja</label>
+                        <input
+                            type="text"
+                            wire:model.live="tableNumber"
+                            placeholder="Contoh: 01"
+                            class="w-full h-9 px-3 bg-slate-50 border border-slate-200 rounded-xl font-bold font-mono text-slate-800 placeholder-slate-400 focus:outline-none focus:border-brand-blue"
+                        />
                     </div>
                 </div>
 
                 {{-- Cart Items List --}}
-                <div class="space-y-2 max-h-60 overflow-y-auto pr-1 divide-y divide-slate-100">
-                    @forelse ($cart as $id => $item)
-                        <div class="pt-2 first:pt-0 flex items-center justify-between gap-3 text-xs">
+                <div class="space-y-2 max-h-60 overflow-y-auto pr-1">
+                    @forelse ($cart as $index => $item)
+                        <div class="p-2.5 bg-slate-50 border border-slate-200 rounded-xl flex items-center justify-between gap-2 text-xs">
                             <div class="min-w-0 flex-1">
-                                <h4 class="font-bold text-slate-900 truncate">{{ $item['name'] }}</h4>
-                                <span class="text-slate-400 font-mono text-[11px]">@ {{ $item['formatted_price'] ?? ('Rp '.number_format($item['price'], 0, ',', '.')) }}</span>
+                                <div class="font-bold text-slate-900 truncate">{{ $item['name'] }}</div>
+                                <div class="text-[10px] text-slate-400 font-mono">{{ $item['formatted_subtotal'] }}</div>
                             </div>
 
-                            <div class="flex items-center gap-2">
+                            <div class="flex items-center gap-1.5 shrink-0">
                                 <button
                                     type="button"
-                                    wire:click="updateQuantity({{ $id }}, -1)"
-                                    class="w-6 h-6 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-black flex items-center justify-center cursor-pointer"
+                                    wire:click="updateQuantity({{ $index }}, -1)"
+                                    class="w-6 h-6 rounded-lg bg-white border border-slate-300 text-slate-700 font-bold flex items-center justify-center hover:bg-slate-100 cursor-pointer"
                                 >
                                     -
                                 </button>
-                                <span class="w-5 text-center font-black text-slate-900">{{ $item['quantity'] }}</span>
+                                <span class="w-5 text-center font-bold font-mono text-xs">{{ $item['quantity'] ?? $item['qty'] ?? 1 }}</span>
                                 <button
                                     type="button"
-                                    wire:click="updateQuantity({{ $id }}, 1)"
-                                    class="w-6 h-6 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-black flex items-center justify-center cursor-pointer"
+                                    wire:click="updateQuantity({{ $index }}, 1)"
+                                    class="w-6 h-6 rounded-lg bg-brand-blue text-white font-bold flex items-center justify-center hover:bg-[#003da1] cursor-pointer"
                                 >
                                     +
                                 </button>
+                                <button
+                                    type="button"
+                                    wire:click="removeFromCart({{ $index }})"
+                                    class="w-6 h-6 rounded-lg text-red-500 hover:text-red-700 font-bold flex items-center justify-center cursor-pointer ml-1"
+                                >
+                                    <x-icon name="trash" class="w-3.5 h-3.5 text-inherit" />
+                                </button>
                             </div>
-
-                            <span class="font-black text-slate-900 font-mono shrink-0 w-20 text-right">
-                                {{ $item['formatted_subtotal'] ?? ('Rp '.number_format($item['subtotal'], 0, ',', '.')) }}
-                            </span>
                         </div>
                     @empty
-                        <div class="py-8 text-center text-xs text-slate-400 font-medium border-2 border-dashed border-slate-100 rounded-2xl">
-                            Klik menu di sebelah kiri untuk menambahkan.
+                        <div class="py-8 text-center text-xs text-slate-400">
+                            Keranjang walk-in masih kosong. Klik menu di samping untuk menambahkan.
                         </div>
                     @endforelse
                 </div>
 
-                {{-- Bill Summary --}}
-                <div class="pt-3 border-t-2 border-slate-100 space-y-1.5 text-xs">
-                    <div class="flex justify-between text-slate-500">
-                        <span>Subtotal</span>
+                {{-- Subtotal & Tax PB1 Calculation --}}
+                <div class="p-3.5 bg-slate-50 border-2 border-slate-200 rounded-2xl space-y-1.5 text-xs">
+                    <div class="flex justify-between text-slate-500 font-medium">
+                        <span>Subtotal Item</span>
                         <span class="font-mono font-bold">{{ $this->formatted_subtotal }}</span>
                     </div>
-                    <div class="flex justify-between text-slate-500">
-                        <span>PB1 (Pajak Resto 10%)</span>
+                    <div class="flex justify-between text-slate-500 font-medium">
+                        <span>Pajak Restoran PB1 (10%)</span>
                         <span class="font-mono font-bold">{{ $this->formatted_tax }}</span>
                     </div>
-                    <div class="flex justify-between text-sm font-black text-slate-900 pt-1.5 border-t border-dashed border-slate-200">
+                    <div class="flex justify-between text-sm font-black text-slate-900 pt-2 border-t border-slate-200">
                         <span>Total Tagihan</span>
                         <span class="text-brand-blue font-mono">{{ $this->formatted_total }}</span>
                     </div>
@@ -230,21 +238,24 @@
                             wire:click="$set('paymentMethod', 'cash')"
                             class="h-9 px-1 rounded-xl border-2 flex items-center justify-center gap-1 cursor-pointer transition {{ $paymentMethod === 'cash' ? 'bg-brand-blue text-white border-brand-blue shadow-sm' : 'bg-slate-50 text-slate-700 border-slate-200 hover:border-slate-300' }}"
                         >
-                            <span>💵 Tunai</span>
+                            <x-icon name="banknote" class="w-3.5 h-3.5 text-inherit" />
+                            <span>Tunai</span>
                         </button>
                         <button
                             type="button"
                             wire:click="$set('paymentMethod', 'qris')"
                             class="h-9 px-1 rounded-xl border-2 flex items-center justify-center gap-1 cursor-pointer transition {{ $paymentMethod === 'qris' ? 'bg-brand-blue text-white border-brand-blue shadow-sm' : 'bg-slate-50 text-slate-700 border-slate-200 hover:border-slate-300' }}"
                         >
-                            <span>💳 QRIS Midtrans</span>
+                            <x-icon name="qr-code" class="w-3.5 h-3.5 text-inherit" />
+                            <span>QRIS Midtrans</span>
                         </button>
                         <button
                             type="button"
                             wire:click="$set('paymentMethod', 'qris_static')"
                             class="h-9 px-1 rounded-xl border-2 flex items-center justify-center gap-1 cursor-pointer transition {{ $paymentMethod === 'qris_static' ? 'bg-brand-blue text-white border-brand-blue shadow-sm' : 'bg-slate-50 text-slate-700 border-slate-200 hover:border-slate-300' }}"
                         >
-                            <span>🏷️ QRIS Statis</span>
+                            <x-icon name="credit-card" class="w-3.5 h-3.5 text-inherit" />
+                            <span>QRIS Statis</span>
                         </button>
                     </div>
 
@@ -293,7 +304,8 @@
                     @elseif ($paymentMethod === 'qris')
                         <div class="p-3 bg-blue-50/70 rounded-2xl border border-blue-200 space-y-1 text-xs text-blue-900">
                             <div class="flex items-center gap-1.5 font-bold">
-                                <span>⚡ QRIS Dinamis Midtrans Snap</span>
+                                <x-icon name="qr-code" class="w-4 h-4 text-brand-blue" />
+                                <span>QRIS Dinamis Midtrans Snap</span>
                             </div>
                             <p class="text-[11px] text-blue-700 leading-relaxed">
                                 Barcode QRIS resmi terbit otomatis sesuai nominal pesanan saat tombol bayar ditekan.
@@ -301,7 +313,10 @@
                         </div>
                     @elseif ($paymentMethod === 'qris_static')
                         <div class="p-3 bg-slate-50 rounded-2xl border border-slate-200 space-y-1 text-xs text-slate-700">
-                            <span class="font-bold">🏷️ QRIS Statis Meja Kasir</span>
+                            <div class="flex items-center gap-1.5 font-bold">
+                                <x-icon name="credit-card" class="w-4 h-4 text-slate-600" />
+                                <span>QRIS Statis Meja Kasir</span>
+                            </div>
                             <p class="text-[11px] text-slate-500">
                                 Pelanggan scan stiker akrilik di kasir. Transaksi langsung dicatat lunas tanpa popup.
                             </p>
@@ -320,16 +335,18 @@
                             <button
                                 type="button"
                                 wire:click="reOpenMidtrans"
-                                class="flex-1 py-1.5 bg-brand-blue hover:bg-[#003da1] text-white rounded-xl font-bold text-[11px] cursor-pointer"
+                                class="flex-1 py-1.5 bg-brand-blue hover:bg-[#003da1] text-white rounded-xl font-bold text-[11px] cursor-pointer flex items-center justify-center gap-1"
                             >
-                                🔄 Buka QRIS Lagi
+                                <x-icon name="refresh" class="w-3.5 h-3.5 text-white" />
+                                <span>Buka QRIS Lagi</span>
                             </button>
                             <button
                                 type="button"
                                 wire:click="markOrderPaidManually"
-                                class="flex-1 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold text-[11px] cursor-pointer"
+                                class="flex-1 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold text-[11px] cursor-pointer flex items-center justify-center gap-1"
                             >
-                                ✓ Tandai Lunas
+                                <x-icon name="check" class="w-3.5 h-3.5 text-white" />
+                                <span>Tandai Lunas</span>
                             </button>
                         </div>
                     </div>
@@ -343,9 +360,11 @@
                     class="w-full h-11 bg-brand-blue hover:bg-[#003da1] disabled:opacity-40 text-white rounded-2xl font-extrabold text-xs flex items-center justify-center gap-2 cursor-pointer shadow-md transition disabled:cursor-not-allowed"
                 >
                     @if ($paymentMethod === 'qris')
-                        <span>💳 Tampilkan QRIS Midtrans & Bayar</span>
+                        <x-icon name="qr-code" class="w-4 h-4 text-white" />
+                        <span>Tampilkan QRIS Midtrans & Bayar</span>
                     @else
-                        <span>✓ Proses Transaksi & Kirim ke Dapur</span>
+                        <x-icon name="check" class="w-4 h-4 text-white" />
+                        <span>Proses Transaksi & Kirim ke Dapur</span>
                     @endif
                 </button>
             </div>
@@ -357,8 +376,8 @@
         <div class="fixed inset-0 z-50 flex items-center justify-center p-4">
             <div wire:click="closeSuccessModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs"></div>
             <div class="relative w-full max-w-sm bg-white rounded-3xl p-6 shadow-2xl border-2 border-slate-200 z-10 text-center">
-                <div class="w-14 h-14 mx-auto rounded-2xl bg-emerald-50 text-emerald-600 border border-emerald-200 flex items-center justify-center text-2xl mb-3">
-                    ✓
+                <div class="w-14 h-14 mx-auto rounded-2xl bg-emerald-50 text-emerald-600 border border-emerald-200 flex items-center justify-center mb-3">
+                    <x-icon name="check" class="w-8 h-8 text-emerald-600" />
                 </div>
                 <h3 class="text-base font-black text-slate-900">Transaksi Berhasil Disimpan!</h3>
                 <p class="text-xs text-slate-500 mt-1">
@@ -380,9 +399,10 @@
                     <button
                         type="button"
                         wire:click="closeSuccessModal"
-                        class="w-full h-10 bg-brand-blue hover:bg-[#003da1] text-white rounded-xl text-xs font-bold transition cursor-pointer"
+                        class="w-full h-10 bg-brand-blue hover:bg-[#003da1] text-white rounded-xl text-xs font-bold transition cursor-pointer flex items-center justify-center gap-1.5"
                     >
-                        Transaksi Baru ➔
+                        <span>Transaksi Baru</span>
+                        <x-icon name="arrow-right" class="w-3.5 h-3.5 text-white" />
                     </button>
                     <a
                         href="{{ route('staff.kitchen-board') }}"

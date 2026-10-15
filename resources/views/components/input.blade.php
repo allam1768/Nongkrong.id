@@ -20,19 +20,12 @@
             :title="show ? 'Sembunyikan password' : 'Lihat password'"
             :aria-label="show ? 'Sembunyikan password' : 'Lihat password'"
         >
-            <img
-                x-show="!show"
-                src="{{ asset('assets/icn/at-icons_eye-closed.svg') }}"
-                alt="Lihat password"
-                class="w-5 h-5 select-none"
-            />
-            <img
-                x-show="show"
-                x-cloak
-                src="{{ asset('assets/icn/at-icons_eye.svg') }}"
-                alt="Sembunyikan password"
-                class="w-5 h-5 select-none"
-            />
+            <span x-show="!show" class="block">
+                <x-icon name="eye-closed" class="w-5 h-5 select-none" />
+            </span>
+            <span x-show="show" x-cloak class="block">
+                <x-icon name="eye" class="w-5 h-5 select-none" />
+            </span>
         </button>
     </div>
 @else
