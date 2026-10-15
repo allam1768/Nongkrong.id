@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Livewire\Admin\AdminAnalytics;
 use App\Livewire\Login\Portal;
 use App\Models\User;
 use Database\Seeders\DatabaseSeeder;
@@ -101,9 +102,64 @@ class PortalTest extends TestCase
             ->set('loginPassword', 'password123')
             ->call('submitLogin')
             ->assertHasNoErrors()
-            ->assertSet('showLoginModal', false);
+            ->assertSet('showLoginModal', false)
+            ->assertRedirect(route('staff.kitchen-board'));
 
         $this->assertAuthenticatedAs($employee);
+    }
+
+    public function test_portal_login_redirects_admin_to_dashboard(): void
+    {
+        $admin = User::factory()->create([
+            'name' => 'Owner Admin',
+            'email' => 'owner@nongkrong.id',
+            'role' => 'admin',
+            'password' => bcrypt('password123'),
+        ]);
+
+        Livewire::test(Portal::class)
+            ->call('openLogin')
+            ->set('loginUsername', 'owner@nongkrong.id')
+            ->set('loginPassword', 'password123')
+            ->call('submitLogin')
+            ->assertHasNoErrors()
+            ->assertRedirect(route('admin.dashboard'));
+    }
+
+    public function test_portal_login_redirects_cashier_to_cashier_register(): void
+    {
+        $cashier = User::factory()->create([
+            'name' => 'Cashier Maya',
+            'email' => 'maya@nongkrong.id',
+            'role' => 'cashier',
+            'password' => bcrypt('password123'),
+        ]);
+
+        Livewire::test(Portal::class)
+            ->call('openLogin')
+            ->set('loginUsername', 'maya@nongkrong.id')
+            ->set('loginPassword', 'password123')
+            ->call('submitLogin')
+            ->assertHasNoErrors()
+            ->assertRedirect(route('staff.cashier-register'));
+    }
+
+    public function test_portal_login_redirects_barista_to_kitchen_board(): void
+    {
+        $barista = User::factory()->create([
+            'name' => 'Barista Rudi',
+            'email' => 'rudi@nongkrong.id',
+            'role' => 'barista',
+            'password' => bcrypt('password123'),
+        ]);
+
+        Livewire::test(Portal::class)
+            ->call('openLogin')
+            ->set('loginUsername', 'rudi@nongkrong.id')
+            ->set('loginPassword', 'password123')
+            ->call('submitLogin')
+            ->assertHasNoErrors()
+            ->assertRedirect(route('staff.kitchen-board'));
     }
 
     /**
@@ -174,5 +230,35 @@ class PortalTest extends TestCase
             ->call('backToTableModal')
             ->assertSet('showTableModal', true)
             ->assertSet('showQuickOrderModal', false);
+    }
+
+    /**
+     * Test authenticated user can officially logout via POST /logout route.
+     */
+    public function test_authenticated_user_can_logout_via_route(): void
+    {
+        $admin = User::where('role', 'admin')->first();
+        $this->assertNotNull($admin);
+
+        $response = $this->actingAs($admin)->post(route('logout'));
+
+        $response->assertRedirect(route('portal'));
+        $this->assertGuest();
+    }
+
+    /**
+     * Test admin and staff Livewire components can call logout action directly.
+     */
+    public function test_staff_and_admin_livewire_components_can_invoke_logout(): void
+    {
+        $admin = User::where('role', 'admin')->first();
+        $this->assertNotNull($admin);
+
+        Livewire::actingAs($admin)
+            ->test(AdminAnalytics::class)
+            ->call('logout')
+            ->assertRedirect(route('portal'));
+
+        $this->assertGuest();
     }
 }

@@ -8,6 +8,7 @@ use App\Services\MidtransService;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 use Livewire\Component;
+use Midtrans\Transaction;
 
 #[Layout('layouts.app')]
 #[Title('Pantau Status Pesanan')]
@@ -124,15 +125,33 @@ class OrderTracking extends Component
     public function handleMidtransSuccess(): void
     {
         $order = Order::where('order_code', $this->orderCode)->first();
-        if ($order) {
-            $order->update([
-                'payment_status' => 'paid',
-                'order_status' => $order->order_status === 'pending' ? 'processing' : $order->order_status,
-            ]);
-            $this->paymentStatus = 'paid';
-            $this->orderStatus = $order->order_status;
-            $this->showQrisModal = false;
-            $this->triggerToast('Pembayaran Midtrans Berhasil Diverifikasi!');
+        if (! $order) {
+            return;
+        }
+
+        $this->showQrisModal = false;
+        $this->triggerToast('Menunggu konfirmasi pembayaran dari Midtrans...');
+
+        if ($this->paymentMethod === 'qris') {
+            try {
+                $status = (object) Transaction::status($this->orderCode);
+                $txStatus = $status->transaction_status ?? null;
+                $grossAmount = $status->gross_amount ?? null;
+
+                if (in_array($txStatus, ['settlement', 'capture'], true)) {
+                    if ($grossAmount === null || (int) round((float) $order->total_amount) === (int) round((float) $grossAmount)) {
+                        $order->update([
+                            'payment_status' => 'paid',
+                            'order_status' => $order->order_status === 'pending' ? 'processing' : $order->order_status,
+                        ]);
+                        $this->paymentStatus = 'paid';
+                        $this->orderStatus = $order->order_status;
+                        $this->triggerToast('Pembayaran Midtrans Berhasil Diverifikasi!');
+                    }
+                }
+            } catch (\Throwable $e) {
+                // Ignore exception and wait for webhook or live polling refresh
+            }
         }
     }
 
@@ -141,6 +160,10 @@ class OrderTracking extends Component
      */
     public function simulatePayQris(): void
     {
+        if (! app()->environment('local', 'testing')) {
+            abort(403, 'Aksi simulasi pembayaran tidak diizinkan pada environment ini.');
+        }
+
         $order = Order::where('order_code', $this->orderCode)->first();
         if ($order) {
             $order->update([

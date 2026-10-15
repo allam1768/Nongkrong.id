@@ -19,6 +19,21 @@ class OrderItem extends Model
         'item_notes',
     ];
 
+    protected $appends = [
+        'formatted_unit_price',
+        'formatted_subtotal',
+    ];
+
+    public function getFormattedUnitPriceAttribute(): string
+    {
+        return 'Rp '.number_format((float) $this->unit_price, 0, ',', '.');
+    }
+
+    public function getFormattedSubtotalAttribute(): string
+    {
+        return 'Rp '.number_format((float) $this->subtotal, 0, ',', '.');
+    }
+
     protected function casts(): array
     {
         return [

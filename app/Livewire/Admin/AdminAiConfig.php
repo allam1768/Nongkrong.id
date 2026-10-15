@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Admin;
 
+use App\Livewire\Concerns\HasLogout;
 use App\Models\Menu;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
@@ -11,6 +12,8 @@ use Livewire\Component;
 #[Title('AI Barista Tuner - Admin NONGKRONG.id')]
 class AdminAiConfig extends Component
 {
+    use HasLogout;
+
     public string $model = 'gemini-1.5-flash';
 
     public string $systemPrompt = 'Kamu adalah Gemini Barista pintar di kafe NONGKRONG.id. Karaktermu ramah, asyik, dan paham cita rasa kopi. Tugasmu membantu pelanggan memilih minuman atau camilan terbaik sesuai mood, rasa manis, kafein, dan preferensi mereka. Rekomendasikan menu yang ada di katalog dengan menyebutkan harganya.';

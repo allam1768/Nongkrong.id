@@ -19,6 +19,25 @@ class CustomerOrderTest extends TestCase
     {
         parent::setUp();
         $this->seed(DatabaseSeeder::class);
+        $table = Table::where('status', 'available')->first();
+        session([
+            'table_id' => $table->id,
+            'table_number' => $table->table_number,
+            'access_code' => $table->access_code,
+            'customer_name' => 'Budi Santoso',
+        ]);
+    }
+
+    /**
+     * Test accessing order page without table session redirects to portal with flash warning.
+     */
+    public function test_customer_order_redirects_to_portal_without_table_session(): void
+    {
+        session()->forget('table_id');
+
+        $response = $this->get('/order');
+        $response->assertRedirect(route('portal'));
+        $response->assertSessionHas('warning');
     }
 
     /**
@@ -264,5 +283,80 @@ class CustomerOrderTest extends TestCase
             ->assertSet('placedOrderPaid', true)
             ->assertSee('Pesanan Berhasil Dikirim!')
             ->assertSee('Pembayaran QRIS Terverifikasi (Lunas)');
+    }
+
+    public function test_customer_order_simulation_aborts_403_in_production(): void
+    {
+        $this->app->detectEnvironment(fn () => 'production');
+
+        Livewire::test(CustomerOrder::class)
+            ->call('simulatePaymentSuccess')
+            ->assertStatus(403);
+    }
+
+    public function test_checkout_recalculates_price_and_tax_from_server_database_ignoring_client_tampering(): void
+    {
+        $table = Table::where('table_number', '01')->first();
+        session([
+            'customer_name' => 'Budi Santoso',
+            'table_id' => $table->id,
+            'table_number' => $table->table_number,
+        ]);
+
+        $menu = Menu::first();
+        $realPrice = (float) $menu->price;
+        $expectedSubtotal = $realPrice * 2;
+        $expectedTax = round($expectedSubtotal * 0.10, 2);
+        $expectedTotal = $expectedSubtotal + $expectedTax;
+
+        // Attacker tampered cart price to 100 and cartTotal to 110 in client payload
+        $tamperedCart = [
+            'item_1' => [
+                'menu_id' => $menu->id,
+                'name' => $menu->name,
+                'price' => 100,
+                'quantity' => 2,
+                'subtotal' => 200,
+                'temperature' => 'ice',
+                'sugar' => 'normal',
+                'notes' => '',
+            ],
+        ];
+
+        $component = Livewire::test(CustomerOrder::class)
+            ->set('cart', $tamperedCart)
+            ->set('cartTotal', 220)
+            ->call('checkoutOrder');
+
+        $orderCode = $component->get('placedOrderCode');
+        $order = Order::where('order_code', $orderCode)->first();
+
+        $this->assertEquals($expectedTotal, (float) $order->total_amount);
+        $orderItem = $order->items->first();
+        $this->assertEquals($realPrice, (float) $orderItem->unit_price);
+        $this->assertEquals($expectedSubtotal, (float) $orderItem->subtotal);
+    }
+
+    public function test_customer_order_handle_midtrans_success_does_not_mark_paid_without_server_confirmation(): void
+    {
+        $table = Table::where('table_number', '01')->first();
+        session([
+            'customer_name' => 'Budi Santoso',
+            'table_id' => $table->id,
+            'table_number' => $table->table_number,
+        ]);
+
+        $menu = Menu::first();
+
+        $component = Livewire::test(CustomerOrder::class)
+            ->call('quickAddToCart', $menu->id)
+            ->set('paymentMethod', 'qris')
+            ->call('checkoutOrder')
+            ->call('handleMidtransSuccess');
+
+        $orderCode = $component->get('placedOrderCode');
+        $order = Order::where('order_code', $orderCode)->first();
+        $this->assertEquals('unpaid', $order->payment_status);
+        $this->assertFalse($component->get('placedOrderPaid'));
     }
 }

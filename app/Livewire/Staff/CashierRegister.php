@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Staff;
 
+use App\Livewire\Concerns\HasLogout;
 use App\Models\Category;
 use App\Models\Menu;
 use App\Models\Order;
@@ -17,6 +18,8 @@ use Livewire\Component;
 #[Title('Kasir POS Walk-in - NONGKRONG.id')]
 class CashierRegister extends Component
 {
+    use HasLogout;
+
     public string $search = '';
 
     public int $selectedCategoryId = 0;
@@ -73,13 +76,17 @@ class CashierRegister extends Component
         if (isset($this->cart[$menuId])) {
             $this->cart[$menuId]['quantity']++;
             $this->cart[$menuId]['subtotal'] = $this->cart[$menuId]['quantity'] * $this->cart[$menuId]['price'];
+            $this->cart[$menuId]['formatted_subtotal'] = 'Rp '.number_format($this->cart[$menuId]['subtotal'], 0, ',', '.');
         } else {
+            $price = (float) $menu->price;
             $this->cart[$menuId] = [
                 'id' => $menu->id,
                 'name' => $menu->name,
-                'price' => (float) $menu->price,
+                'price' => $price,
+                'formatted_price' => 'Rp '.number_format($price, 0, ',', '.'),
                 'quantity' => 1,
-                'subtotal' => (float) $menu->price,
+                'subtotal' => $price,
+                'formatted_subtotal' => 'Rp '.number_format($price, 0, ',', '.'),
             ];
         }
 
@@ -98,6 +105,7 @@ class CashierRegister extends Component
             unset($this->cart[$menuId]);
         } else {
             $this->cart[$menuId]['subtotal'] = $this->cart[$menuId]['quantity'] * $this->cart[$menuId]['price'];
+            $this->cart[$menuId]['formatted_subtotal'] = 'Rp '.number_format($this->cart[$menuId]['subtotal'], 0, ',', '.');
         }
     }
 
@@ -116,14 +124,29 @@ class CashierRegister extends Component
         return array_sum(array_column($this->cart, 'subtotal'));
     }
 
+    public function getFormattedSubtotalProperty(): string
+    {
+        return 'Rp '.number_format($this->subtotal, 0, ',', '.');
+    }
+
     public function getTaxProperty(): float
     {
         return $this->subtotal * 0.10;
     }
 
+    public function getFormattedTaxProperty(): string
+    {
+        return 'Rp '.number_format($this->tax, 0, ',', '.');
+    }
+
     public function getTotalProperty(): float
     {
         return $this->subtotal + $this->tax;
+    }
+
+    public function getFormattedTotalProperty(): string
+    {
+        return 'Rp '.number_format($this->total, 0, ',', '.');
     }
 
     public function getChangeProperty(): float
@@ -133,6 +156,11 @@ class CashierRegister extends Component
         }
 
         return max(0, $this->cashGiven - $this->total);
+    }
+
+    public function getFormattedChangeProperty(): string
+    {
+        return 'Rp '.number_format($this->change, 0, ',', '.');
     }
 
     public function setCashGiven(float $amount): void

@@ -24,7 +24,35 @@ class Menu extends Model
 
     protected $appends = [
         'image_url',
+        'taste_tags',
+        'formatted_price',
     ];
+
+    /**
+     * Get clean array of taste profile tags.
+     *
+     * @return list<string>
+     */
+    public function getTasteTagsAttribute(): array
+    {
+        if (is_array($this->taste_profile)) {
+            return array_values(array_filter($this->taste_profile, fn ($tag) => is_string($tag) && trim($tag) !== ''));
+        }
+
+        if (is_string($this->taste_profile)) {
+            return array_values(array_filter(array_map('trim', explode(',', $this->taste_profile)), fn ($tag) => $tag !== ''));
+        }
+
+        return [];
+    }
+
+    /**
+     * Get formatted Indonesian Rupiah price string.
+     */
+    public function getFormattedPriceAttribute(): string
+    {
+        return 'Rp '.number_format((float) $this->price, 0, ',', '.');
+    }
 
     protected function casts(): array
     {

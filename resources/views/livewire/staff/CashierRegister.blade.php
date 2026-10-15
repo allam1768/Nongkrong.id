@@ -60,6 +60,16 @@
                 >
                     <span>📊 Admin</span>
                 </a>
+                <form method="POST" action="{{ route('logout') }}" class="inline">
+                    @csrf
+                    <button
+                        type="submit"
+                        class="px-3.5 py-1.5 bg-rose-50 hover:bg-rose-100 border border-rose-200 text-rose-700 rounded-xl text-xs font-bold transition flex items-center gap-1.5 cursor-pointer shadow-xs"
+                        title="Logout Kasir"
+                    >
+                        <span>🚪 Logout</span>
+                    </button>
+                </form>
             </div>
         </div>
     </header>
@@ -105,7 +115,7 @@
                             </div>
 
                             <div class="mt-3 pt-2 border-t border-slate-100 flex items-center justify-between">
-                                <span class="text-xs font-black text-brand-blue font-mono">Rp {{ number_format((float) $menu->price, 0, ',', '.') }}</span>
+                                <span class="text-xs font-black text-brand-blue font-mono">{{ $menu->formatted_price }}</span>
                                 <span class="w-6 h-6 rounded-lg bg-blue-50 text-brand-blue text-xs font-black flex items-center justify-center group-hover:bg-brand-blue group-hover:text-white transition">+</span>
                             </div>
                         </div>
@@ -164,7 +174,7 @@
                         <div class="pt-2 first:pt-0 flex items-center justify-between gap-3 text-xs">
                             <div class="min-w-0 flex-1">
                                 <h4 class="font-bold text-slate-900 truncate">{{ $item['name'] }}</h4>
-                                <span class="text-slate-400 font-mono text-[11px]">@ Rp {{ number_format($item['price'], 0, ',', '.') }}</span>
+                                <span class="text-slate-400 font-mono text-[11px]">@ {{ $item['formatted_price'] ?? ('Rp '.number_format($item['price'], 0, ',', '.')) }}</span>
                             </div>
 
                             <div class="flex items-center gap-2">
@@ -186,7 +196,7 @@
                             </div>
 
                             <span class="font-black text-slate-900 font-mono shrink-0 w-20 text-right">
-                                Rp {{ number_format($item['subtotal'], 0, ',', '.') }}
+                                {{ $item['formatted_subtotal'] ?? ('Rp '.number_format($item['subtotal'], 0, ',', '.')) }}
                             </span>
                         </div>
                     @empty
@@ -200,15 +210,15 @@
                 <div class="pt-3 border-t-2 border-slate-100 space-y-1.5 text-xs">
                     <div class="flex justify-between text-slate-500">
                         <span>Subtotal</span>
-                        <span class="font-mono font-bold">Rp {{ number_format($this->subtotal, 0, ',', '.') }}</span>
+                        <span class="font-mono font-bold">{{ $this->formatted_subtotal }}</span>
                     </div>
                     <div class="flex justify-between text-slate-500">
                         <span>PB1 (Pajak Resto 10%)</span>
-                        <span class="font-mono font-bold">Rp {{ number_format($this->tax, 0, ',', '.') }}</span>
+                        <span class="font-mono font-bold">{{ $this->formatted_tax }}</span>
                     </div>
                     <div class="flex justify-between text-sm font-black text-slate-900 pt-1.5 border-t border-dashed border-slate-200">
                         <span>Total Tagihan</span>
-                        <span class="text-brand-blue font-mono">Rp {{ number_format($this->total, 0, ',', '.') }}</span>
+                        <span class="text-brand-blue font-mono">{{ $this->formatted_total }}</span>
                     </div>
                 </div>
 
@@ -276,7 +286,7 @@
                             <div class="flex items-center justify-between pt-1 border-t border-slate-200 text-xs">
                                 <span class="font-bold text-slate-500">Kembalian:</span>
                                 <span class="font-mono font-black text-emerald-600 text-sm">
-                                    Rp {{ number_format($this->change, 0, ',', '.') }}
+                                    {{ $this->formatted_change }}
                                 </span>
                             </div>
                         </div>

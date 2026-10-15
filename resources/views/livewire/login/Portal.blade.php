@@ -88,6 +88,16 @@
         </div>
     </header>
 
+    {{-- Flash Notification / Warning Alert --}}
+    @if (session()->has('warning') || session()->has('alert') || session()->has('error'))
+        <div class="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-full max-w-md px-4 pointer-events-auto">
+            <div class="p-3.5 rounded-2xl bg-amber-50 border border-amber-200 text-amber-900 shadow-xl flex items-center gap-3 text-xs font-poppins font-semibold">
+                <span class="text-base text-amber-600 shrink-0">⚠️</span>
+                <span class="flex-1">{{ session('warning') ?? session('alert') ?? session('error') }}</span>
+            </div>
+        </div>
+    @endif
+
     {{-- 2. MOBILE VIEW (< md): Mengikuti Persis Proporsi Mockup Pengguna --}}
     <div class="flex md:hidden flex-col items-center justify-between flex-1 w-full min-h-0 overflow-hidden z-20 pt-1 pb-0">
         {{-- Top Flow: Title, Buttons, Subtitle with evenly distributed vertical rhythm --}}

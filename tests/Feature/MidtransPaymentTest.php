@@ -123,7 +123,99 @@ class MidtransPaymentTest extends TestCase
         $response->assertStatus(404);
     }
 
-    public function test_order_tracking_can_trigger_midtrans_and_handle_success(): void
+    public function test_midtrans_webhook_rejects_payload_without_signature_key(): void
+    {
+        $order = Order::create([
+            'order_code' => 'ORD-TEST-NOSIG',
+            'table_id' => $this->table->id,
+            'customer_name' => 'Attacker',
+            'order_status' => 'pending',
+            'payment_status' => 'unpaid',
+            'payment_method' => 'qris',
+            'total_amount' => 18000,
+        ]);
+
+        $payload = [
+            'order_id' => $order->order_code,
+            'status_code' => '200',
+            'gross_amount' => '18000.00',
+            'transaction_status' => 'settlement',
+            // Omit signature_key intentionally
+        ];
+
+        $response = $this->postJson(route('midtrans.webhook'), $payload);
+
+        $response->assertStatus(404);
+
+        $order->refresh();
+        $this->assertEquals('unpaid', $order->payment_status);
+        $this->assertEquals('pending', $order->order_status);
+    }
+
+    public function test_midtrans_webhook_rejects_payload_with_invalid_signature_key(): void
+    {
+        $order = Order::create([
+            'order_code' => 'ORD-TEST-INVALIDSIG',
+            'table_id' => $this->table->id,
+            'customer_name' => 'Attacker',
+            'order_status' => 'pending',
+            'payment_status' => 'unpaid',
+            'payment_method' => 'qris',
+            'total_amount' => 18000,
+        ]);
+
+        $payload = [
+            'order_id' => $order->order_code,
+            'status_code' => '200',
+            'gross_amount' => '18000.00',
+            'transaction_status' => 'settlement',
+            'signature_key' => 'invalid-hash-string-that-does-not-match',
+        ];
+
+        $response = $this->postJson(route('midtrans.webhook'), $payload);
+
+        $response->assertStatus(404);
+
+        $order->refresh();
+        $this->assertEquals('unpaid', $order->payment_status);
+        $this->assertEquals('pending', $order->order_status);
+    }
+
+    public function test_midtrans_webhook_rejects_payload_with_mismatched_gross_amount(): void
+    {
+        $order = Order::create([
+            'order_code' => 'ORD-TEST-MISMATCH',
+            'table_id' => $this->table->id,
+            'customer_name' => 'Attacker',
+            'order_status' => 'pending',
+            'payment_status' => 'unpaid',
+            'payment_method' => 'qris',
+            'total_amount' => 50000,
+        ]);
+
+        $serverKey = config('services.midtrans.server_key');
+        // Underpaying with 1000 instead of 50000
+        $tamperedGross = '1000.00';
+        $signature = hash('sha512', $order->order_code.'200'.$tamperedGross.$serverKey);
+
+        $payload = [
+            'order_id' => $order->order_code,
+            'status_code' => '200',
+            'gross_amount' => $tamperedGross,
+            'transaction_status' => 'settlement',
+            'signature_key' => $signature,
+        ];
+
+        $response = $this->postJson(route('midtrans.webhook'), $payload);
+
+        $response->assertStatus(404);
+
+        $order->refresh();
+        $this->assertEquals('unpaid', $order->payment_status);
+        $this->assertEquals('pending', $order->order_status);
+    }
+
+    public function test_order_tracking_does_not_mark_paid_from_client_callback_alone(): void
     {
         $order = Order::create([
             'order_code' => 'ORD-TRACK-001',
@@ -142,7 +234,7 @@ class MidtransPaymentTest extends TestCase
             ->call('handleMidtransSuccess');
 
         $order->refresh();
-        $this->assertEquals('paid', $order->payment_status);
-        $this->assertEquals('processing', $order->order_status);
+        $this->assertEquals('unpaid', $order->payment_status);
+        $this->assertEquals('pending', $order->order_status);
     }
 }

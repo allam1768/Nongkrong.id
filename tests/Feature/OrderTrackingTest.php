@@ -95,4 +95,13 @@ class OrderTrackingTest extends TestCase
             'order_status' => 'processing',
         ]);
     }
+
+    public function test_qris_simulation_aborts_403_in_production(): void
+    {
+        $this->app->detectEnvironment(fn () => 'production');
+
+        Livewire::test(OrderTracking::class, ['code' => 'ORD-TEST-001'])
+            ->call('simulatePayQris')
+            ->assertStatus(403);
+    }
 }

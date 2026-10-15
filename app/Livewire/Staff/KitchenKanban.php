@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Staff;
 
+use App\Livewire\Concerns\HasLogout;
 use App\Models\Order;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
@@ -11,6 +12,8 @@ use Livewire\Component;
 #[Title('Kitchen & POS Kanban Board - NONGKRONG.id')]
 class KitchenKanban extends Component
 {
+    use HasLogout;
+
     public string $activeFilter = 'all'; // all, dine-in, takeaway
 
     public ?string $toastMessage = null;

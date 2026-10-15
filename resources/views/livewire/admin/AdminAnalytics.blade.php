@@ -34,7 +34,7 @@
                     <span class="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold text-sm">💰</span>
                 </div>
                 <div class="text-xl sm:text-2xl font-black text-slate-900 font-mono">
-                    Rp {{ number_format($totalRevenue, 0, ',', '.') }}
+                    {{ $formattedTotalRevenue }}
                 </div>
                 <div class="mt-2 text-[11px] text-emerald-600 font-bold flex items-center gap-1">
                     <span>↑ +18.4%</span>
@@ -49,7 +49,7 @@
                     <span class="w-8 h-8 rounded-xl bg-blue-50 text-brand-blue flex items-center justify-center font-bold text-sm">🧾</span>
                 </div>
                 <div class="text-xl sm:text-2xl font-black text-slate-900 font-mono">
-                    {{ number_format($totalOrders, 0, ',', '.') }}
+                    {{ $formattedTotalOrders }}
                 </div>
                 <div class="mt-2 text-[11px] text-blue-600 font-bold flex items-center gap-1">
                     <span>↑ +12 Pesanan</span>
@@ -64,7 +64,7 @@
                     <span class="w-8 h-8 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center font-bold text-sm">☕</span>
                 </div>
                 <div class="text-xl sm:text-2xl font-black text-slate-900 font-mono">
-                    {{ number_format($totalItemsSold, 0, ',', '.') }}
+                    {{ $formattedTotalItemsSold }}
                 </div>
                 <div class="mt-2 text-[11px] text-purple-600 font-bold flex items-center gap-1">
                     <span>Rata-rata 2.4</span>
@@ -132,7 +132,7 @@
                                 </span>
                                 <div class="truncate">
                                     <div class="font-bold text-slate-900 truncate">{{ $item->menu?->name ?? 'Menu' }}</div>
-                                    <span class="text-[10px] text-slate-400 font-mono">Rp {{ number_format((float) $item->total_rev, 0, ',', '.') }}</span>
+                                    <span class="text-[10px] text-slate-400 font-mono">{{ $item->formatted_total_rev }}</span>
                                 </div>
                             </div>
                             <span class="font-black text-brand-blue bg-blue-50 px-2.5 py-1 rounded-lg border border-blue-200 shrink-0 font-mono">
@@ -184,7 +184,7 @@
                                 <td class="py-3 font-bold text-slate-900">{{ $order->customer_name }}</td>
                                 <td class="py-3">Meja {{ $order->table?->table_number ?? '01' }}</td>
                                 <td class="py-3 text-slate-500">{{ $order->items->count() }} item</td>
-                                <td class="py-3 font-mono font-bold">Rp {{ number_format((float) $order->total_amount, 0, ',', '.') }}</td>
+                                <td class="py-3 font-mono font-bold">{{ $order->formatted_total_amount }}</td>
                                 <td class="py-3 uppercase font-mono text-[11px]">{{ $order->payment_method }}</td>
                                 <td class="py-3">
                                     @if ($order->order_status === 'completed')

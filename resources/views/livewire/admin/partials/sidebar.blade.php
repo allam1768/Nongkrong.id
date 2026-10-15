@@ -77,12 +77,15 @@
             </div>
         </div>
 
-        <a
-            href="{{ route('portal') }}"
-            wire:navigate
-            class="w-full py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5"
-        >
-            <span>🚪 Keluar ke Portal</span>
-        </a>
+        <form method="POST" action="{{ route('logout') }}" class="w-full">
+            @csrf
+            <button
+                type="submit"
+                class="w-full py-2.5 bg-rose-950/40 hover:bg-rose-900/60 border border-rose-800/40 text-rose-200 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 cursor-pointer shadow-xs"
+                title="Logout Resmi Admin"
+            >
+                <span>🚪 Logout Resmi</span>
+            </button>
+        </form>
     </div>
 </aside>

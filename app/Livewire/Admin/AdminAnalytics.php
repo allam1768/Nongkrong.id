@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Admin;
 
+use App\Livewire\Concerns\HasLogout;
 use App\Models\Order;
 use App\Models\OrderItem;
 use Illuminate\Support\Facades\DB;
@@ -13,6 +14,8 @@ use Livewire\Component;
 #[Title('Admin Executive Analytics - NONGKRONG.id')]
 class AdminAnalytics extends Component
 {
+    use HasLogout;
+
     public function render()
     {
         $totalRevenue = (float) Order::where('payment_status', 'paid')->sum('total_amount');
@@ -34,6 +37,12 @@ class AdminAnalytics extends Component
             ->take(5)
             ->get();
 
+        $topSelling->transform(function ($item) {
+            $item->formatted_total_rev = 'Rp '.number_format((float) $item->total_rev, 0, ',', '.');
+
+            return $item;
+        });
+
         // Hourly distribution dummy/calc for bar chart
         $hourlyDistribution = [
             ['hour' => '10:00', 'orders' => 4, 'pct' => 30],
@@ -47,8 +56,11 @@ class AdminAnalytics extends Component
 
         return view('livewire.admin.AdminAnalytics', [
             'totalRevenue' => $totalRevenue,
+            'formattedTotalRevenue' => 'Rp '.number_format($totalRevenue, 0, ',', '.'),
             'totalOrders' => $totalOrders,
+            'formattedTotalOrders' => number_format($totalOrders, 0, ',', '.'),
             'totalItemsSold' => $totalItemsSold,
+            'formattedTotalItemsSold' => number_format($totalItemsSold, 0, ',', '.'),
             'aiConversionRate' => $aiConversionRate,
             'recentOrders' => $recentOrders,
             'topSelling' => $topSelling,

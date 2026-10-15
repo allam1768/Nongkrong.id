@@ -42,6 +42,16 @@
                 >
                     <span>📊 Admin Analytics</span>
                 </a>
+                <form method="POST" action="{{ route('logout') }}" class="inline">
+                    @csrf
+                    <button
+                        type="submit"
+                        class="px-3.5 py-2 bg-rose-50 hover:bg-rose-100 border border-rose-200 text-rose-700 rounded-xl text-xs font-bold transition flex items-center gap-1.5 cursor-pointer shadow-xs"
+                        title="Logout Staf"
+                    >
+                        <span>🚪 Logout</span>
+                    </button>
+                </form>
             </div>
         </div>
     </header>

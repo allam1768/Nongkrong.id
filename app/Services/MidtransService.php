@@ -142,9 +142,9 @@ class MidtransService
         $serverKey = (string) config('services.midtrans.server_key');
         $expectedSignature = hash('sha512', $orderId.$statusCode.$grossAmount.$serverKey);
 
-        // Verify SHA512 signature if signature_key is supplied
-        if (! empty($signatureKey) && ! hash_equals($expectedSignature, $signatureKey)) {
-            Log::warning('Midtrans signature verification mismatch', [
+        // Strictly enforce signature_key presence and verify SHA512 hash
+        if (empty($signatureKey) || ! hash_equals($expectedSignature, $signatureKey)) {
+            Log::warning('Midtrans signature verification failed or signature_key is missing', [
                 'order_id' => $orderId,
                 'received_signature' => $signatureKey,
             ]);
@@ -155,6 +155,17 @@ class MidtransService
         $order = Order::where('order_code', $orderId)->first();
         if (! $order) {
             Log::warning('Midtrans webhook order not found: '.$orderId);
+
+            return null;
+        }
+
+        // Validate nominal amount match between webhook and database order
+        if ((int) round((float) $order->total_amount) !== (int) round((float) $grossAmount)) {
+            Log::warning('Midtrans webhook gross_amount mismatch detected', [
+                'order_id' => $orderId,
+                'received_gross_amount' => $grossAmount,
+                'expected_order_amount' => $order->total_amount,
+            ]);
 
             return null;
         }

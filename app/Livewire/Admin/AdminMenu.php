@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Admin;
 
+use App\Livewire\Concerns\HasLogout;
 use App\Models\Category;
 use App\Models\Menu;
 use Illuminate\Support\Str;
@@ -13,6 +14,8 @@ use Livewire\Component;
 #[Title('Kelola Menu & Rasa - Admin NONGKRONG.id')]
 class AdminMenu extends Component
 {
+    use HasLogout;
+
     public string $search = '';
 
     public int $selectedCategoryId = 0;
@@ -93,12 +96,22 @@ class AdminMenu extends Component
 
     public function deleteMenu(int $menuId): void
     {
-        $menu = Menu::find($menuId);
-        if ($menu) {
-            $name = $menu->name;
-            $menu->delete();
-            $this->triggerToast("Menu {$name} berhasil dihapus.");
+        $menu = Menu::withCount('orderItems')->find($menuId);
+        if (! $menu) {
+            return;
         }
+
+        $name = $menu->name;
+
+        if ($menu->order_items_count > 0) {
+            $menu->update(['is_available' => false]);
+            $this->triggerToast("Menu '{$name}' memiliki riwayat pesanan sehingga tidak dapat dihapus fisik. Statusnya telah otomatis dinonaktifkan (Habis).");
+
+            return;
+        }
+
+        $menu->delete();
+        $this->triggerToast("Menu '{$name}' berhasil dihapus.");
     }
 
     protected function triggerToast(string $message): void

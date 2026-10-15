@@ -76,16 +76,14 @@
                                     {{ $m->category?->name ?? '-' }}
                                 </td>
                                 <td class="py-3.5 px-4 font-mono font-black text-brand-blue">
-                                    Rp {{ number_format((float) $m->price, 0, ',', '.') }}
+                                    {{ $m->formatted_price }}
                                 </td>
                                 <td class="py-3.5 px-4">
                                     <div class="flex flex-wrap gap-1">
-                                        @foreach (explode(',', (string) $m->taste_profile) as $tag)
-                                            @if (trim($tag) !== '')
-                                                <span class="px-2 py-0.5 bg-blue-50 text-brand-blue rounded-md border border-blue-200 text-[10px] font-bold">
-                                                    {{ trim($tag) }}
-                                                </span>
-                                            @endif
+                                        @foreach ($m->taste_tags as $tag)
+                                            <span class="px-2 py-0.5 bg-blue-50 text-brand-blue rounded-md border border-blue-200 text-[10px] font-bold">
+                                                {{ $tag }}
+                                            </span>
                                         @endforeach
                                     </div>
                                 </td>

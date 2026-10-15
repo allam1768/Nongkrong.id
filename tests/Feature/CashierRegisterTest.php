@@ -57,6 +57,25 @@ class CashierRegisterTest extends TestCase
         ]);
     }
 
+    public function test_unauthenticated_user_redirected_from_cashier_register(): void
+    {
+        $response = $this->get(route('staff.cashier-register'));
+        $response->assertRedirect(route('portal'));
+    }
+
+    public function test_customer_role_forbidden_from_cashier_register(): void
+    {
+        $customer = User::create([
+            'name' => 'Budi Customer',
+            'email' => 'customer@example.com',
+            'password' => bcrypt('password123'),
+            'role' => 'customer',
+        ]);
+
+        $response = $this->actingAs($customer)->get(route('staff.cashier-register'));
+        $response->assertStatus(403);
+    }
+
     public function test_cashier_register_page_renders_successfully(): void
     {
         $response = $this->actingAs($this->cashier)->get(route('staff.cashier-register'));

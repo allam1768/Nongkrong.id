@@ -330,7 +330,7 @@ class TableSelection extends Component
             ->orderBy('table_number')
             ->get();
 
-        return view('livewire.user.TableSelection-modal', [
+        return view('livewire.user.TableSelection', [
             'availableTables' => $availableTables,
             'tables' => $availableTables,
             'currentYear' => date('Y'),

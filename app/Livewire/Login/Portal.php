@@ -140,18 +140,24 @@ class Portal extends Component
             $this->showLoginModal = false;
             $user = Auth::user();
 
-            if ($user && $user->role === 'admin') {
-                $this->redirectRoute('admin.dashboard', navigate: true);
+            if ($user) {
+                if ($user->role === 'admin') {
+                    $this->redirectRoute('admin.dashboard', navigate: true);
 
-                return;
-            } elseif ($user && ($user->email === 'kasir@smartcafe.id' || str_contains(strtolower($user->name), 'kasir'))) {
-                $this->redirectRoute('staff.cashier-register', navigate: true);
+                    return;
+                }
 
-                return;
-            } elseif ($user && ($user->email === 'barista@smartcafe.id' || str_contains(strtolower($user->name), 'barista') || $user->role === 'staff')) {
-                $this->redirectRoute('staff.kitchen-board', navigate: true);
+                if ($user->role === 'cashier') {
+                    $this->redirectRoute('staff.cashier-register', navigate: true);
 
-                return;
+                    return;
+                }
+
+                if (in_array($user->role, ['staff', 'barista'], true)) {
+                    $this->redirectRoute('staff.kitchen-board', navigate: true);
+
+                    return;
+                }
             }
 
             return;

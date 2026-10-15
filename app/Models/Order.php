@@ -43,6 +43,15 @@ class Order extends Model
         'notes',
     ];
 
+    protected $appends = [
+        'formatted_total_amount',
+    ];
+
+    public function getFormattedTotalAmountAttribute(): string
+    {
+        return 'Rp '.number_format((float) $this->total_amount, 0, ',', '.');
+    }
+
     protected function casts(): array
     {
         return [

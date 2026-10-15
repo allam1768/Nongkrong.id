@@ -272,7 +272,7 @@
                             @endif
 
                             <div class="text-[13px] font-extrabold text-brand-blue mt-1">
-                                {{ $item['formatted_subtotal'] }}
+                                {{ $item['formatted_subtotal'] ?? ('Rp '.number_format((float) ($item['subtotal'] ?? 0), 0, ',', '.')) }}
                             </div>
                         </div>
 
@@ -371,7 +371,7 @@
                     <span class="text-brand-blue">{{ $formattedCartTotal }}</span>
                 </div>
 
-                <button type="button" wire:click="checkoutOrder" @disabled(empty($cart)) id="btn-checkout-cart"
+                <button type="button" wire:click="checkoutOrder" wire:loading.attr="disabled" @disabled(empty($cart)) id="btn-checkout-cart"
                     class="w-full h-12 bg-brand-blue hover:bg-[#003da1] disabled:opacity-40 text-white rounded-full text-[14px] font-extrabold flex items-center justify-center gap-2 mt-4 transition-all shadow-md active:scale-98 cursor-pointer disabled:cursor-not-allowed">
                     <span wire:loading.remove wire:target="checkoutOrder">Lanjut ke Checkout ➔</span>
                     <span wire:loading.inline-flex wire:target="checkoutOrder" class="inline-flex items-center gap-2 whitespace-nowrap">

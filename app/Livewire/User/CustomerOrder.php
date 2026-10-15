@@ -10,6 +10,7 @@ use App\Models\Table;
 use App\Services\MidtransService;
 use App\Services\QrCodeService;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 use Livewire\Attributes\Url;
@@ -151,26 +152,17 @@ class CustomerOrder extends Component
      */
     public function mount(): void
     {
-        $this->customerName = (string) session('customer_name', 'Tamu');
+        if (! session()->has('table_id')) {
+            session()->flash('warning', 'Silakan pilih meja terlebih dahulu sebelum memesan.');
+            $this->redirectRoute('portal', navigate: true);
 
-        if (session()->has('table_id') && session()->has('table_number')) {
-            $this->tableId = (int) session('table_id');
-            $this->tableNumber = (string) session('table_number');
-            $this->tableAccessCode = (string) session('access_code', '');
-        } else {
-            // Check if there is an active table, or attempt fallback to first available
-            $defaultTable = Table::where('status', 'available')->first();
-            if ($defaultTable) {
-                $this->tableId = $defaultTable->id;
-                $this->tableNumber = $defaultTable->table_number;
-                $this->tableAccessCode = $defaultTable->access_code;
-                session([
-                    'table_id' => $defaultTable->id,
-                    'table_number' => $defaultTable->table_number,
-                    'access_code' => $defaultTable->access_code,
-                ]);
-            }
+            return;
         }
+
+        $this->customerName = (string) session('customer_name', 'Tamu');
+        $this->tableId = (int) session('table_id');
+        $this->tableNumber = (string) session('table_number');
+        $this->tableAccessCode = (string) session('access_code', '');
 
         // Restore cart from session
         $savedCart = session('customer_cart', []);
@@ -435,12 +427,78 @@ class CustomerOrder extends Component
             return;
         }
 
+        // Re-fetch menus from database to ensure zero-trust security & calculate official prices on server
+        $menuIds = array_filter(array_column($this->cart, 'menu_id'));
+        $menus = Menu::whereIn('id', $menuIds)->get()->keyBy('id');
+
+        $computedSubtotal = 0.0;
+        $orderItemsData = [];
+
+        foreach ($this->cart as $item) {
+            $menuId = (int) ($item['menu_id'] ?? 0);
+            $menu = $menus->get($menuId);
+
+            if (! $menu) {
+                continue;
+            }
+
+            $quantity = max(1, (int) ($item['quantity'] ?? 1));
+            $unitPrice = (float) $menu->price;
+            $lineSubtotal = $unitPrice * $quantity;
+            $computedSubtotal += $lineSubtotal;
+
+            $options = [];
+            if (! empty($item['temperature'])) {
+                $options[] = ucfirst($item['temperature']);
+            }
+            if (! empty($item['sugar']) && $item['sugar'] !== 'normal') {
+                $options[] = ucfirst($item['sugar']).' Sugar';
+            }
+            if (! empty($item['notes'])) {
+                $options[] = $item['notes'];
+            }
+
+            $itemNotes = ! empty($options) ? implode(', ', $options) : null;
+            if ($itemNotes !== null) {
+                $itemNotes = Str::limit($itemNotes, 250, '');
+            }
+
+            $orderItemsData[] = [
+                'menu_id' => $menu->id,
+                'quantity' => $quantity,
+                'unit_price' => $unitPrice,
+                'subtotal' => $lineSubtotal,
+                'item_notes' => $itemNotes,
+                'item_snapshot' => [
+                    'menu_id' => $menu->id,
+                    'name' => $menu->name,
+                    'category' => $menu->category,
+                    'price' => $unitPrice,
+                    'quantity' => $quantity,
+                    'subtotal' => $lineSubtotal,
+                    'options_summary' => $itemNotes,
+                    'formatted_price' => 'Rp '.number_format($unitPrice, 0, ',', '.'),
+                    'formatted_subtotal' => 'Rp '.number_format($lineSubtotal, 0, ',', '.'),
+                ],
+            ];
+        }
+
+        if (empty($orderItemsData)) {
+            $this->triggerToast('Menu yang Anda pilih tidak tersedia atau tidak valid.');
+
+            return;
+        }
+
+        // Server-calculated PB1 10% Restaurant Tax and Total Amount
+        $tax = round($computedSubtotal * 0.10, 2);
+        $totalAmount = $computedSubtotal + $tax;
+
         // Generate clean unique order code
         $datePrefix = date('Ymd');
         $randomSuffix = strtoupper(substr(bin2hex(random_bytes(3)), 0, 5));
         $orderCode = "ORD-{$datePrefix}-{$randomSuffix}";
 
-        DB::transaction(function () use ($orderCode) {
+        DB::transaction(function () use ($orderCode, $totalAmount, $orderItemsData) {
             $order = Order::create([
                 'order_code' => $orderCode,
                 'table_id' => $this->tableId,
@@ -449,32 +507,23 @@ class CustomerOrder extends Component
                 'order_status' => 'pending',
                 'payment_status' => 'unpaid',
                 'payment_method' => $this->paymentMethod,
-                'total_amount' => $this->cartTotal,
+                'total_amount' => $totalAmount,
                 'notes' => trim($this->orderNotes) ?: null,
             ]);
 
-            foreach ($this->cart as $item) {
-                $options = [];
-                if (! empty($item['temperature'])) {
-                    $options[] = ucfirst($item['temperature']);
-                }
-                if (! empty($item['sugar']) && $item['sugar'] !== 'normal') {
-                    $options[] = ucfirst($item['sugar']).' Sugar';
-                }
-                if (! empty($item['notes'])) {
-                    $options[] = $item['notes'];
-                }
-
-                $itemNotes = ! empty($options) ? implode(', ', $options) : null;
-
+            foreach ($orderItemsData as $itemData) {
                 OrderItem::create([
                     'order_id' => $order->id,
-                    'menu_id' => $item['menu_id'],
-                    'quantity' => $item['quantity'],
-                    'unit_price' => $item['price'],
-                    'subtotal' => $item['subtotal'],
-                    'item_notes' => $itemNotes,
+                    'menu_id' => $itemData['menu_id'],
+                    'quantity' => $itemData['quantity'],
+                    'unit_price' => $itemData['unit_price'],
+                    'subtotal' => $itemData['subtotal'],
+                    'item_notes' => $itemData['item_notes'],
                 ]);
+            }
+
+            if ($this->tableId) {
+                Table::where('id', $this->tableId)->where('status', 'available')->update(['status' => 'occupied']);
             }
 
             // Save order snapshot for confirmation modal
@@ -482,7 +531,7 @@ class CustomerOrder extends Component
             $this->placedOrderTime = now()->format('H:i');
             $this->placedOrderTotal = (float) $order->total_amount;
             $this->formattedPlacedOrderTotal = 'Rp '.number_format($this->placedOrderTotal, 0, ',', '.');
-            $this->placedOrderItems = array_values($this->cart);
+            $this->placedOrderItems = array_column($orderItemsData, 'item_snapshot');
             $this->placedPaymentMethod = $this->paymentMethod;
             $this->placedOrderPaid = false;
         });
@@ -614,15 +663,8 @@ class CustomerOrder extends Component
             return;
         }
 
-        $order = Order::where('order_code', $this->placedOrderCode)->first();
-        if ($order) {
-            $order->update([
-                'payment_status' => 'paid',
-                'order_status' => $order->order_status === 'pending' ? 'processing' : $order->order_status,
-            ]);
-            $this->placedOrderPaid = true;
-            $this->triggerToast('Pembayaran Midtrans Berhasil Diverifikasi!');
-        }
+        $this->triggerToast('Menunggu konfirmasi pembayaran dari Midtrans...');
+        $this->checkPaymentStatus(false);
     }
 
     /**
@@ -630,6 +672,10 @@ class CustomerOrder extends Component
      */
     public function simulatePaymentSuccess(): void
     {
+        if (! app()->environment('local', 'testing')) {
+            abort(403, 'Aksi simulasi pembayaran tidak diizinkan pada environment ini.');
+        }
+
         if (! $this->placedOrderCode) {
             return;
         }
@@ -933,6 +979,13 @@ class CustomerOrder extends Component
         if ($this->selectedTaste !== 'all') {
             $taste = $this->selectedTaste;
             $menuQuery->whereJsonContains('taste_profile', $taste);
+        }
+
+        // Ensure cart items are properly formatted for presentation
+        foreach ($this->cart as $key => $item) {
+            if (! isset($item['formatted_subtotal'])) {
+                $this->cart[$key] = $this->formatCartItem((array) $item);
+            }
         }
 
         $menus = $menuQuery->orderBy('category_id')->orderBy('name')->get()->map(function ($menu) {

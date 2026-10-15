@@ -52,7 +52,7 @@
                                 </div>
                             @endif
                             <div class="text-xs font-extrabold text-brand-blue mt-1">
-                                {{ $item['formatted_subtotal'] }}
+                                {{ $item['formatted_subtotal'] ?? ('Rp '.number_format((float) ($item['subtotal'] ?? 0), 0, ',', '.')) }}
                             </div>
                         </div>
                         <div class="flex items-center gap-2 bg-white border border-[#CBD5E1] rounded-lg px-2 py-1">
@@ -153,6 +153,7 @@
                 <button
                     type="button"
                     wire:click="checkoutOrder"
+                    wire:loading.attr="disabled"
                     @disabled(empty($cart))
                     class="w-full h-11 bg-brand-blue hover:bg-[#003da1] disabled:opacity-40 text-white rounded-full text-xs font-extrabold flex items-center justify-center gap-2 mt-4 cursor-pointer transition-all shadow-md active:scale-98 disabled:cursor-not-allowed"
                 >
