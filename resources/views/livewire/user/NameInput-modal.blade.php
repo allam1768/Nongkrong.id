@@ -46,18 +46,18 @@
                 title="Ganti Meja"
                 aria-label="Ganti Meja"
             >
-                <img
-                    src="{{ asset('assets/icn/black/toleft-black.svg') }}"
-                    alt="Kembali"
-                    class="w-4 h-auto object-contain select-none"
-                />
+
+            <x-icon
+                name="toleft"
+                size="w-4 h-4"
+                class="text-brand-blue"
+            />
             </button>
 
             <div class="absolute left-1/2 -translate-x-1/2 flex items-center justify-center pointer-events-none select-none">
-                <img
-                    src="{{ asset('assets/img/NongkrongId-blue.svg') }}"
-                    alt="NONGKRONG.id"
-                    class="h-6 sm:h-7 w-auto object-contain select-none"
+               <x-icon
+                name="logo"
+                    class="text-brand-blue h-7 sm:h-6 w-auto object-contain select-none"
                 />
             </div>
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire;
+namespace App\Livewire\Login;
 
 use App\Models\Table;
 use Illuminate\Support\Facades\Auth;
@@ -85,7 +85,7 @@ class Portal extends Component
         $this->selectedRole = $role;
 
         if ($role === 'customer') {
-            $this->openQuickOrder();
+            $this->openTableModal();
         } elseif ($role === 'employee') {
             $this->openLogin();
         }
@@ -165,13 +165,7 @@ class Portal extends Component
      */
     public function openTableSelection(bool $isMobile = false): void
     {
-        if ($isMobile) {
-            $this->openTableModal();
-
-            return;
-        }
-
-        $this->openQuickOrder();
+        $this->openTableModal();
     }
 
     /**
@@ -435,7 +429,7 @@ class Portal extends Component
             ->orderBy('table_number')
             ->get();
 
-        return view('livewire.Portal', [
+        return view('livewire.login.Portal', [
             'currentYear' => date('Y'),
             'availableTables' => $availableTables,
         ]);

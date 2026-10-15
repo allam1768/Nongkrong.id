@@ -398,8 +398,8 @@
                 <button type="button" wire:click="checkoutOrder" @disabled(empty($cart)) id="btn-checkout-cart"
                     class="w-full h-12 bg-brand-blue hover:bg-[#003da1] disabled:opacity-40 text-white rounded-full text-[14px] font-extrabold flex items-center justify-center gap-2 mt-4 transition-all shadow-md active:scale-98 cursor-pointer disabled:cursor-not-allowed">
                     <span wire:loading.remove wire:target="checkoutOrder">Lanjut ke Checkout ➔</span>
-                    <span wire:loading wire:target="checkoutOrder" class="inline-flex items-center gap-2">
-                        <svg class="w-4 h-4 animate-spin text-white" viewBox="0 0 24 24" fill="none">
+                    <span wire:loading.inline-flex wire:target="checkoutOrder" class="inline-flex items-center gap-2 whitespace-nowrap">
+                        <svg class="w-4 h-4 animate-spin text-white shrink-0 inline-block" viewBox="0 0 24 24" fill="none">
                             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
                                 stroke-width="4"></circle>
                             <path class="opacity-75" fill="currentColor"
@@ -439,7 +439,7 @@
     @include('livewire.reuse-component.AiBarista-modal')
 
     {{-- 6. MENU CUSTOMIZATION DETAIL MODAL --}}
-    @include('livewire.reuse-component.MenuDetail-modal')
+    @include('livewire.user.MenuDetail-modal')
 
     {{-- 7. ORDER SUCCESS MODAL --}}
     @include('livewire.reuse-component.OrderSuccess-modal')

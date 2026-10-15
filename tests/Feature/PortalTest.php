@@ -2,7 +2,7 @@
 
 namespace Tests\Feature;
 
-use App\Livewire\Portal;
+use App\Livewire\Login\Portal;
 use App\Models\User;
 use Database\Seeders\DatabaseSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -29,32 +29,24 @@ class PortalTest extends TestCase
         $response->assertStatus(200);
         $response->assertSee('Pesan Cepat');
         $response->assertSee('Login Karyawan');
-        $response->assertSee('Fall in Love with');
+        $response->assertSee('Fall in Love');
+        $response->assertSee('with Coffee');
         $response->assertSee('NONGKRONG.id');
-        $response->assertSee('barista1.png');
-        $response->assertSee('barista2.png');
-        $response->assertSee('assets/img/NongkrongId-blue.svg');
-        $response->assertSee('assets/img/icont_noks-blue.svg');
-        $this->assertFileExists(public_path('assets/img/NongkrongId-blue.svg'));
-        $this->assertFileExists(public_path('assets/img/icont_noks-blue.svg'));
+        $response->assertSee('assets/img/portal.svg');
     }
 
     /**
-     * Test quick order redirects directly to table selection.
+     * Test quick order opens table selection modal.
      */
-    public function test_portal_quick_order_redirects_to_table_selection(): void
+    public function test_portal_quick_order_opens_table_modal(): void
     {
         Livewire::test(Portal::class)
             ->call('openTableSelection')
-            ->assertRedirect(route('table.selection'));
-
-        Livewire::test(Portal::class)
-            ->call('openQuickOrder')
-            ->assertRedirect(route('table.selection'));
+            ->assertSet('showTableModal', true);
 
         Livewire::test(Portal::class)
             ->call('setRole', 'customer')
-            ->assertRedirect(route('table.selection'));
+            ->assertSet('showTableModal', true);
     }
 
     /**

@@ -1,114 +1,3 @@
-<script>
-    function portalState() {
-        return {
-            showAiChat: false,
-            lang: 'ID',
-            inputMessage: '',
-            isTyping: false,
-            messages: [
-                {
-                    sender: 'ai',
-                    text: 'Halo! Saya **AI Barista Nongkrong.id** ☕\nBingung mau pesan apa hari ini? Ceritakan seleramu (misal: kopi manis creamy, strong melek, atau non-kopi segar), atau pilih opsi cepat di bawah!',
-                    time: 'Baru saja',
-                    showCta: false
-                }
-            ],
-            quickPrompts: [
-                '☕ Kopi Manis & Creamy',
-                '⚡ Kopi Strong / Melek',
-                '🍃 Minuman Segar Non-Kopi',
-                '🥐 Rekomendasi Cemilan',
-                '📍 Cara Pesan ke Meja'
-            ],
-            sendUserMessage(text) {
-                let msg = (text || this.inputMessage || '').trim();
-                if (!msg || this.isTyping) return;
-
-                let timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-                this.messages.push({
-                    sender: 'user',
-                    text: msg,
-                    time: timeStr
-                });
-                this.inputMessage = '';
-                this.isTyping = true;
-
-                this.$nextTick(() => {
-                    let box = this.$refs.chatBox;
-                    if (box) box.scrollTop = box.scrollHeight;
-                });
-
-                setTimeout(() => {
-                    this.isTyping = false;
-                    let res = this.getAiReply(msg);
-                    this.messages.push({
-                        sender: 'ai',
-                        text: res.text,
-                        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-                        showCta: res.showCta
-                    });
-                    this.$nextTick(() => {
-                        let box = this.$refs.chatBox;
-                        if (box) box.scrollTop = box.scrollHeight;
-                    });
-                }, 750);
-            },
-            getAiReply(query) {
-                let q = query.toLowerCase();
-                if (q.includes('manis') || q.includes('creamy') || q.includes('susu') || q.includes('aren') || q.includes('caramel')) {
-                    return {
-                        text: 'Rekomendasi terbaik buat kamu:\n1. 🍯 **Es Kopi Susu Gula Aren** (Best Seller — manis legit gurih)\n2. 🍮 **Caramel Macchiato** (Espresso lembut berpadu saus karamel)\n\nKeduanya menggunakan susu segar pilihan yang creamy banget!',
-                        showCta: true
-                    };
-                }
-                if (q.includes('strong') || q.includes('melek') || q.includes('kerja') || q.includes('begadang') || q.includes('pahit') || q.includes('americano') || q.includes('espresso')) {
-                    return {
-                        text: 'Pilihan paling pas untuk booster energi:\n1. ⚡ **Double Shot Americano** (Bold, aromatic, zero sugar)\n2. ☕ **V60 Single Origin Aceh Gayo** (Manual brew aroma fruity & floral)\n\nDijamin fokus seharian!',
-                        showCta: true
-                    };
-                }
-                if (q.includes('non') || q.includes('segar') || q.includes('teh') || q.includes('matcha') || q.includes('cokelat') || q.includes('berry')) {
-                    return {
-                        text: 'Menu non-kopi segar favorit:\n1. 🍃 **Matcha Latte Ice Premium** (Uji matcha kental kaya rasa)\n2. 🍓 **Sparkling Berry Mojito** (Soda dingin dengan sari buah beri asli)\n\nSegar dan dingin untuk menemani harimu!',
-                        showCta: true
-                    };
-                }
-                if (q.includes('cemilan') || q.includes('makan') || q.includes('roti') || q.includes('snack') || q.includes('croissant') || q.includes('toast')) {
-                    return {
-                        text: 'Pasangan ngopi paling pas:\n1. 🥐 **Butter Croissant** hangat & renyah\n2. 🍫 **Choco Lava Toast** lumeran cokelat hangat\n3. 🍟 **Truffle French Fries** untuk cemilan gurih!',
-                        showCta: true
-                    };
-                }
-                if (q.includes('pesan') || q.includes('meja') || q.includes('qr') || q.includes('cara') || q.includes('order')) {
-                    return {
-                        text: 'Caranya sangat mudah! Klik tombol **Pesan Cepat** di bawah untuk memilih meja atau scan kode QR meja kamu. Pesananmu akan segera disiapkan barista!',
-                        showCta: true
-                    };
-                }
-                return {
-                    text: 'Pilihan yang menarik! Menu rekomendasi barista kami hari ini adalah **Signature Creamy Latte**. Mau langsung pesan ke meja sekarang?',
-                    showCta: true
-                };
-            },
-            formatMessage(text) {
-                if (!text) return '';
-                return text.replace(/\*\*(.*?)\*\*/g, '<strong class="font-bold text-slate-900">$1</strong>');
-            },
-            resetChat() {
-                this.messages = [
-                    {
-                        sender: 'ai',
-                        text: 'Halo! Saya **AI Barista Nongkrong.id** ☕\nBingung mau pesan apa hari ini? Ceritakan seleramu atau pilih opsi cepat di bawah!',
-                        time: 'Baru saja',
-                        showCta: false
-                    }
-                ];
-                this.inputMessage = '';
-            }
-        };
-    }
-</script>
-
 <div x-data="portalState()"
     class="fixed inset-0 h-dvh w-full bg-white text-slate-900 flex flex-col justify-between overflow-hidden overscroll-none select-none px-0 md:px-6 lg:px-12 py-2 sm:py-3 md:py-4">
     {{-- 1. TOP HEADERS --}}
@@ -122,20 +11,7 @@
         </a>
 
         <div class="flex items-center gap-4 lg:gap-6 text-sm font-medium text-slate-800 font-poppins select-none">
-            {{-- AI Barista Chatbot Button Desktop --}}
-            <button type="button" @click="showAiChat = true"
-                class="flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-50/80 hover:bg-blue-100/80 text-brand-blue border border-blue-200/60 transition-all cursor-pointer focus:outline-none text-xs font-semibold font-poppins shadow-2xs hover:shadow-xs group"
-                title="Tanya AI Barista Assistant">
-                <span class="relative flex h-2 w-2">
-                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                    <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-                </span>
-                <svg class="w-4 h-4 text-brand-blue group-hover:scale-110 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>
-                    <path d="M8 12h.01M12 12h.01M16 12h.01" stroke-width="2.5"/>
-                </svg>
-                <span>AI Barista</span>
-            </button>
+
 
             {{-- Pilihan Bahasa ID / EN (Identik Mockup: Clean Typography) --}}
             <div class="flex items-center gap-1.5 text-sm font-poppins select-none">
@@ -150,7 +26,23 @@
                     class="transition-colors cursor-pointer py-0.5">
                     EN
                 </button>
+
             </div>
+
+            {{-- AI Barista Chatbot Button Desktop --}}
+            <button type="button" @click="showAiChat = true"
+                class="flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-50/80 hover:bg-blue-100/80 text-brand-blue border border-blue-200/60 transition-all cursor-pointer focus:outline-none text-xs font-semibold font-poppins shadow-2xs hover:shadow-xs group"
+                title="Tanya AI Barista Assistant">
+                <span class="relative flex h-2 w-2">
+                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                </span>
+                <svg class="w-4 h-4 text-brand-blue group-hover:scale-110 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>
+                    <path d="M8 12h.01M12 12h.01M16 12h.01" stroke-width="2.5"/>
+                </svg>
+                <span>AI Barista</span>
+            </button>
         </div>
     </header>
 
@@ -164,18 +56,7 @@
 
         <div class="flex items-center gap-3.5 text-xs font-medium text-slate-800 font-poppins select-none">
             {{-- AI Barista Chatbot Button Mobile --}}
-            <button type="button" @click="showAiChat = true"
-                class="relative text-slate-700 hover:text-brand-blue transition-colors cursor-pointer focus:outline-none flex items-center justify-center p-1.5 rounded-full hover:bg-slate-100"
-                aria-label="Tanya AI Barista" title="AI Barista Chatbot">
-                <span class="absolute top-1 right-1 flex h-2 w-2">
-                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                    <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-                </span>
-                <svg class="w-5 h-5 text-slate-800 hover:text-brand-blue transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>
-                    <path d="M8 12h.01M12 12h.01M16 12h.01" stroke-width="2.5"/>
-                </svg>
-            </button>
+
 
             {{-- Pilihan Bahasa ID / EN (Identik Mockup: Clean Typography) --}}
             <div class="flex items-center gap-1 text-xs font-poppins select-none">
@@ -191,6 +72,19 @@
                     EN
                 </button>
             </div>
+
+            <button type="button" @click="showAiChat = true"
+                class="relative text-slate-700 hover:text-brand-blue transition-colors cursor-pointer focus:outline-none flex items-center justify-center p-1.5 rounded-full hover:bg-slate-100"
+                aria-label="Tanya AI Barista" title="AI Barista Chatbot">
+                <span class="absolute top-1 right-1 flex h-2 w-2">
+                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                </span>
+                <svg class="w-5 h-5 text-slate-800 hover:text-brand-blue transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>
+                    <path d="M8 12h.01M12 12h.01M16 12h.01" stroke-width="2.5"/>
+                </svg>
+            </button>
         </div>
     </header>
 
@@ -213,9 +107,7 @@
                     wire:click="openTableModal"
                     class="w-full h-12 bg-brand-blue hover:bg-[#003da1] text-white font-bold text-sm rounded-full shadow-lg shadow-brand-blue/35 transition-all active:scale-98 cursor-pointer flex items-center justify-center gap-2 font-poppins">
                     <span>Pesan Cepat</span>
-                    <svg class="w-4 h-4 text-white -rotate-12 translate-x-0.5" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" />
-                    </svg>
+
                 </button>
 
                 {{-- Login Karyawan Button (Bottom: White Pill with Brand Blue Border) --}}
@@ -273,13 +165,9 @@
             <div class="mt-6 sm:mt-7 w-full flex flex-col items-start gap-3 md:gap-3.5">
                 {{-- Pesan Cepat Button --}}
                 <button type="button" id="btn-pesan-cepat-desktop"
-                    wire:click="openTableSelection"
+                    wire:click="openTableModal"
                     class="w-60 h-12 bg-brand-blue hover:bg-[#003da1] text-white font-bold text-sm rounded-full shadow-md shadow-brand-blue/25 transition-all active:scale-98 cursor-pointer flex items-center justify-center gap-2 font-poppins">
                     <span>Pesan Cepat</span>
-                    <svg class="w-4 h-4 text-white -rotate-12 translate-x-0.5"
-                        viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" />
-                    </svg>
                 </button>
 
                 {{-- Login Karyawan Button --}}
@@ -296,17 +184,129 @@
     @include('livewire.reuse-component.AiBarista-modal')
 
     {{-- Employee Login Modal Popup (Separated into Partial) --}}
-    @include('livewire.reuse-component.Login-modal')
+    @include('livewire.login.Login-modal')
 
     {{-- Mobile Table Selection Modal Popup (Separated into Partial) --}}
-    @include('livewire.reuse-component.TableSelection-modal')
+    @include('livewire.user.TableSelection-modal')
 
     {{-- Quick Order Name Modal Popup (Separated into Partial) --}}
-    @include('livewire.reuse-component.NameInput-modal')
+    @include('livewire.user.NameInput-modal')
 
     {{-- Subtle Minimal Footer (Desktop Only) --}}
     <footer class="hidden md:block w-full text-center py-1 sm:py-2 text-[11px] text-neutral-400 font-sora z-30 select-none shrink-0">
         &copy; {{ $currentYear }} NONGKRONG.id
     </footer>
+
+    {{-- State Logic for AI Barista & UI --}}
+    <script>
+        function portalState() {
+            return {
+                showAiChat: false,
+                lang: 'ID',
+                inputMessage: '',
+                isTyping: false,
+                messages: [
+                    {
+                        sender: 'ai',
+                        text: 'Halo! Saya **AI Barista Nongkrong.id** ☕\nBingung mau pesan apa hari ini? Ceritakan seleramu (misal: kopi manis creamy, strong melek, atau non-kopi segar), atau pilih opsi cepat di bawah!',
+                        time: 'Baru saja',
+                        showCta: false
+                    }
+                ],
+                quickPrompts: [
+                    '☕ Kopi Manis & Creamy',
+                    '⚡ Kopi Strong / Melek',
+                    '🍃 Minuman Segar Non-Kopi',
+                    '🥐 Rekomendasi Cemilan',
+                    '📍 Cara Pesan ke Meja'
+                ],
+                sendUserMessage(text) {
+                    let msg = (text || this.inputMessage || '').trim();
+                    if (!msg || this.isTyping) return;
+
+                    let timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                    this.messages.push({
+                        sender: 'user',
+                        text: msg,
+                        time: timeStr
+                    });
+                    this.inputMessage = '';
+                    this.isTyping = true;
+
+                    this.$nextTick(() => {
+                        let box = this.$refs.chatBox;
+                        if (box) box.scrollTop = box.scrollHeight;
+                    });
+
+                    setTimeout(() => {
+                        this.isTyping = false;
+                        let res = this.getAiReply(msg);
+                        this.messages.push({
+                            sender: 'ai',
+                            text: res.text,
+                            time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                            showCta: res.showCta
+                        });
+                        this.$nextTick(() => {
+                            let box = this.$refs.chatBox;
+                            if (box) box.scrollTop = box.scrollHeight;
+                        });
+                    }, 750);
+                },
+                getAiReply(query) {
+                    let q = query.toLowerCase();
+                    if (q.includes('manis') || q.includes('creamy') || q.includes('susu') || q.includes('aren') || q.includes('caramel')) {
+                        return {
+                            text: 'Rekomendasi terbaik buat kamu:\n1. 🍯 **Es Kopi Susu Gula Aren** (Best Seller — manis legit gurih)\n2. 🍮 **Caramel Macchiato** (Espresso lembut berpadu saus karamel)\n\nKeduanya menggunakan susu segar pilihan yang creamy banget!',
+                            showCta: true
+                        };
+                    }
+                    if (q.includes('strong') || q.includes('melek') || q.includes('kerja') || q.includes('begadang') || q.includes('pahit') || q.includes('americano') || q.includes('espresso')) {
+                        return {
+                            text: 'Pilihan paling pas untuk booster energi:\n1. ⚡ **Double Shot Americano** (Bold, aromatic, zero sugar)\n2. ☕ **V60 Single Origin Aceh Gayo** (Manual brew aroma fruity & floral)\n\nDijamin fokus seharian!',
+                            showCta: true
+                        };
+                    }
+                    if (q.includes('non') || q.includes('segar') || q.includes('teh') || q.includes('matcha') || q.includes('cokelat') || q.includes('berry')) {
+                        return {
+                            text: 'Menu non-kopi segar favorit:\n1. 🍃 **Matcha Latte Ice Premium** (Uji matcha kental kaya rasa)\n2. 🍓 **Sparkling Berry Mojito** (Soda dingin dengan sari buah beri asli)\n\nSegar dan dingin untuk menemani harimu!',
+                            showCta: true
+                        };
+                    }
+                    if (q.includes('cemilan') || q.includes('makan') || q.includes('roti') || q.includes('snack') || q.includes('croissant') || q.includes('toast')) {
+                        return {
+                            text: 'Pasangan ngopi paling pas:\n1. 🥐 **Butter Croissant** hangat & renyah\n2. 🍫 **Choco Lava Toast** lumeran cokelat hangat\n3. 🍟 **Truffle French Fries** untuk cemilan gurih!',
+                            showCta: true
+                        };
+                    }
+                    if (q.includes('pesan') || q.includes('meja') || q.includes('qr') || q.includes('cara') || q.includes('order')) {
+                        return {
+                            text: 'Caranya sangat mudah! Klik tombol **Pesan Cepat** di bawah untuk memilih meja atau scan kode QR meja kamu. Pesananmu akan segera disiapkan barista!',
+                            showCta: true
+                        };
+                    }
+                    return {
+                        text: 'Pilihan yang menarik! Menu rekomendasi barista kami hari ini adalah **Signature Creamy Latte**. Mau langsung pesan ke meja sekarang?',
+                        showCta: true
+                    };
+                },
+                formatMessage(text) {
+                    if (!text) return '';
+                    return text.replace(/\*\*(.*?)\*\*/g, '<strong class="font-bold text-slate-900">$1</strong>');
+                },
+                resetChat() {
+                    this.messages = [
+                        {
+                            sender: 'ai',
+                            text: 'Halo! Saya **AI Barista Nongkrong.id** ☕\nBingung mau pesan apa hari ini? Ceritakan seleramu atau pilih opsi cepat di bawah!',
+                            time: 'Baru saja',
+                            showCta: false
+                        }
+                    ];
+                    this.inputMessage = '';
+                }
+            };
+        }
+    </script>
 </div>
 
