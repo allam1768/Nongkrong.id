@@ -58,7 +58,7 @@
         {{-- Top Navigation Bar --}}
         <div class="flex items-center justify-between w-full shrink-0 pt-1 sm:pt-0 relative z-20">
             {{-- Left: Mobile Back to Table Selection Button --}}
-            <div class="flex items-center justify-start min-w-[95px]">
+            <div class="flex items-center justify-start min-w-23.75">
                 <button
                     type="button"
                     wire:click="backToTableModal"
@@ -75,15 +75,14 @@
 
             {{-- Center: Logo NONGKRONG.id --}}
             <div class="flex-1 flex items-center justify-center select-none px-2">
-                <img
-                    src="{{ asset('assets/img/NongkrongId-blue.svg') }}"
-                    alt="NONGKRONG.id"
-                    class="h-6 sm:h-7 w-auto object-contain select-none"
+                <x-icon
+                    name="logo"
+                    class="text-brand-blue h-6 sm:h-7 w-auto object-contain select-none"
                 />
             </div>
 
             {{-- Right: Close Button --}}
-            <div class="flex items-center justify-end min-w-[95px]">
+            <div class="flex items-center justify-end min-w-23.75">
                 <button
                     type="button"
                     wire:click="closeQuickOrder"
@@ -120,10 +119,9 @@
             {{-- 2. Mas Nongki (Barista AI) Friendly Speech Greeting Card --}}
             <div class="w-full bg-white border-2 border-slate-200 rounded-2xl p-3 flex items-center gap-3 mb-3 select-none shadow-xs">
                 <div class="relative w-14 h-14 rounded-2xl bg-blue-50 border-2 border-brand-blue flex items-center justify-center shrink-0">
-                    <img
-                        src="{{ asset('assets/img/icont_noks-blue.svg') }}"
-                        alt="Mas Nongki"
-                        class="w-8 h-8 object-contain"
+                    <x-icon
+                        name="icont_noks"
+                        class="w-8 h-8 object-contain text-brand-blue"
                     />
                     {{-- Mini Star on Mascot --}}
                     <div class="absolute -top-1.5 -right-1.5 w-4 h-4">

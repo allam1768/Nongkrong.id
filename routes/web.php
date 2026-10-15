@@ -10,6 +10,7 @@ use App\Livewire\Staff\CashierRegister;
 use App\Livewire\Staff\KitchenKanban;
 use App\Livewire\User\CustomerOrder;
 use App\Livewire\User\OrderTracking;
+use App\Livewire\User\TableSelection;
 use Illuminate\Support\Facades\Route;
 
 // 1. Splash Screen
@@ -19,8 +20,8 @@ Route::get('/', SplashScreen::class)->name('splash');
 Route::get('/portal', Portal::class)->name('portal');
 Route::redirect('/login', '/portal')->name('login.portal');
 
-// 3. Pemilihan Meja (Dialihkan ke Portal Overlay)
-Route::redirect('/table', '/portal')->name('table.selection');
+// 3. Pemilihan Meja
+Route::get('/table', TableSelection::class)->name('table.selection');
 
 // 4. Halaman Pemesanan Menu Pelanggan
 Route::get('/order', CustomerOrder::class)->name('customer.order');

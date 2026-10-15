@@ -24,12 +24,13 @@
         x-data="{ visible: false }"
         x-init="setTimeout(() => visible = true, 50)"
         :class="visible ? 'opacity-100 scale-100' : 'opacity-0 scale-95'"
+        data-asset="assets/img/NongkrongId.svg"
     >
         <x-icon
-                name="nongkrong-id"
-                size="h-8 sm:h-12 md:h-16 w-auto"
-                class="text-white select-none"
-            />
+            name="nongkrong-id"
+            size="h-8 sm:h-12 md:h-16 w-auto"
+            class="text-white select-none"
+        />
     </div>
 </div>
 

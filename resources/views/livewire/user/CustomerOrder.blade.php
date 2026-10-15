@@ -39,8 +39,8 @@
             <a href="{{ route('customer.order') }}" wire:navigate
                 class="inline-flex items-center transition-transform duration-200 hover:scale-105 focus:outline-none"
                 title="NONGKRONG.id">
-                <img src="{{ asset('assets/img/NongkrongId.svg') }}" alt="NONGKRONG.id"
-                    class="h-6 sm:h-7 md:h-8 w-auto max-w-36.25 sm:max-w-none object-contain select-none" />
+                <x-icon name="logo"
+                    class="h-6 sm:h-7 md:h-8 w-auto max-w-36.25 sm:max-w-none object-contain select-none text-brand-blue" />
             </a>
             <span class="sr-only">Digital Menu</span>
         </div>
@@ -57,7 +57,7 @@
                 @if ($searchQuery)
                     <button type="button" wire:click="$set('searchQuery', '')"
                         class="text-slate-400 hover:text-slate-600 text-xs cursor-pointer p-1" title="Hapus pencarian">
-                        ✕
+                        <x-icon name="close" class="w-3.5 h-3.5" />
                     </button>
                 @endif
             </div>
@@ -73,8 +73,7 @@
 
             {{-- Mobile Cart Trigger (Visible on < lg) --}}
             <button type="button" wire:click="openCart" title="Lihat Keranjang Pesanan" class="relative">
-                <img src="{{ asset('assets/icn/card.svg') }}" alt="keranjang"
-                    class="w-6 h-auto object-contain select-none">
+                <x-icon name="card" class="w-6 h-6 text-slate-700 select-none" />
 
                 @if ($cartCount > 0)
                     <span
@@ -90,16 +89,14 @@
     <div class="sm:hidden px-4 pt-2.5 pb-2.5">
         <div
             class="w-full h-10 border-[1.5px] border-[#CBD5E1] rounded-full flex items-center px-3.5 gap-2 focus-within:border-brand-blue bg-white transition-all">
-            <img src="{{ asset('assets/icn/search.svg') }}" alt="cari"
-                class="w-4 h-auto object-contain select-none">
+            <x-icon name="search" class="w-4 h-4 text-slate-400 select-none" />
             <input type="text" wire:model.live.debounce.300ms="searchQuery"
                 placeholder="Cari kopi, tea, makanan, atau snack..."
                 class="w-full bg-transparent border-none text-xs text-slate-800 placeholder-slate-400 focus:outline-none" />
             @if ($searchQuery)
                 <button type="button" wire:click="$set('searchQuery', '')"
                     class="text-slate-400 hover:text-slate-600 text-xs p-1">
-                    <img src="{{ asset('assets/icn/cancel.svg') }}" alt="keranjang"
-                    class="w-3 h-auto object-contain select-none">
+                    <x-icon name="cancel" class="w-3.5 h-3.5 select-none" />
                 </button>
             @endif
         </div>
@@ -125,13 +122,12 @@
                 <button type="button" wire:click="openAiModal"
                     class="relative z-10 shrink-0 w-full sm:w-auto bg-white hover:bg-blue-50 text-brand-blue font-black text-xs sm:text-[13px] px-5 sm:px-6 py-2.5 sm:py-3 rounded-xl sm:rounded-full flex items-center justify-center gap-2 shadow-sm transition-all active:scale-95 cursor-pointer">
                     <span>Tanya Barista AI</span>
-                    <img src="{{ asset('assets/icn/toright.svg') }}" alt="keranjang"
-                    class="w-5 h-auto object-contain select-none">
+                    <x-icon name="toright" class="w-5 h-auto text-brand-blue select-none" />
                 </button>
 
                 {{-- Decorative Star Watermark in Background --}}
-                <img src="{{ asset('assets/img/Star-ic.svg') }}" alt="" aria-hidden="true"
-                    class="absolute -right-6 -bottom-6 w-28 sm:w-32 h-28 sm:h-32 opacity-15 pointer-events-none select-none" />
+                <x-icon name="star" aria-hidden="true"
+                    class="text-white absolute -right-6 -bottom-6 w-28 sm:w-32 h-28 sm:h-32 opacity-15 pointer-events-none select-none" />
             </div>
 
             {{-- CATEGORIES TABS BAR --}}
@@ -229,8 +225,7 @@
                 <div class="py-16 text-center max-w-md mx-auto text-slate-500">
                     <div
                         class="w-16 h-16 mx-auto rounded-3xl bg-slate-100 border border-slate-200 text-3xl flex items-center justify-center mb-3">
-                        <img src="{{ asset('assets/icn/search.svg') }}" alt="keranjang"
-                    class="w-100 h-auto object-contain select-none">
+                        <x-icon name="search" class="w-8 h-8 text-slate-400 select-none" />
                     </div>
                     <h3 class="text-base font-bold text-slate-800">
                         Menu Tidak Ditemukan
@@ -323,12 +318,7 @@
                             class="flex items-center gap-2.5 p-2.5 rounded-xl border text-left transition-all cursor-pointer {{ $paymentMethod === 'cash' ? 'border-brand-blue bg-blue-50/80 text-brand-blue ring-1 ring-brand-blue' : 'border-slate-200 bg-white text-slate-700 hover:border-slate-300 hover:bg-slate-50' }}">
                             <div
                                 class="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 {{ $paymentMethod === 'cash' ? 'bg-brand-blue/10 text-brand-blue' : 'bg-slate-100 text-slate-500' }}">
-                                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <rect width="20" height="12" x="2" y="6" rx="2" />
-                                    <circle cx="12" cy="12" r="2" />
-                                    <path d="M6 12h.01M18 12h.01" />
-                                </svg>
+                                <x-icon name="cash" class="w-4 h-4" />
                             </div>
                             <div class="min-w-0 flex-1">
                                 <div class="text-xs font-bold leading-tight">Cash</div>
@@ -349,21 +339,7 @@
                             class="flex items-center gap-2.5 p-2.5 rounded-xl border text-left transition-all cursor-pointer {{ $paymentMethod === 'qris' ? 'border-brand-blue bg-blue-50/80 text-brand-blue ring-1 ring-brand-blue' : 'border-slate-200 bg-white text-slate-700 hover:border-slate-300 hover:bg-slate-50' }}">
                             <div
                                 class="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 {{ $paymentMethod === 'qris' ? 'bg-brand-blue/10 text-brand-blue' : 'bg-slate-100 text-slate-500' }}">
-                                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <rect width="5" height="5" x="3" y="3" rx="1" />
-                                    <rect width="5" height="5" x="16" y="3" rx="1" />
-                                    <rect width="5" height="5" x="3" y="16" rx="1" />
-                                    <path d="M21 16h-3a2 2 0 0 0-2 2v3" />
-                                    <path d="M21 21v.01" />
-                                    <path d="M12 7v3a2 2 0 0 1-2 2H7" />
-                                    <path d="M3 12h.01" />
-                                    <path d="M12 3h.01" />
-                                    <path d="M12 16v.01" />
-                                    <path d="M16 12h1" />
-                                    <path d="M21 12v.01" />
-                                    <path d="M12 21v-1" />
-                                </svg>
+                                <x-icon name="qris" class="w-4 h-4" />
                             </div>
                             <div class="min-w-0 flex-1">
                                 <div class="text-xs font-bold leading-tight">QRIS</div>

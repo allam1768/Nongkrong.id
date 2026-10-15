@@ -100,7 +100,7 @@
                 {{-- Validation Feedback --}}
                 @error('customerName')
                     <p class="text-xs text-rose-500 font-poppins font-medium text-left pl-1 -mt-1 flex items-center gap-1">
-                        <svg class="w-3.5 h-3.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+                        <x-icon name="alert-circle" class="w-3.5 h-3.5 shrink-0" />
                         <span>{{ $message }}</span>
                     </p>
                 @enderror
@@ -115,17 +115,12 @@
                     class="w-full h-13 font-bold text-sm sm:text-base shadow-lg shadow-brand-blue/20 mt-1"
                 >
                     <span>Lanjut Pilih Menu</span>
-                    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                        <line x1="5" y1="12" x2="19" y2="12"></line>
-                        <polyline points="12 5 19 12 12 19"></polyline>
-                    </svg>
+                    <x-icon name="arrow-right" class="w-4 h-4" />
                 </x-button>
 
                 {{-- Trust / Session Indicator --}}
                 <div class="flex items-center justify-center gap-1.5 mt-1.5 text-xs text-slate-400 font-poppins select-none">
-                    <svg class="w-4 h-4 text-emerald-500 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-                    </svg>
+                    <x-icon name="shield" class="w-4 h-4 text-emerald-500 shrink-0" />
                     <span>Sesi meja langsung aktif &bull; Tanpa perlu registrasi akun</span>
                 </div>
             </form>

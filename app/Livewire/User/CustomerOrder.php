@@ -7,11 +7,14 @@ use App\Models\Menu;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Table;
+use App\Services\MidtransService;
+use App\Services\QrCodeService;
 use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 use Livewire\Attributes\Url;
 use Livewire\Component;
+use Midtrans\Transaction;
 
 #[Layout('layouts.app')]
 #[Title('Pesan Menu Digital')]
@@ -112,6 +115,8 @@ class CustomerOrder extends Component
     public ?string $placedQrString = null;
 
     public ?string $placedCashQrUrl = null;
+
+    public bool $autoCheckPayment = true;
 
     // Barista AI Modal State
     public bool $showAiModal = false;
@@ -490,7 +495,7 @@ class CustomerOrder extends Component
         if ($this->placedPaymentMethod === 'qris' && $this->placedOrderCode) {
             $order = Order::where('order_code', $this->placedOrderCode)->first();
             if ($order) {
-                $midtransService = app(\App\Services\MidtransService::class);
+                $midtransService = app(MidtransService::class);
                 $this->placedSnapToken = $midtransService->getOrCreateSnapToken($order);
                 $qrisData = $midtransService->getOrCreateQris($order);
                 if ($qrisData) {
@@ -499,7 +504,7 @@ class CustomerOrder extends Component
                 }
             }
         } elseif ($this->placedPaymentMethod === 'cash' && $this->placedOrderCode) {
-            $this->placedCashQrUrl = \App\Services\QrCodeService::generateForOrder($this->placedOrderCode);
+            $this->placedCashQrUrl = QrCodeService::generateForOrder($this->placedOrderCode);
         }
 
         $this->showCartDrawer = false;
@@ -507,16 +512,38 @@ class CustomerOrder extends Component
     }
 
     /**
-     * Polling method to automatically detect payment status updates from Midtrans or DB.
+     * Toggle auto-check polling for order payment.
      */
-    public function checkPaymentStatus(): void
+    public function toggleAutoCheck(): void
     {
-        if (! $this->showOrderSuccessModal || ! $this->placedOrderCode || $this->placedOrderPaid) {
+        $this->autoCheckPayment = ! $this->autoCheckPayment;
+        $status = $this->autoCheckPayment ? 'diaktifkan' : 'dijeda';
+        $this->triggerToast("Auto-cek pembayaran {$status}.");
+    }
+
+    /**
+     * Polling or manual method to detect payment status updates from Midtrans or DB.
+     */
+    public function checkPaymentStatus(bool $isManual = false): void
+    {
+        if (! $this->showOrderSuccessModal || ! $this->placedOrderCode) {
+            return;
+        }
+
+        if ($this->placedOrderPaid) {
+            if ($isManual) {
+                $this->triggerToast('Pembayaran pesanan sudah diverifikasi (Lunas).');
+            }
+
             return;
         }
 
         $order = Order::where('order_code', $this->placedOrderCode)->first();
         if (! $order) {
+            if ($isManual) {
+                $this->triggerToast('Data pesanan tidak ditemukan.');
+            }
+
             return;
         }
 
@@ -530,7 +557,7 @@ class CustomerOrder extends Component
 
         if ($this->placedPaymentMethod === 'qris') {
             try {
-                $status = (object) \Midtrans\Transaction::status($this->placedOrderCode);
+                $status = (object) Transaction::status($this->placedOrderCode);
                 $txStatus = $status->transaction_status ?? null;
 
                 if (in_array($txStatus, ['settlement', 'capture'], true)) {
@@ -540,10 +567,17 @@ class CustomerOrder extends Component
                     ]);
                     $this->placedOrderPaid = true;
                     $this->triggerToast('Pembayaran QRIS Berhasil Diverifikasi!');
+
+                    return;
                 }
             } catch (\Throwable $e) {
                 // Ignore during polling while payment is still pending
             }
+        }
+
+        if ($isManual) {
+            $channel = $this->placedPaymentMethod === 'cash' ? 'kasir' : 'QRIS';
+            $this->triggerToast("Belum ada konfirmasi pembayaran {$channel}. Silakan tunggu beberapa saat atau cek lagi.");
         }
     }
 
@@ -562,7 +596,7 @@ class CustomerOrder extends Component
         }
 
         if (empty($this->placedSnapToken)) {
-            $midtransService = app(\App\Services\MidtransService::class);
+            $midtransService = app(MidtransService::class);
             $this->placedSnapToken = $midtransService->getOrCreateSnapToken($order);
         }
 

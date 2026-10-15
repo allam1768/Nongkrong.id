@@ -20,6 +20,11 @@
             'type' => 'stroke',
             'body' => '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>',
         ],
+        'refresh' => [
+            'viewBox' => '0 0 24 24',
+            'type' => 'stroke',
+            'body' => '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>',
+        ],
         'close' => [
             'viewBox' => '0 0 24 24',
             'type' => 'stroke',
@@ -34,6 +39,31 @@
             'viewBox' => '0 0 24 24',
             'type' => 'stroke',
             'body' => '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>',
+        ],
+        'cash' => [
+            'viewBox' => '0 0 24 24',
+            'type' => 'stroke',
+            'body' => '<rect width="20" height="12" x="2" y="6" rx="2" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/><circle cx="12" cy="12" r="2" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 12h.01M18 12h.01"/>',
+        ],
+        'qris' => [
+            'viewBox' => '0 0 24 24',
+            'type' => 'stroke',
+            'body' => '<rect width="5" height="5" x="3" y="3" rx="1" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/><rect width="5" height="5" x="16" y="3" rx="1" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/><rect width="5" height="5" x="3" y="16" rx="1" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 16h-3a2 2 0 0 0-2 2v3"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21v.01"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 7v3a2 2 0 0 1-2 2H7"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12h.01"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3h.01"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 16v.01"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 12h1"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12v.01"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 21v-1"/>',
+        ],
+        'alert-circle' => [
+            'viewBox' => '0 0 24 24',
+            'type' => 'stroke',
+            'body' => '<circle cx="12" cy="12" r="10" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/><line x1="12" y1="8" x2="12" y2="12" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/><line x1="12" y1="16" x2="12.01" y2="16" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>',
+        ],
+        'shield' => [
+            'viewBox' => '0 0 24 24',
+            'type' => 'stroke',
+            'body' => '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>',
+        ],
+        'camera' => [
+            'viewBox' => '0 0 24 24',
+            'type' => 'stroke',
+            'body' => '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/>',
         ],
 
         // App icons (compact inline SVG bodies)
@@ -119,6 +149,16 @@
         'logo' => 'NongkrongId',
         'Star-ic' => 'star',
         'star-ic' => 'star',
+        'qr' => 'qris',
+        'qrcode' => 'qris',
+        'warning' => 'alert-circle',
+        'alert' => 'alert-circle',
+        'error' => 'alert-circle',
+        'shield-check' => 'shield',
+        'video' => 'camera',
+        'webcam' => 'camera',
+        'sync' => 'refresh',
+        'reload' => 'refresh',
     ];
 
     $resolvedName = $aliases[$name] ?? $name;

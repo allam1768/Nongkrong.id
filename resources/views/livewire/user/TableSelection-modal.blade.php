@@ -31,7 +31,7 @@
         x-transition:leave="ease-in duration-200"
         x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
         x-transition:leave-end="opacity-0 translate-y-full sm:translate-y-0 sm:scale-95"
-        class="relative w-full max-w-none sm:max-w-md md:max-w-3xl lg:max-w-4xl bg-white rounded-t-[32px] sm:rounded-3xl rounded-b-none sm:rounded-b-3xl pt-5 pb-6 px-5 sm:p-8 shadow-2xl border-t sm:border border-slate-100 z-10 transition-all select-auto max-h-[90vh] overflow-y-auto"
+        class="relative w-full max-w-none sm:max-w-md md:max-w-3xl lg:max-w-4xl bg-white rounded-t-4xl sm:rounded-3xl rounded-b-none sm:rounded-b-3xl pt-5 pb-6 px-5 sm:p-8 shadow-2xl border-t sm:border border-slate-100 z-10 transition-all select-auto max-h-[90vh] overflow-y-auto"
         @click.stop
     >
         {{-- Close Button (Bisa dipakai di Mobile & Desktop) --}}
@@ -43,10 +43,7 @@
             title="Tutup"
             aria-label="Tutup"
         >
-            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <line x1="18" y1="6" x2="6" y2="18"></line>
-                <line x1="6" y1="6" x2="18" y2="18"></line>
-            </svg>
+            <x-icon name="close" class="w-4 h-4 text-slate-300 hover:text-slate-600" />
         </button>
 
         {{-- ================================================================= --}}
@@ -129,7 +126,7 @@
                 }"
                 x-init="if (window.innerWidth < 768) startCamera()"
                 x-effect="if (!open) stopCamera(); else if (window.innerWidth < 768 && !cameraActive && !cameraError) startCamera();"
-                class="relative w-full max-w-[240px] sm:max-w-[260px] aspect-square mx-auto rounded-3xl overflow-hidden bg-slate-950 border border-slate-800 flex items-center justify-center select-none shadow-inner"
+                class="relative w-full max-w-60 sm:max-w-65 aspect-square mx-auto rounded-3xl overflow-hidden bg-slate-950 border border-slate-800 flex items-center justify-center select-none shadow-inner"
             >
                 {{-- Native Video Stream --}}
                 <video
@@ -153,7 +150,7 @@
                         </svg> --}}
                     </div>
                     <span class="text-xs font-semibold text-white font-poppins">Kamera Scanner Meja</span>
-                    <span class="text-[10px] text-slate-400 font-poppins mt-0.5 max-w-[180px]">Izinkan akses kamera untuk scan otomatis</span>
+                    <span class="text-[10px] text-slate-400 font-poppins mt-0.5 max-w-45">Izinkan akses kamera untuk scan otomatis</span>
                     <button
                         type="button"
                         @click="startCamera()"
@@ -338,7 +335,7 @@
                 {{-- Sisi Kiri: Real Webcam Scanner Live --}}
                 <div class="flex flex-col items-center justify-center p-5 bg-slate-50/80 rounded-2xl border border-slate-200/80 text-center">
                     {{-- Frame Video Webcam --}}
-                    <div class="relative w-full max-w-[260px] aspect-square rounded-2xl overflow-hidden bg-slate-950 border border-slate-800 flex items-center justify-center select-none shadow-inner">
+                    <div class="relative w-full max-w-65 aspect-square rounded-2xl overflow-hidden bg-slate-950 border border-slate-800 flex items-center justify-center select-none shadow-inner">
                         {{-- Live Video Stream --}}
                         <video
                             x-ref="desktopCameraFeed"
@@ -355,12 +352,10 @@
                             class="absolute inset-0 bg-slate-950/90 flex flex-col items-center justify-center p-3 text-center z-5"
                         >
                             <div class="w-10 h-10 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-slate-300 mb-1.5">
-                                <svg class="w-5 h-5 text-brand-blue" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                                </svg>
+                                <x-icon name="camera" class="w-5 h-5 text-brand-blue" />
                             </div>
                             <span class="text-xs font-semibold text-white font-poppins">Webcam Scanner Meja</span>
-                            <span class="text-[10px] text-slate-400 font-poppins mt-0.5 max-w-[190px]">Izinkan akses webcam untuk scan otomatis</span>
+                            <span class="text-[10px] text-slate-400 font-poppins mt-0.5 max-w-47.5">Izinkan akses webcam untuk scan otomatis</span>
                             <button
                                 type="button"
                                 @click="startDesktopCamera()"
@@ -400,7 +395,7 @@
                             Buka Cam
                         </button>
                     </div>
-                    <p class="text-[11px] text-slate-400 font-poppins mt-0.5 max-w-[220px]">
+                    <p class="text-[11px] text-slate-400 font-poppins mt-0.5 max-w-55">
                         Arahkan stiker QR code meja ke webcam laptop/PC Anda
                     </p>
                 </div>
@@ -430,9 +425,7 @@
                         {{-- Validation Feedback --}}
                         @error('tableCode')
                             <div class="mb-3 p-2.5 rounded-lg bg-red-50 border border-red-200 text-red-600 text-xs font-poppins flex items-center gap-2">
-                                <svg class="w-4 h-4 text-red-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                                </svg>
+                                <x-icon name="alert-circle" class="w-4 h-4 text-red-500 shrink-0" />
                                 <span>{{ $message }}</span>
                             </div>
                         @enderror

@@ -214,4 +214,55 @@ class CustomerOrderTest extends TestCase
             'payment_method' => 'cash',
         ]);
     }
+
+    /**
+     * Test checking payment status manually and toggling auto-check feature.
+     */
+    public function test_customer_can_check_payment_status_and_toggle_auto_check(): void
+    {
+        $table = Table::where('table_number', '01')->first();
+        session([
+            'customer_name' => 'Rian Hidayat',
+            'table_id' => $table->id,
+            'table_number' => $table->table_number,
+        ]);
+
+        $menu = Menu::first();
+
+        $component = Livewire::test(CustomerOrder::class)
+            ->call('quickAddToCart', $menu->id)
+            ->set('paymentMethod', 'qris')
+            ->call('checkoutOrder')
+            ->assertSet('showOrderSuccessModal', true)
+            ->assertSet('autoCheckPayment', true)
+            ->assertSee('Cek Status Transaksi')
+            ->assertSee('Auto Cek Transaksi')
+            ->assertSee('● Aktif');
+
+        $orderCode = $component->get('placedOrderCode');
+        $this->assertNotNull($orderCode);
+
+        // Toggle auto-check off then on
+        $component->call('toggleAutoCheck')
+            ->assertSet('autoCheckPayment', false)
+            ->assertSee('Nonaktif');
+
+        $component->call('toggleAutoCheck')
+            ->assertSet('autoCheckPayment', true)
+            ->assertSee('● Aktif');
+
+        // Check payment manually while unpaid
+        $component->call('checkPaymentStatus', true)
+            ->assertSet('placedOrderPaid', false)
+            ->assertDispatched('toast-notify');
+
+        // Simulate database status changed to paid
+        Order::where('order_code', $orderCode)->update(['payment_status' => 'paid']);
+
+        // Check payment status should now detect paid state
+        $component->call('checkPaymentStatus')
+            ->assertSet('placedOrderPaid', true)
+            ->assertSee('Pesanan Berhasil Dikirim!')
+            ->assertSee('Pembayaran QRIS Terverifikasi (Lunas)');
+    }
 }

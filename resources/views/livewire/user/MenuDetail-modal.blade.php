@@ -22,7 +22,7 @@
                 wire:click="closeDetail"
                 class="absolute top-4 right-4 sm:top-5 sm:right-5 text-slate-400 hover:text-slate-600 p-1.5 rounded-full hover:bg-slate-100 transition-colors cursor-pointer"
             >
-                ✕
+                <x-icon name="close" class="w-4 h-4" />
             </button>
 
             <div class="mb-5">

@@ -38,7 +38,7 @@
                     class="w-9 h-9 rounded-xl border-2 border-[#CBD5E1] bg-white flex items-center justify-center text-slate-700 hover:border-brand-blue hover:text-brand-blue transition font-black text-sm"
                     title="Kembali ke Menu"
                 >
-                    ←
+                    <x-icon name="toleft" class="w-4 h-4 text-slate-700 hover:text-brand-blue transition" />
                 </a>
                 <div>
                     <div class="flex items-center gap-2">
@@ -165,7 +165,8 @@
                 {{-- Progress Bar Line --}}
                 <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden mt-4">
                     <div
-                        class="bg-brand-blue h-full transition-all duration-500 rounded-full @if ($this->currentStep === 1) w-1/4 @elseif ($this->currentStep === 2) w-2/4 @elseif ($this->currentStep === 3) w-3/4 @else w-full @endif"
+                        class="bg-brand-blue h-full transition-all duration-500 rounded-full"
+                        style="width: {{ match ($this->currentStep) { 1 => '25%', 2 => '50%', 3 => '75%', default => '100%' } }};"
                     ></div>
                 </div>
             </div>
@@ -262,7 +263,9 @@
             <div class="relative w-full max-w-sm bg-white rounded-3xl p-6 shadow-2xl border-2 border-slate-200 z-10 text-center">
                 <div class="flex items-center justify-between pb-3 border-b border-slate-100 mb-3">
                     <span class="text-xs font-black text-brand-blue">QRIS NONGKRONG.ID</span>
-                    <button wire:click="$set('showQrisModal', false)" class="text-slate-400 hover:text-slate-700 font-bold text-sm cursor-pointer">✕</button>
+                    <button wire:click="$set('showQrisModal', false)" class="text-slate-400 hover:text-slate-700 p-1 cursor-pointer">
+                        <x-icon name="close" class="w-4 h-4" />
+                    </button>
                 </div>
 
                 {{-- QR Code Visual --}}
@@ -290,7 +293,7 @@
                         wire:click="payWithMidtrans"
                         class="w-full h-11 bg-brand-blue hover:bg-[#003da1] text-white rounded-full font-bold text-xs cursor-pointer shadow-md flex items-center justify-center gap-2 transition"
                     >
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
+                        <x-icon name="card" class="w-4 h-4" />
                         <span>Buka Pop-up Midtrans Snap (Sandbox)</span>
                     </button>
 
@@ -299,7 +302,8 @@
                         wire:click="simulatePayQris"
                         class="w-full h-10 bg-emerald-600 hover:bg-emerald-700 text-white rounded-full font-bold text-xs cursor-pointer shadow-sm flex items-center justify-center gap-2 transition"
                     >
-                        ✓ Simulasikan Pembayaran Berhasil (Instant Backup)
+                        <x-icon name="check" class="w-3.5 h-3.5" />
+                        <span>Simulasikan Pembayaran Berhasil (Instant Backup)</span>
                     </button>
                 </div>
             </div>
