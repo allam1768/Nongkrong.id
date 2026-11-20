@@ -1,8 +1,8 @@
 <?php
-ini_set("display_errors", "1");
-ini_set("display_startup_errors", "1");
-error_reporting(E_ALL);
 
+ini_set('display_errors', '1');
+ini_set('display_startup_errors', '1');
+error_reporting(E_ALL);
 
 /**
  * Entry point for Vercel Serverless PHP Runtime.
@@ -37,10 +37,10 @@ $_SERVER['LARAVEL_STORAGE_PATH'] = $storagePath;
 
 try {
     require __DIR__ . '/../public/index.php';
-} catch (\Throwable ) {
+} catch (\Throwable $e) {
     http_response_code(500);
     echo "<h1>Laravel Boot Exception</h1>";
-    echo "<p><strong>Message:</strong> " . htmlspecialchars(->getMessage()) . "</p>";
-    echo "<p><strong>File:</strong> " . htmlspecialchars(->getFile()) . ":" . ->getLine() . "</p>";
-    echo "<pre>" . htmlspecialchars(->getTraceAsString()) . "</pre>";
+    echo "<p><strong>Message:</strong> " . htmlspecialchars($e->getMessage()) . "</p>";
+    echo "<p><strong>File:</strong> " . htmlspecialchars($e->getFile()) . ":" . $e->getLine() . "</p>";
+    echo "<pre>" . htmlspecialchars($e->getTraceAsString()) . "</pre>";
 }
