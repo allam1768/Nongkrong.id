@@ -36,6 +36,20 @@ class OrderTracking extends Component
 
     public string $orderTime = '';
 
+    public float $subtotalAmount = 0;
+
+    public string $formattedSubtotalAmount = 'Rp 0';
+
+    public float $taxAmount = 0;
+
+    public string $formattedTaxAmount = 'Rp 0';
+
+    public ?string $snapToken = null;
+
+    public ?string $qrisUrl = null;
+
+    public ?string $cashQrUrl = null;
+
     /**
      * @var array<int, array<string, mixed>>
      */
@@ -87,6 +101,32 @@ class OrderTracking extends Component
                 'notes' => $item->item_notes,
             ];
         })->toArray();
+
+        $this->subtotalAmount = (float) array_sum(array_column($this->orderItems, 'subtotal'));
+        $this->taxAmount = max(0, $this->totalAmount - $this->subtotalAmount);
+        $this->formattedSubtotalAmount = 'Rp '.number_format($this->subtotalAmount, 0, ',', '.');
+        $this->formattedTaxAmount = 'Rp '.number_format($this->taxAmount, 0, ',', '.');
+
+        if ($this->paymentStatus !== 'paid') {
+            if ($this->paymentMethod === 'qris') {
+                try {
+                    $midtransService = app(MidtransService::class);
+                    $this->snapToken = $midtransService->getOrCreateSnapToken($order);
+                    $qrisData = $midtransService->getOrCreateQris($order);
+                    if ($qrisData) {
+                        $this->qrisUrl = $qrisData['qr_url'] ?? null;
+                    }
+                } catch (\Throwable $e) {
+                    // Ignore Midtrans error on local tracking view
+                }
+            } elseif ($this->paymentMethod === 'cash') {
+                try {
+                    $this->cashQrUrl = \App\Services\QrCodeService::generateForOrder($this->orderCode);
+                } catch (\Throwable $e) {
+                    // Ignore QR generation failure
+                }
+            }
+        }
     }
 
     /**
@@ -197,6 +237,19 @@ class OrderTracking extends Component
             'ready' => 3,
             'completed' => 4,
             default => 1,
+        };
+    }
+
+    /**
+     * Get progress bar percentage width for the connected stepper.
+     */
+    public function getProgressWidthProperty(): string
+    {
+        return match ($this->currentStep) {
+            1 => '0%',
+            2 => '33.33%',
+            3 => '66.66%',
+            default => '100%',
         };
     }
 

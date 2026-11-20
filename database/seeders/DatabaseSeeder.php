@@ -47,11 +47,29 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
+        $dapur = User::updateOrCreate(
+            ['email' => 'dapur@smartcafe.id'],
+            [
+                'name' => 'Budi Tim Dapur',
+                'password' => Hash::make('password123'),
+                'role' => 'kitchen',
+            ]
+        );
+
+        $cleaner = User::updateOrCreate(
+            ['email' => 'cleaner@smartcafe.id'],
+            [
+                'name' => 'Ahmad Tim Pembersih',
+                'password' => Hash::make('password123'),
+                'role' => 'cleaner',
+            ]
+        );
+
         // 2. DATA MEJA KAFE (Tables)
         $tablesData = [
             ['table_number' => '01', 'capacity' => 2, 'status' => 'available', 'qr_code_token' => 'QR-TBL-01-A9X1', 'access_code' => '7K92A'],
             ['table_number' => '02', 'capacity' => 4, 'status' => 'occupied',  'qr_code_token' => 'QR-TBL-02-B8Y2', 'access_code' => '3X81B'],
-            ['table_number' => '03', 'capacity' => 4, 'status' => 'occupied',  'qr_code_token' => 'QR-TBL-03-C7Z3', 'access_code' => '8Y24C'],
+            ['table_number' => '03', 'capacity' => 4, 'status' => 'dirty',     'qr_code_token' => 'QR-TBL-03-C7Z3', 'access_code' => '8Y24C'],
             ['table_number' => '04', 'capacity' => 6, 'status' => 'available', 'qr_code_token' => 'QR-TBL-04-D6W4', 'access_code' => '6W15D'],
             ['table_number' => '05', 'capacity' => 2, 'status' => 'available', 'qr_code_token' => 'QR-TBL-05-E5V5', 'access_code' => '5V39E'],
             ['table_number' => 'VIP-1', 'capacity' => 8, 'status' => 'reserved', 'qr_code_token' => 'QR-TBL-VIP1-F4U6', 'access_code' => '4U72F'],

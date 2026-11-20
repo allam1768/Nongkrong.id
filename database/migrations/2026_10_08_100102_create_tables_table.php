@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('table_number', 20)->unique();
             $table->unsignedInteger('capacity')->default(4);
-            $table->enum('status', ['available', 'occupied', 'reserved'])->default('available');
+            $table->enum('status', ['available', 'occupied', 'reserved', 'dirty'])->default('available');
             $table->string('qr_code_token', 64)->nullable()->unique();
             $table->string('access_code', 10)->nullable()->unique();
             $table->timestamps();

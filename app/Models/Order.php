@@ -69,6 +69,11 @@ class Order extends Model
         return $this->belongsTo(User::class, 'handled_by');
     }
 
+    public function isPaid(): bool
+    {
+        return in_array($this->payment_status, ['paid', 'settlement'], true);
+    }
+
     public function items(): HasMany
     {
         return $this->hasMany(OrderItem::class);

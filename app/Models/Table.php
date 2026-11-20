@@ -20,6 +20,46 @@ class Table extends Model
         'access_code',
     ];
 
+    public function isAvailable(): bool
+    {
+        return $this->status === 'available';
+    }
+
+    public function isOccupied(): bool
+    {
+        return $this->status === 'occupied';
+    }
+
+    public function isDirtyTable(): bool
+    {
+        return $this->status === 'dirty';
+    }
+
+    public function isReserved(): bool
+    {
+        return $this->status === 'reserved';
+    }
+
+    public function markAvailable(): bool
+    {
+        return $this->update(['status' => 'available']);
+    }
+
+    public function markDirty(): bool
+    {
+        return $this->update(['status' => 'dirty']);
+    }
+
+    public function markOccupied(): bool
+    {
+        return $this->update(['status' => 'occupied']);
+    }
+
+    public function activeOrder(): ?Order
+    {
+        return $this->orders->first();
+    }
+
     public function orders(): HasMany
     {
         return $this->hasMany(Order::class, 'table_id');

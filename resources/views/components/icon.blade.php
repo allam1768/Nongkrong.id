@@ -20,6 +20,11 @@
             'type' => 'stroke',
             'body' => '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>',
         ],
+        'menu' => [
+            'viewBox' => '0 0 24 24',
+            'type' => 'stroke',
+            'body' => '<line x1="4" x2="20" y1="12" y2="12" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/><line x1="4" x2="20" y1="6" y2="6" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/><line x1="4" x2="20" y1="18" y2="18" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>',
+        ],
         'refresh' => [
             'viewBox' => '0 0 24 24',
             'type' => 'stroke',
@@ -34,6 +39,11 @@
             'viewBox' => '0 0 24 24',
             'type' => 'stroke',
             'body' => '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>',
+        ],
+        'download' => [
+            'viewBox' => '0 0 24 24',
+            'type' => 'stroke',
+            'body' => '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/>',
         ],
         'plus' => [
             'viewBox' => '0 0 24 24',
@@ -225,6 +235,21 @@
             'type' => 'stroke',
             'body' => '<polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>',
         ],
+        'paper-plane' => [
+            'viewBox' => '0 0 24 24',
+            'type' => 'stroke',
+            'body' => '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m22 2-7 20-4-9-9-4Z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M22 2 11 13"/>',
+        ],
+        'brush' => [
+            'viewBox' => '0 0 24 24',
+            'type' => 'stroke',
+            'body' => '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m9.06 11.9 8.07-8.06a2.85 2.85 0 1 1 4.03 4.03l-8.06 8.08"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7.07 14.94c-1.66 0-3 1.35-3 3.02 0 1.33-2.5 1.52-2 2.02 1.55 1.55 6-.5 6-2.02 0-1.67-1.34-3.02-3-3.02z"/>',
+        ],
+        'users' => [
+            'viewBox' => '0 0 24 24',
+            'type' => 'stroke',
+            'body' => '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M22 21v-2a4 4 0 0 0-3-3.87"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 3.13a4 4 0 0 1 0 7.75"/>',
+        ],
 
         // App logo text asset
         'NongkrongId' => [
@@ -232,6 +257,13 @@
             'type' => 'fill',
             'size' => 'w-32 h-auto',
             'file' => 'assets/img/NongkrongId.svg',
+        ],
+
+        // App logo mark / mascot icon (Vector_1 hand-drawn smiley)
+        'icont_noks' => [
+            'viewBox' => '0 0 103 111',
+            'type' => 'fill',
+            'file' => 'assets/img/icont_noks.svg',
         ],
     ];
 
@@ -247,10 +279,12 @@
         'toright' => 'arrow-right',
         'coffee-bean' => 'coffee',
         'cofee' => 'coffee',
-        'icont_noks' => 'coffee',
-        'icont-noks' => 'coffee',
-        'noks' => 'coffee',
-        'logo-icon' => 'coffee',
+        'icont_noks' => 'icont_noks',
+        'icont-noks' => 'icont_noks',
+        'noks' => 'icont_noks',
+        'logo-icon' => 'icont_noks',
+        'vector_1' => 'icont_noks',
+        'Vector_1' => 'icont_noks',
         'star' => 'star',
         'Star-ic' => 'star',
         'cart' => 'shopping-bag',
@@ -313,7 +347,8 @@
                     $raw = file_get_contents($path);
                     $start = strpos($raw, '>') + 1;
                     $end = strrpos($raw, '</svg>');
-                    $fileCache[$fileKey] = trim(substr($raw, $start, $end - $start));
+                    $extracted = trim(substr($raw, $start, $end - $start));
+                    $fileCache[$fileKey] = preg_replace('/fill="#[0-9a-fA-F]+"/i', 'fill="currentColor"', $extracted);
                 } else {
                     $fileCache[$fileKey] = '';
                 }

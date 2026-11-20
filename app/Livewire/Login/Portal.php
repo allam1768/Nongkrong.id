@@ -85,6 +85,9 @@ class Portal extends Component
         $this->selectedRole = $role;
 
         if ($role === 'customer') {
+            if (Auth::check()) {
+                Auth::logout();
+            }
             $this->openTableModal();
         } elseif ($role === 'employee') {
             $this->openLogin();
@@ -148,12 +151,18 @@ class Portal extends Component
                 }
 
                 if ($user->role === 'cashier') {
-                    $this->redirectRoute('staff.cashier-register', navigate: true);
+                    $this->redirectRoute('staff.cashier-tables', navigate: true);
 
                     return;
                 }
 
-                if (in_array($user->role, ['staff', 'barista'], true)) {
+                if ($user->role === 'cleaner') {
+                    $this->redirectRoute('staff.cleaning-board', navigate: true);
+
+                    return;
+                }
+
+                if (in_array($user->role, ['staff', 'barista', 'kitchen'], true)) {
                     $this->redirectRoute('staff.kitchen-board', navigate: true);
 
                     return;
@@ -179,6 +188,9 @@ class Portal extends Component
      */
     public function openTableModal(): void
     {
+        if (Auth::check()) {
+            Auth::logout();
+        }
         $this->selectedRole = 'customer';
         session(['role' => 'customer']);
         $this->showTableModal = true;
@@ -194,6 +206,7 @@ class Portal extends Component
     {
         $this->showTableModal = false;
         $this->resetValidation();
+        $this->triggerToast('Pemilihan meja dibatalkan.');
     }
 
     /**
@@ -221,6 +234,12 @@ class Portal extends Component
 
         if ($table->status === 'occupied') {
             $this->addError('tableCode', "Meja {$table->table_number} saat ini sedang terisi (Occupied).");
+
+            return;
+        }
+
+        if ($table->status === 'dirty') {
+            $this->addError('tableCode', "Meja {$table->table_number} sedang disiapkan dan dibersihkan oleh tim kami. Silakan pilih meja lain atau tunggu sebentar.");
 
             return;
         }
@@ -253,6 +272,12 @@ class Portal extends Component
             return;
         }
 
+        if ($table->status === 'dirty') {
+            $this->addError('tableCode', "Meja {$table->table_number} sedang dibersihkan oleh tim kami. Silakan pilih meja lain.");
+
+            return;
+        }
+
         if ($table->status === 'reserved') {
             $this->addError('tableCode', "Meja {$table->table_number} telah direservasi.");
 
@@ -261,6 +286,7 @@ class Portal extends Component
 
         $this->showScannerModal = false;
         $this->applySelectedTable($table);
+        $this->redirectRoute('customer.order', navigate: true);
     }
 
     /**
@@ -303,6 +329,26 @@ class Portal extends Component
             return null;
         }
 
+        // 0. Extract token from URL or query parameter if input is a URL or query string
+        if (str_contains($input, 'http://') || str_contains($input, 'https://') || str_contains($input, '?') || str_contains($input, 'qr=')) {
+            $queryString = parse_url($input, PHP_URL_QUERY);
+            if ($queryString) {
+                parse_str($queryString, $queryParams);
+                if (! empty($queryParams['qr'])) {
+                    $input = trim((string) $queryParams['qr']);
+                }
+            }
+        }
+
+        // 0b. If input still contains a QR token pattern (e.g. QR-TBL-01-A9X1)
+        if (preg_match('/(QR-TBL-[A-Za-z0-9_-]+)/i', $input, $matches)) {
+            $matchedToken = $matches[1];
+            $table = Table::whereRaw('UPPER(qr_code_token) = ?', [strtoupper($matchedToken)])->first();
+            if ($table) {
+                return $table;
+            }
+        }
+
         $upper = strtoupper($input);
 
         // 1. Direct match on access_code
@@ -318,7 +364,7 @@ class Portal extends Component
         }
 
         // 3. Exact match on qr_code_token
-        $table = Table::where('qr_code_token', $input)->first();
+        $table = Table::whereRaw('UPPER(qr_code_token) = ?', [$upper])->first();
         if ($table) {
             return $table;
         }
@@ -384,6 +430,15 @@ class Portal extends Component
     {
         $this->showQuickOrderModal = false;
         $this->resetValidation();
+        $this->triggerToast('Pemesanan dibatalkan. Meja belum disimpan.');
+    }
+
+    /**
+     * Dispatch browser toast notification.
+     */
+    protected function triggerToast(string $message): void
+    {
+        $this->dispatch('toast-notify', message: $message);
     }
 
     /**

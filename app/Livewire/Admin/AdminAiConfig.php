@@ -3,7 +3,10 @@
 namespace App\Livewire\Admin;
 
 use App\Livewire\Concerns\HasLogout;
+use App\Livewire\Concerns\RequiresAdminRole;
 use App\Models\Menu;
+use App\Models\Setting;
+use App\Services\AiBaristaService;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 use Livewire\Component;
@@ -13,6 +16,7 @@ use Livewire\Component;
 class AdminAiConfig extends Component
 {
     use HasLogout;
+    use RequiresAdminRole;
 
     public string $model = 'gemini-1.5-flash';
 
@@ -35,6 +39,15 @@ class AdminAiConfig extends Component
 
     public function mount(): void
     {
+        $config = Setting::get('ai_config');
+        if (is_array($config)) {
+            $this->model = $config['model'] ?? $this->model;
+            $this->tonePersona = $config['tonePersona'] ?? $this->tonePersona;
+            $this->temperature = isset($config['temperature']) ? (float) $config['temperature'] : $this->temperature;
+            $this->upsellStrategy = $config['upsellStrategy'] ?? $this->upsellStrategy;
+            $this->systemPrompt = $config['systemPrompt'] ?? $this->systemPrompt;
+        }
+
         $this->chatMessages = [
             [
                 'role' => 'assistant',
@@ -45,6 +58,22 @@ class AdminAiConfig extends Component
 
     public function saveConfig(): void
     {
+        $this->validate([
+            'model' => 'required|string|in:gemini-1.5-flash,gemini-1.5-pro',
+            'tonePersona' => 'required|string|in:friendly,efficient,trendy',
+            'temperature' => 'required|numeric|min:0.2|max:1.0',
+            'upsellStrategy' => 'required|string|in:soft,balanced,proactive',
+            'systemPrompt' => 'required|string|min:10|max:2000',
+        ]);
+
+        Setting::set('ai_config', [
+            'model' => $this->model,
+            'tonePersona' => $this->tonePersona,
+            'temperature' => (float) $this->temperature,
+            'upsellStrategy' => $this->upsellStrategy,
+            'systemPrompt' => $this->systemPrompt,
+        ]);
+
         $this->triggerToast('Konfigurasi Gemini AI Barista berhasil disimpan!');
     }
 
@@ -61,8 +90,10 @@ class AdminAiConfig extends Component
         ];
         $this->testInput = '';
 
-        // Generate dynamic contextual barista response based on tuning and menus
-        $response = $this->generateSimulatedResponse($query);
+        // Generate response via AiBaristaService (connected to 9Router with live fallback)
+        $aiService = app(AiBaristaService::class);
+        $result = $aiService->chat($query, 'admin-tuner');
+        $response = $result['text'] ?? 'Maaf, terjadi kendala saat memproses jawaban.';
 
         $this->chatMessages[] = [
             'role' => 'assistant',

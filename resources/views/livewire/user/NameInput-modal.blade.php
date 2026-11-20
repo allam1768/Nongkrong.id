@@ -1,14 +1,28 @@
-{{-- Quick Order Full Screen Modal (Input Nama Pelanggan) --}}
 <div
-    x-data="{ open: @entangle('showQuickOrderModal') }"
+    x-data="{
+        open: @entangle('showQuickOrderModal'),
+        showConfirmExit: false,
+        attemptExit() {
+            this.showConfirmExit = true;
+        },
+        cancelExit() {
+            this.showConfirmExit = false;
+        },
+        confirmExitAction() {
+            this.showConfirmExit = false;
+            this.open = false;
+            $wire.closeQuickOrder();
+        }
+    }"
     x-show="open"
     x-cloak
-    @keydown.escape.window="open = false; $wire.closeQuickOrder()"
+    @keydown.escape.window="if (open) { attemptExit(); }"
     class="fixed inset-0 z-50 flex items-center justify-center p-0 sm:p-6"
     role="dialog"
     aria-modal="true"
     aria-labelledby="quick-order-title"
 >
+
     {{-- Backdrop Overlay (Only visible on tablet/desktop centered dialog) --}}
     <div
         x-show="open"
@@ -18,8 +32,8 @@
         x-transition:leave="ease-in duration-200"
         x-transition:leave-start="opacity-100"
         x-transition:leave-end="opacity-0"
-        @click="open = false; $wire.closeQuickOrder()"
-        class="fixed inset-0 bg-slate-900/40 backdrop-blur-xs transition-opacity hidden sm:block"
+        @click="attemptExit()"
+        class="fixed inset-0 bg-slate-900/40 backdrop-blur-xs transition-opacity hidden sm:block cursor-pointer"
     ></div>
 
     {{-- Dialog Box: Full Screen on Mobile, Centered Modal on Tablet/Desktop --}}
@@ -34,7 +48,44 @@
         class="relative w-full h-full sm:h-auto min-h-dvh sm:min-h-0 sm:max-w-md bg-white rounded-none sm:rounded-3xl shadow-none sm:shadow-2xl sm:border border-slate-100 z-10 transition-all select-auto flex flex-col justify-between p-6 sm:p-8 overflow-y-auto overflow-x-hidden"
         @click.stop
     >
-
+        {{-- Confirmation overlay before leaving name input --}}
+        <div
+            x-show="showConfirmExit"
+            x-cloak
+            x-transition:enter="ease-out duration-200"
+            x-transition:enter-start="opacity-0 scale-95"
+            x-transition:enter-end="opacity-100 scale-100"
+            x-transition:leave="ease-in duration-150"
+            x-transition:leave-start="opacity-100 scale-100"
+            x-transition:leave-end="opacity-0 scale-95"
+            class="absolute inset-0 z-30 bg-slate-900/80 backdrop-blur-xs flex items-center justify-center p-4 rounded-none sm:rounded-3xl"
+        >
+            <div class="bg-white rounded-2xl p-5 max-w-xs w-full text-center shadow-2xl border border-slate-200 space-y-3">
+                <div class="w-10 h-10 mx-auto rounded-full bg-amber-50 text-amber-600 flex items-center justify-center">
+                    <x-icon name="alert-circle" class="w-5 h-5 text-amber-600" />
+                </div>
+                <h4 class="text-sm font-black text-slate-900">Batalkan Pemesanan?</h4>
+                <p class="text-xs text-slate-500 leading-relaxed">
+                    Meja Anda sudah terhubung. Jika keluar sekarang, nama pemesan belum tersimpan.
+                </p>
+                <div class="flex gap-2 pt-1">
+                    <button
+                        type="button"
+                        @click="cancelExit()"
+                        class="flex-1 py-2 bg-brand-blue hover:bg-[#003da1] text-white rounded-xl text-xs font-bold transition cursor-pointer"
+                    >
+                        Lanjut Isi Nama
+                    </button>
+                    <button
+                        type="button"
+                        @click="confirmExitAction()"
+                        class="flex-1 py-2 bg-slate-100 hover:bg-rose-50 hover:text-rose-600 text-slate-700 rounded-xl text-xs font-bold transition cursor-pointer"
+                    >
+                        Ya, Batalkan
+                    </button>
+                </div>
+            </div>
+        </div>
 
         {{-- Top Navigation Bar --}}
         <div class="relative w-full flex items-center justify-between shrink-0 pt-1 sm:pt-0 z-20">
@@ -46,22 +97,30 @@
                 title="Ganti Meja"
                 aria-label="Ganti Meja"
             >
-
-            <x-icon
-                name="toleft"
-                size="w-4 h-4"
-                class="text-brand-blue"
-            />
+                <x-icon
+                    name="toleft"
+                    size="w-4 h-4"
+                    class="text-brand-blue"
+                />
             </button>
 
             <div class="absolute left-1/2 -translate-x-1/2 flex items-center justify-center pointer-events-none select-none">
                <x-icon
-                name="logo"
+                    name="logo"
                     class="text-brand-blue h-7 sm:h-6 w-auto object-contain select-none"
                 />
             </div>
 
-
+            {{-- Right: Close X Button --}}
+            <button
+                type="button"
+                @click="attemptExit()"
+                class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-400 hover:text-slate-700 flex items-center justify-center active:scale-90 transition-all cursor-pointer focus:outline-none border border-slate-200/80 z-10"
+                title="Batal & Keluar"
+                aria-label="Batal & Keluar"
+            >
+                <x-icon name="close" class="w-4 h-4 text-slate-400 hover:text-slate-700" />
+            </button>
         </div>
 
         {{-- Center Content: Mascot Box, Table Badge, Greetings & Name Input --}}

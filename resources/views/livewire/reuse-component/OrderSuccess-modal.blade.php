@@ -1,18 +1,34 @@
 {{-- 7. ORDER SUCCESS & PAYMENT SIMULATOR MODAL --}}
 @if ($showOrderSuccessModal)
     <div
-        x-data
+        x-data="{
+            showConfirmClose: false,
+            attemptClose() {
+                @if (! $placedOrderPaid)
+                    this.showConfirmClose = true;
+                @else
+                    $wire.closeOrderSuccess();
+                @endif
+            },
+            cancelClose() {
+                this.showConfirmClose = false;
+            },
+            confirmCloseAction() {
+                this.showConfirmClose = false;
+                $wire.closeOrderSuccess();
+            }
+        }"
         class="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6"
         role="dialog"
         aria-modal="true"
     >
         {{-- Polling watcher for Auto Cek when enabled and order is still pending --}}
         @if ($autoCheckPayment && ! $placedOrderPaid)
-            <div wire:poll.3s="checkPaymentStatus" class="hidden"></div>
+            <div wire:poll.5s="checkPaymentStatus" class="hidden"></div>
         @endif
 
         <div
-            wire:click="closeOrderSuccess"
+            @click="attemptClose()"
             class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs transition-opacity"
         ></div>
 
@@ -20,6 +36,56 @@
             class="relative w-full max-w-sm sm:max-w-md bg-white rounded-3xl p-6 sm:p-7 shadow-2xl border-2 border-slate-200 z-10 text-center max-h-[92vh] overflow-y-auto"
             @click.stop
         >
+            {{-- Close Button --}}
+            <button
+                type="button"
+                @click="attemptClose()"
+                class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 p-1.5 rounded-full hover:bg-slate-100 active:scale-95 transition-all cursor-pointer focus:outline-none z-20"
+                title="Tutup Modal"
+                aria-label="Tutup Modal"
+            >
+                <x-icon name="close" class="w-4 h-4 text-slate-400 hover:text-slate-600" />
+            </button>
+
+            {{-- Confirmation Prompt before leaving unpaid modal --}}
+            <div
+                x-show="showConfirmClose"
+                x-cloak
+                x-transition:enter="ease-out duration-200"
+                x-transition:enter-start="opacity-0 scale-95"
+                x-transition:enter-end="opacity-100 scale-100"
+                x-transition:leave="ease-in duration-150"
+                x-transition:leave-start="opacity-100 scale-100"
+                x-transition:leave-end="opacity-0 scale-95"
+                class="absolute inset-0 z-30 bg-slate-900/80 backdrop-blur-xs flex items-center justify-center p-4 rounded-3xl"
+            >
+                <div class="bg-white rounded-2xl p-5 max-w-xs w-full text-center shadow-2xl border border-slate-200 space-y-3">
+                    <div class="w-10 h-10 mx-auto rounded-full bg-amber-50 text-amber-600 flex items-center justify-center">
+                        <x-icon name="alert-circle" class="w-5 h-5 text-amber-600" />
+                    </div>
+                    <h4 class="text-sm font-black text-slate-900">Tutup Tiket Pembayaran?</h4>
+                    <p class="text-xs text-slate-500 leading-relaxed">
+                        Pesanan <strong class="text-slate-800 font-mono">#{{ substr((string) $placedOrderCode, -5) }}</strong> tetap tersimpan. Kamu dapat membuka kembali tiket bayar atau memantau status pesanan kapan saja.
+                    </p>
+                    <div class="flex gap-2 pt-1">
+                        <button
+                            type="button"
+                            @click="cancelClose()"
+                            class="flex-1 py-2 bg-brand-blue hover:bg-[#003da1] text-white rounded-xl text-xs font-bold transition cursor-pointer"
+                        >
+                            Lanjut Bayar
+                        </button>
+                        <button
+                            type="button"
+                            @click="confirmCloseAction()"
+                            class="flex-1 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold transition cursor-pointer"
+                        >
+                            Tutup
+                        </button>
+                    </div>
+                </div>
+            </div>
+
             {{-- Header Icon & Title --}}
             @if (! $placedOrderPaid)
                 @if (($placedPaymentMethod ?? $paymentMethod) === 'qris')

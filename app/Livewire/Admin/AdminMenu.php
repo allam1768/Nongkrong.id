@@ -3,6 +3,7 @@
 namespace App\Livewire\Admin;
 
 use App\Livewire\Concerns\HasLogout;
+use App\Livewire\Concerns\RequiresAdminRole;
 use App\Models\Category;
 use App\Models\Menu;
 use Illuminate\Support\Str;
@@ -15,6 +16,7 @@ use Livewire\Component;
 class AdminMenu extends Component
 {
     use HasLogout;
+    use RequiresAdminRole;
 
     public string $search = '';
 

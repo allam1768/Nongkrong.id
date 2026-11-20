@@ -175,6 +175,47 @@ class AdminSuiteTest extends TestCase
             ->assertCount('chatMessages', 3); // initial welcome + user message + bot response
     }
 
+    public function test_admin_can_save_and_persist_ai_config_to_database(): void
+    {
+        Livewire::actingAs($this->admin)
+            ->test(AdminAiConfig::class)
+            ->set('model', 'gemini-1.5-pro')
+            ->set('tonePersona', 'trendy')
+            ->set('temperature', 0.9)
+            ->set('upsellStrategy', 'proactive')
+            ->set('systemPrompt', 'Instruksi khusus persona AI Barista NONGKRONG.id.')
+            ->call('saveConfig')
+            ->assertDispatched('toast-notify');
+
+        $saved = \App\Models\Setting::get('ai_config');
+        $this->assertIsArray($saved);
+        $this->assertEquals('gemini-1.5-pro', $saved['model']);
+        $this->assertEquals('trendy', $saved['tonePersona']);
+        $this->assertEquals(0.9, $saved['temperature']);
+        $this->assertEquals('proactive', $saved['upsellStrategy']);
+        $this->assertEquals('Instruksi khusus persona AI Barista NONGKRONG.id.', $saved['systemPrompt']);
+
+        // Check if new mount loads from DB
+        Livewire::actingAs($this->admin)
+            ->test(AdminAiConfig::class)
+            ->assertSet('model', 'gemini-1.5-pro')
+            ->assertSet('tonePersona', 'trendy')
+            ->assertSet('temperature', 0.9)
+            ->assertSet('upsellStrategy', 'proactive')
+            ->assertSet('systemPrompt', 'Instruksi khusus persona AI Barista NONGKRONG.id.');
+    }
+
+    public function test_admin_ai_config_validates_inputs(): void
+    {
+        Livewire::actingAs($this->admin)
+            ->test(AdminAiConfig::class)
+            ->set('temperature', 2.5) // exceeds max 1.0
+            ->set('model', 'invalid-model')
+            ->set('systemPrompt', 'pendek') // below min 10
+            ->call('saveConfig')
+            ->assertHasErrors(['temperature', 'model', 'systemPrompt']);
+    }
+
     public function test_admin_can_physically_delete_menu_without_order_history(): void
     {
         $unusedMenu = Menu::create([

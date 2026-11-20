@@ -152,4 +152,81 @@ class KitchenKanbanTest extends TestCase
             'order_status' => 'completed',
         ]);
     }
+
+    public function test_kitchen_kanban_only_displays_paid_orders(): void
+    {
+        $unpaidOrder = Order::create([
+            'order_code' => 'ORD-UNPAID-999',
+            'table_id' => $this->table->id,
+            'customer_name' => 'Unpaid Customer',
+            'order_status' => 'pending',
+            'payment_status' => 'unpaid',
+            'payment_method' => 'qris',
+            'total_amount' => 20000,
+        ]);
+
+        $paidOrder = Order::create([
+            'order_code' => 'ORD-PAID-888',
+            'table_id' => $this->table->id,
+            'customer_name' => 'Paid Customer',
+            'order_status' => 'pending',
+            'payment_status' => 'paid',
+            'payment_method' => 'qris',
+            'total_amount' => 20000,
+        ]);
+
+        Livewire::actingAs($this->barista)
+            ->test(KitchenKanban::class)
+            ->assertSee('ORD-PAID-888')
+            ->assertDontSee('ORD-UNPAID-999');
+    }
+
+    public function test_completed_orders_reset_daily_and_ordered_newest_first(): void
+    {
+        // Order completed yesterday (should NOT be visible)
+        $yesterdayOrder = Order::create([
+            'order_code' => 'ORD-YESTERDAY-01',
+            'table_id' => $this->table->id,
+            'customer_name' => 'Kemarin',
+            'order_status' => 'completed',
+            'payment_status' => 'paid',
+            'payment_method' => 'cash',
+            'total_amount' => 15000,
+        ]);
+        $yesterdayOrder->timestamps = false;
+        $yesterdayOrder->updated_at = now()->subDays(2);
+        $yesterdayOrder->saveQuietly();
+
+        // Older order completed today
+        $olderToday = Order::create([
+            'order_code' => 'ORD-TODAY-EARLIER',
+            'table_id' => $this->table->id,
+            'customer_name' => 'Tadi Pagi',
+            'order_status' => 'completed',
+            'payment_status' => 'paid',
+            'payment_method' => 'cash',
+            'total_amount' => 15000,
+        ]);
+        $olderToday->timestamps = false;
+        $olderToday->updated_at = now()->subMinutes(10);
+        $olderToday->saveQuietly();
+
+        // Newest order completed today
+        $newestToday = Order::create([
+            'order_code' => 'ORD-TODAY-NEWEST',
+            'table_id' => $this->table->id,
+            'customer_name' => 'Baru Selesai',
+            'order_status' => 'completed',
+            'payment_status' => 'paid',
+            'payment_method' => 'cash',
+            'total_amount' => 15000,
+        ]);
+
+        Livewire::actingAs($this->barista)
+            ->test(KitchenKanban::class)
+            ->assertSee('ORD-TODAY-NEWEST')
+            ->assertSee('ORD-TODAY-EARLIER')
+            ->assertDontSee('ORD-YESTERDAY-01')
+            ->assertSeeInOrder(['ORD-TODAY-NEWEST', 'ORD-TODAY-EARLIER']);
+    }
 }

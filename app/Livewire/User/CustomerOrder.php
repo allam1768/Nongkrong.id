@@ -12,6 +12,7 @@ use App\Services\QrCodeService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Livewire\Attributes\Layout;
+use Livewire\Attributes\On;
 use Livewire\Attributes\Title;
 use Livewire\Attributes\Url;
 use Livewire\Component;
@@ -79,9 +80,15 @@ class CustomerOrder extends Component
 
     public int $detailQuantity = 1;
 
+    public bool $detailIsBeverage = true;
+
     public string $detailTemperature = 'cold';
 
     public string $detailSugar = 'normal';
+
+    public string $detailServing = 'warm';
+
+    public string $detailSauce = 'standard';
 
     public string $detailNotes = '';
 
@@ -119,31 +126,6 @@ class CustomerOrder extends Component
 
     public bool $autoCheckPayment = true;
 
-    // Barista AI Modal State
-    public bool $showAiModal = false;
-
-    public string $aiMoodInput = '';
-
-    public ?string $aiRecommendationResponse = null;
-
-    /**
-     * @var array<int, array<string, mixed>>
-     */
-    public array $aiRecommendedMenus = [];
-
-    /**
-     * Quick mood selection chips for AI Barista.
-     *
-     * @var array<string, string>
-     */
-    public array $moodChips = [
-        'Sweet & Creamy' => '🍯 Manis & Creamy',
-        'Bold & Strong' => '☕ Bold & Kuat',
-        'Fresh & Fruity' => '🧊 Segar Dingin',
-        'Pastry & Snack' => '🥐 Cemilan Gurih',
-        'Rich Chocolate' => '🍫 Cokelat Mewah',
-    ];
-
     // Toast notification
     public ?string $toastMessage = null;
 
@@ -154,6 +136,15 @@ class CustomerOrder extends Component
     {
         if (! session()->has('table_id')) {
             session()->flash('warning', 'Silakan pilih meja terlebih dahulu sebelum memesan.');
+            $this->redirectRoute('portal', navigate: true);
+
+            return;
+        }
+
+        $table = Table::find((int) session('table_id'));
+        if (! $table || $table->status === 'dirty') {
+            session()->forget(['table_id', 'table_number', 'access_code']);
+            session()->flash('warning', 'Meja ini sedang dibersihkan atau tidak tersedia. Silakan pilih meja lain.');
             $this->redirectRoute('portal', navigate: true);
 
             return;
@@ -170,6 +161,10 @@ class CustomerOrder extends Component
             foreach ($savedCart as $key => $item) {
                 $this->cart[$key] = $this->formatCartItem((array) $item);
             }
+        }
+
+        if (session()->has('active_order_code') && ! $this->placedOrderCode) {
+            $this->placedOrderCode = (string) session('active_order_code');
         }
 
         $this->calculateCartTotals();
@@ -196,14 +191,18 @@ class CustomerOrder extends Component
      */
     public function quickAddToCart(int $menuId): void
     {
-        $menu = Menu::find($menuId);
+        $menu = Menu::with('category')->find($menuId);
         if (! $menu || ! $menu->is_available) {
             $this->triggerToast('Menu tidak tersedia saat ini.');
 
             return;
         }
 
-        $itemKey = $this->generateCartKey($menu->id, 'cold', 'normal', '');
+        $isBeverage = $menu->isBeverage();
+        $opt1 = $isBeverage ? 'cold' : 'warm';
+        $opt2 = $isBeverage ? 'normal' : 'standard';
+
+        $itemKey = $this->generateCartKey($menu->id, $opt1, $opt2, '');
 
         if (isset($this->cart[$itemKey])) {
             $this->cart[$itemKey]['quantity']++;
@@ -215,8 +214,11 @@ class CustomerOrder extends Component
                 'price' => (float) $menu->price,
                 'quantity' => 1,
                 'subtotal' => (float) $menu->price,
-                'temperature' => 'cold',
-                'sugar' => 'normal',
+                'is_beverage' => $isBeverage,
+                'temperature' => $isBeverage ? 'cold' : null,
+                'sugar' => $isBeverage ? 'normal' : null,
+                'serving' => ! $isBeverage ? 'warm' : null,
+                'sauce' => ! $isBeverage ? 'standard' : null,
                 'notes' => '',
             ];
         }
@@ -228,6 +230,7 @@ class CustomerOrder extends Component
     /**
      * Open menu item customization modal.
      */
+    #[On('open-menu-detail')]
     public function openDetail(int $menuId): void
     {
         $menu = Menu::with('category')->find($menuId);
@@ -241,11 +244,14 @@ class CustomerOrder extends Component
         $this->detailMenuPrice = (float) $menu->price;
         $this->detailMenuTaste = (array) ($menu->taste_profile ?? []);
         $this->detailMenuCategory = $menu->category?->name;
+        $this->detailIsBeverage = $menu->isBeverage();
 
         // Reset customization inputs
         $this->detailQuantity = 1;
         $this->detailTemperature = 'cold';
         $this->detailSugar = 'normal';
+        $this->detailServing = 'warm';
+        $this->detailSauce = 'standard';
         $this->detailNotes = '';
 
         $this->updateDetailFormattedPrices();
@@ -259,6 +265,39 @@ class CustomerOrder extends Component
     {
         $this->showDetailModal = false;
         $this->detailMenuId = null;
+    }
+
+    /**
+     * Open menu item customization modal by name (e.g. from AI recommendation).
+     */
+    #[On('open-menu-detail-by-name')]
+    public function openDetailByName(string $name): void
+    {
+        $clean = trim($name);
+        if ($clean === '') {
+            return;
+        }
+
+        $menu = Menu::where('name', 'like', "%{$clean}%")
+            ->orWhere('slug', 'like', '%' . \Illuminate\Support\Str::slug($clean) . '%')
+            ->first();
+
+        if (! $menu) {
+            // Try matching each individual word
+            $words = explode(' ', $clean);
+            foreach ($words as $word) {
+                if (strlen($word) >= 4) {
+                    $menu = Menu::where('name', 'like', "%{$word}%")->first();
+                    if ($menu) {
+                        break;
+                    }
+                }
+            }
+        }
+
+        if ($menu) {
+            $this->openDetail($menu->id);
+        }
     }
 
     /**
@@ -301,10 +340,13 @@ class CustomerOrder extends Component
             return;
         }
 
+        $opt1 = $this->detailIsBeverage ? $this->detailTemperature : $this->detailServing;
+        $opt2 = $this->detailIsBeverage ? $this->detailSugar : $this->detailSauce;
+
         $itemKey = $this->generateCartKey(
             $this->detailMenuId,
-            $this->detailTemperature,
-            $this->detailSugar,
+            $opt1,
+            $opt2,
             $this->detailNotes
         );
 
@@ -320,8 +362,11 @@ class CustomerOrder extends Component
                 'price' => $this->detailMenuPrice,
                 'quantity' => $this->detailQuantity,
                 'subtotal' => $subtotal,
-                'temperature' => $this->detailTemperature,
-                'sugar' => $this->detailSugar,
+                'is_beverage' => $this->detailIsBeverage,
+                'temperature' => $this->detailIsBeverage ? $this->detailTemperature : null,
+                'sugar' => $this->detailIsBeverage ? $this->detailSugar : null,
+                'serving' => ! $this->detailIsBeverage ? $this->detailServing : null,
+                'sauce' => ! $this->detailIsBeverage ? $this->detailSauce : null,
                 'notes' => trim($this->detailNotes),
             ];
         }
@@ -448,11 +493,29 @@ class CustomerOrder extends Component
             $computedSubtotal += $lineSubtotal;
 
             $options = [];
-            if (! empty($item['temperature'])) {
-                $options[] = ucfirst($item['temperature']);
-            }
-            if (! empty($item['sugar']) && $item['sugar'] !== 'normal') {
-                $options[] = ucfirst($item['sugar']).' Sugar';
+            $isBeverage = $item['is_beverage'] ?? true;
+            if ($isBeverage) {
+                if (! empty($item['temperature'])) {
+                    $options[] = $item['temperature'] === 'cold' ? 'Dingin' : ($item['temperature'] === 'hot' ? 'Panas' : ucfirst((string) $item['temperature']));
+                }
+                if (! empty($item['sugar']) && $item['sugar'] !== 'normal') {
+                    $options[] = match ($item['sugar']) {
+                        'less' => 'Less Sugar',
+                        'zero' => 'No Sugar',
+                        default => ucfirst((string) $item['sugar']).' Sugar',
+                    };
+                }
+            } else {
+                if (! empty($item['serving'])) {
+                    $options[] = $item['serving'] === 'warm' ? 'Dihangatkan' : 'Suhu Ruang';
+                }
+                if (! empty($item['sauce']) && $item['sauce'] !== 'standard') {
+                    $options[] = match ($item['sauce']) {
+                        'extra_sauce' => 'Extra Saus',
+                        'no_sauce' => 'Tanpa Saus',
+                        default => (string) $item['sauce'],
+                    };
+                }
             }
             if (! empty($item['notes'])) {
                 $options[] = $item['notes'];
@@ -524,6 +587,20 @@ class CustomerOrder extends Component
 
             if ($this->tableId) {
                 Table::where('id', $this->tableId)->where('status', 'available')->update(['status' => 'occupied']);
+
+                // Track AI conversion if customer ordered recommended items
+                $orderedMenuIds = array_column($orderItemsData, 'menu_id');
+                $consultations = \App\Models\AiConsultation::where('table_id', $this->tableId)
+                    ->where('is_converted', false)
+                    ->where('created_at', '>=', now()->subHours(6))
+                    ->get();
+
+                foreach ($consultations as $consultation) {
+                    $recommended = (array) ($consultation->recommended_ids ?? []);
+                    if (!empty(array_intersect($orderedMenuIds, $recommended))) {
+                        $consultation->update(['is_converted' => true]);
+                    }
+                }
             }
 
             // Save order snapshot for confirmation modal
@@ -534,6 +611,13 @@ class CustomerOrder extends Component
             $this->placedOrderItems = array_column($orderItemsData, 'item_snapshot');
             $this->placedPaymentMethod = $this->paymentMethod;
             $this->placedOrderPaid = false;
+
+            session(['active_order_code' => $order->order_code]);
+            $recentOrders = session('recent_order_codes', []);
+            if (! in_array($order->order_code, $recentOrders, true)) {
+                $recentOrders[] = $order->order_code;
+            }
+            session(['recent_order_codes' => $recentOrders]);
         });
 
         // Clear cart after successful checkout
@@ -694,11 +778,53 @@ class CustomerOrder extends Component
     /**
      * Redirect customer to real-time live order tracking.
      */
-    public function goToTracking(): void
+    public function goToTracking(?string $code = null): void
     {
-        if ($this->placedOrderCode) {
-            $this->redirectRoute('order.tracking', ['code' => $this->placedOrderCode], navigate: true);
+        $orderCode = $code ?: $this->placedOrderCode ?: session('active_order_code');
+        if ($orderCode) {
+            $this->redirectRoute('order.tracking', ['code' => $orderCode], navigate: true);
         }
+    }
+
+    /**
+     * Reopen order confirmation / payment modal.
+     */
+    public function reopenOrderSuccess(?string $code = null): void
+    {
+        $orderCode = $code ?: $this->placedOrderCode ?: session('active_order_code');
+        if (! $orderCode) {
+            $this->triggerToast('Tidak ada data pesanan aktif.');
+
+            return;
+        }
+
+        $order = Order::with('items.menu')->where('order_code', $orderCode)->first();
+        if (! $order) {
+            $this->triggerToast('Data pesanan tidak ditemukan.');
+
+            return;
+        }
+
+        $this->placedOrderCode = $order->order_code;
+        $this->placedOrderTime = $order->created_at ? $order->created_at->format('H:i') : now()->format('H:i');
+        $this->placedOrderTotal = (float) $order->total_amount;
+        $this->formattedPlacedOrderTotal = 'Rp '.number_format($this->placedOrderTotal, 0, ',', '.');
+        $this->placedPaymentMethod = $order->payment_method;
+        $this->placedOrderPaid = in_array($order->payment_status, ['paid', 'settlement'], true);
+
+        if ($this->placedPaymentMethod === 'qris') {
+            $midtransService = app(MidtransService::class);
+            $this->placedSnapToken = $midtransService->getOrCreateSnapToken($order);
+            $qrisData = $midtransService->getOrCreateQris($order);
+            if ($qrisData) {
+                $this->placedQrisUrl = $qrisData['qr_url'] ?? null;
+                $this->placedQrString = $qrisData['qr_string'] ?? null;
+            }
+        } elseif ($this->placedPaymentMethod === 'cash') {
+            $this->placedCashQrUrl = QrCodeService::generateForOrder($this->placedOrderCode);
+        }
+
+        $this->showOrderSuccessModal = true;
     }
 
     /**
@@ -707,7 +833,10 @@ class CustomerOrder extends Component
     public function closeOrderSuccess(): void
     {
         $this->showOrderSuccessModal = false;
-        $this->placedOrderCode = null;
+        if ($this->placedOrderCode) {
+            session(['active_order_code' => $this->placedOrderCode]);
+        }
+        $this->triggerToast('Pesanan disimpan. Pantau status atau buka tiket bayar dari menu atas.');
     }
 
     /**
@@ -739,11 +868,11 @@ class CustomerOrder extends Component
     /**
      * Generate unique hash key for cart item variations.
      */
-    protected function generateCartKey(int $menuId, string $temperature, string $sugar, string $notes): string
+    protected function generateCartKey(int $menuId, string $opt1, string $opt2, string $notes): string
     {
         $cleanNotes = strtolower(trim($notes));
 
-        return md5("{$menuId}_{$temperature}_{$sugar}_{$cleanNotes}");
+        return md5("{$menuId}_{$opt1}_{$opt2}_{$cleanNotes}");
     }
 
     /**
@@ -755,11 +884,29 @@ class CustomerOrder extends Component
     protected function formatCartItem(array $item): array
     {
         $options = [];
-        if (! empty($item['temperature'])) {
-            $options[] = ucfirst((string) $item['temperature']);
-        }
-        if (! empty($item['sugar']) && $item['sugar'] !== 'normal') {
-            $options[] = ucfirst((string) $item['sugar']).' Sugar';
+        $isBeverage = $item['is_beverage'] ?? true;
+        if ($isBeverage) {
+            if (! empty($item['temperature'])) {
+                $options[] = $item['temperature'] === 'cold' ? 'Dingin' : ($item['temperature'] === 'hot' ? 'Panas' : ucfirst((string) $item['temperature']));
+            }
+            if (! empty($item['sugar']) && $item['sugar'] !== 'normal') {
+                $options[] = match ($item['sugar']) {
+                    'less' => 'Less Sugar',
+                    'zero' => 'No Sugar',
+                    default => ucfirst((string) $item['sugar']).' Sugar',
+                };
+            }
+        } else {
+            if (! empty($item['serving'])) {
+                $options[] = $item['serving'] === 'warm' ? 'Dihangatkan' : 'Suhu Ruang';
+            }
+            if (! empty($item['sauce']) && $item['sauce'] !== 'standard') {
+                $options[] = match ($item['sauce']) {
+                    'extra_sauce' => 'Extra Saus',
+                    'no_sauce' => 'Tanpa Saus',
+                    default => (string) $item['sauce'],
+                };
+            }
         }
         if (! empty($item['notes'])) {
             $options[] = (string) $item['notes'];
@@ -810,69 +957,6 @@ class CustomerOrder extends Component
         }
         $this->calculateCartTotals();
         session(['customer_cart' => $this->cart]);
-    }
-
-    /**
-     * Open Barista AI consultation modal.
-     */
-    public function openAiModal(): void
-    {
-        $this->showAiModal = true;
-        if (empty($this->aiRecommendedMenus)) {
-            $this->askAiBarista('Sweet & Creamy');
-        }
-    }
-
-    /**
-     * Close Barista AI consultation modal.
-     */
-    public function closeAiModal(): void
-    {
-        $this->showAiModal = false;
-    }
-
-    /**
-     * Virtual Barista consultation recommendations based on mood or flavor.
-     */
-    public function askAiBarista(string $mood = ''): void
-    {
-        $prompt = ! empty($mood) ? $mood : trim($this->aiMoodInput);
-        if (empty($prompt)) {
-            $prompt = 'Sweet & Creamy';
-        }
-
-        $this->aiMoodInput = $prompt;
-        $cleanPrompt = strtolower($prompt);
-
-        if (str_contains($cleanPrompt, 'bold') || str_contains($cleanPrompt, 'pahit') || str_contains($cleanPrompt, 'strong')) {
-            $this->aiRecommendationResponse = 'Untuk kamu yang butuh dorongan fokus tinggi dengan karakter rasa kopi yang bold & mantap, Barista merekomendasikan ekstraksi Arabika murni kami.';
-            $menus = Menu::whereIn('id', [4, 5])->get();
-        } elseif (str_contains($cleanPrompt, 'fresh') || str_contains($cleanPrompt, 'segar') || str_contains($cleanPrompt, 'dingin') || str_contains($cleanPrompt, 'fruit')) {
-            $this->aiRecommendationResponse = 'Sensasi dingin menyegarkan dengan paduan citrus sparkling atau cold brew fruity siap recharge harimu!';
-            $menus = Menu::whereIn('id', [10, 4])->get();
-        } elseif (str_contains($cleanPrompt, 'snack') || str_contains($cleanPrompt, 'cemilan') || str_contains($cleanPrompt, 'makan') || str_contains($cleanPrompt, 'croissant')) {
-            $this->aiRecommendationResponse = 'Pasangan sempurna untuk sesi nongkrong santai: pastry butter Prancis renyah atau kentang truffle parmesan gurih!';
-            $menus = Menu::whereIn('id', [12, 14])->get();
-        } elseif (str_contains($cleanPrompt, 'cokelat') || str_contains($cleanPrompt, 'chocolate') || str_contains($cleanPrompt, 'manis')) {
-            $this->aiRecommendationResponse = 'Kombinasi Belgian chocolate mewah dan cake leleh hangat memberikan mood booster instan!';
-            $menus = Menu::whereIn('id', [8, 13])->get();
-        } else {
-            // Default: Sweet & Creamy
-            $this->aiRecommendationResponse = 'Pilihan racikan manis lembut paling favorit pengunjung! Susu segar dipadu gula aren alami dan saus karamel legit.';
-            $menus = Menu::whereIn('id', [1, 2])->get();
-        }
-
-        $this->aiRecommendedMenus = $menus->map(function ($menu) {
-            return [
-                'id' => $menu->id,
-                'name' => $menu->name,
-                'price' => (float) $menu->price,
-                'formatted_price' => 'Rp '.number_format((float) $menu->price, 0, ',', '.'),
-                'description' => $menu->description,
-                'flavor' => $this->getMenuFlavorTag($menu),
-                'visual' => $this->getMenuVisual($menu),
-            ];
-        })->toArray();
     }
 
     /**
@@ -996,9 +1080,32 @@ class CustomerOrder extends Component
             return $menu;
         });
 
+        $recentCodes = session('recent_order_codes', []);
+        if ($this->placedOrderCode && ! in_array($this->placedOrderCode, $recentCodes, true)) {
+            $recentCodes[] = $this->placedOrderCode;
+        }
+
+        $activeOrders = collect();
+        if (! empty($recentCodes)) {
+            $activeOrders = Order::whereIn('order_code', $recentCodes)
+                ->whereIn('order_status', ['pending', 'processing', 'ready'])
+                ->latest()
+                ->get();
+        } elseif ($this->tableId) {
+            $activeOrders = Order::where('table_id', $this->tableId)
+                ->whereIn('order_status', ['pending', 'processing', 'ready'])
+                ->whereDate('created_at', today())
+                ->latest()
+                ->get();
+        }
+
+        $latestActiveOrder = $activeOrders->first();
+
         return view('livewire.user.CustomerOrder', [
             'categories' => $categories,
             'menus' => $menus,
+            'latestActiveOrder' => $latestActiveOrder,
+            'activeOrders' => $activeOrders,
         ]);
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Livewire\User;
 
 use App\Models\Table;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 use Livewire\Component;
@@ -73,6 +74,11 @@ class TableSelection extends Component
      */
     public function mount(): void
     {
+        // When customer accesses table selection, ensure no administrative credentials leak
+        if (Auth::check()) {
+            Auth::logout();
+        }
+
         $sessionName = (string) session('customer_name', '');
         $this->customerName = ($sessionName === 'Tamu') ? '' : $sessionName;
 
@@ -81,6 +87,14 @@ class TableSelection extends Component
             $this->selectedTableId = (int) session('table_id');
             $this->selectedTableNumber = (string) session('table_number');
             $this->selectedTableAccessCode = session('access_code') ? (string) session('access_code') : null;
+        }
+
+        // Support direct QR code scan via URL query parameter
+        if ($qrParam = request()->query('qr')) {
+            $table = $this->resolveTable((string) $qrParam);
+            if ($table && $table->status === 'available') {
+                $this->applySelectedTable($table);
+            }
         }
     }
 
@@ -119,6 +133,12 @@ class TableSelection extends Component
             return;
         }
 
+        if ($table->status === 'dirty') {
+            $this->addError('tableCode', "Meja {$table->table_number} sedang disiapkan dan dibersihkan oleh tim kami. Silakan pilih meja lain.");
+
+            return;
+        }
+
         if ($table->status === 'reserved') {
             $this->addError('tableCode', "Meja {$table->table_number} saat ini telah direservasi. Silakan hubungi kasir atau pilih meja lain.");
 
@@ -147,6 +167,12 @@ class TableSelection extends Component
             return;
         }
 
+        if ($table->status === 'dirty') {
+            $this->addError('tableCode', "Meja {$table->table_number} sedang dibersihkan oleh tim kami. Silakan pilih meja lain.");
+
+            return;
+        }
+
         if ($table->status === 'reserved') {
             $this->addError('tableCode', "Meja {$table->table_number} telah direservasi.");
 
@@ -155,6 +181,7 @@ class TableSelection extends Component
 
         $this->showScannerModal = false;
         $this->applySelectedTable($table);
+        $this->redirectRoute('customer.order', navigate: true);
     }
 
     /**
@@ -257,6 +284,26 @@ class TableSelection extends Component
             return null;
         }
 
+        // 0. Extract token from URL or query parameter if input is a URL or query string
+        if (str_contains($input, 'http://') || str_contains($input, 'https://') || str_contains($input, '?') || str_contains($input, 'qr=')) {
+            $queryString = parse_url($input, PHP_URL_QUERY);
+            if ($queryString) {
+                parse_str($queryString, $queryParams);
+                if (! empty($queryParams['qr'])) {
+                    $input = trim((string) $queryParams['qr']);
+                }
+            }
+        }
+
+        // 0b. If input still contains a QR token pattern (e.g. QR-TBL-01-A9X1)
+        if (preg_match('/(QR-TBL-[A-Za-z0-9_-]+)/i', $input, $matches)) {
+            $matchedToken = $matches[1];
+            $table = Table::whereRaw('UPPER(qr_code_token) = ?', [strtoupper($matchedToken)])->first();
+            if ($table) {
+                return $table;
+            }
+        }
+
         $upper = strtoupper($input);
 
         // 1. Direct match on access_code
@@ -272,7 +319,7 @@ class TableSelection extends Component
         }
 
         // 3. Exact match on qr_code_token
-        $table = Table::where('qr_code_token', $input)->first();
+        $table = Table::whereRaw('UPPER(qr_code_token) = ?', [$upper])->first();
         if ($table) {
             return $table;
         }

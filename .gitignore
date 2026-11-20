@@ -15,7 +15,7 @@
 /auth.json
 /Hermes_data
 /node_modules
-/public/build
+#/public/build
 /public/fonts-manifest.dev.json
 /public/hot
 /public/storage
@@ -29,3 +29,6 @@ Thumbs.db
 /findings.md
 /progress.md
 /task_plan.md
+
+/public/qrcodes/*
+!/public/qrcodes/.gitkeep

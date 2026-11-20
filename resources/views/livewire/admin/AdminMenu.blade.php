@@ -1,4 +1,4 @@
-<div class="min-h-screen bg-[#F8FAFC] flex flex-col lg:flex-row font-sans">
+<div class="min-h-screen lg:h-screen lg:overflow-hidden bg-[#F8FAFC] flex flex-col lg:flex-row font-sans">
     {{-- Toast Notification --}}
     @include('livewire.reuse-component.Toast-notification')
 
@@ -6,7 +6,7 @@
     @include('livewire.admin.partials.sidebar')
 
     {{-- Main Content --}}
-    <main class="flex-1 p-5 sm:p-8 overflow-y-auto">
+    <main class="flex-1 p-5 sm:p-8 overflow-y-auto lg:h-screen">
         {{-- Header --}}
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b-2 border-slate-200">
             <div>

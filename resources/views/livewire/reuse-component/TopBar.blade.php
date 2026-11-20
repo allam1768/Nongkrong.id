@@ -16,7 +16,7 @@
                     class="w-9 h-9 rounded-xl border-2 border-slate-200 bg-white flex items-center justify-center text-slate-700 hover:border-brand-blue hover:text-brand-blue transition font-black text-sm shrink-0"
                     title="{{ $backTitle }}"
                 >
-                    ←
+                    <x-icon name="arrow-left" class="w-4 h-4" />
                 </a>
             @endif
             <div>

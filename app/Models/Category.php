@@ -28,4 +28,25 @@ class Category extends Model
     {
         return $this->hasMany(Menu::class);
     }
+
+    /**
+     * Determine if this category represents beverages/drinks.
+     */
+    public function isBeverage(): bool
+    {
+        $foodSlugs = ['pastry-bakery', 'meals-snacks', 'food', 'foods', 'snack', 'snacks', 'bakery', 'pastry', 'makanan'];
+        if (in_array($this->slug, $foodSlugs, true)) {
+            return false;
+        }
+
+        $foodKeywords = ['pastry', 'bakery', 'meal', 'snack', 'makanan', 'toast', 'croissant', 'roti'];
+        $name = strtolower($this->name);
+        foreach ($foodKeywords as $kw) {
+            if (str_contains($name, $kw)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
 }

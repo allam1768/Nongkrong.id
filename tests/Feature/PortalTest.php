@@ -141,7 +141,7 @@ class PortalTest extends TestCase
             ->set('loginPassword', 'password123')
             ->call('submitLogin')
             ->assertHasNoErrors()
-            ->assertRedirect(route('staff.cashier-register'));
+            ->assertRedirect(route('staff.cashier-tables'));
     }
 
     public function test_portal_login_redirects_barista_to_kitchen_board(): void

@@ -72,9 +72,10 @@
 
             {{-- Center: Logo NONGKRONG.id --}}
             <div class="flex-1 flex items-center justify-center select-none px-2">
-                <x-icon
-                    name="logo"
-                    class="text-brand-blue h-6 sm:h-7 w-auto object-contain select-none"
+                <img
+                    src="{{ asset('assets/img/NongkrongId-blue.svg') }}"
+                    alt="Nongkrong.id"
+                    class="h-6 sm:h-7 w-auto object-contain select-none"
                 />
             </div>
 

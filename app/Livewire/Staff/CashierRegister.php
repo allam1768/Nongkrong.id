@@ -12,6 +12,7 @@ use App\Services\MidtransService;
 use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
+use Livewire\Attributes\Url;
 use Livewire\Component;
 
 #[Layout('layouts.app')]
@@ -20,6 +21,13 @@ class CashierRegister extends Component
 {
     use HasLogout;
 
+    public function boot(): void
+    {
+        if (! auth()->check() || ! in_array(auth()->user()->role, ['cashier', 'staff', 'admin'], true)) {
+            abort(403, 'Akses tidak diizinkan untuk peran ini.');
+        }
+    }
+
     public string $search = '';
 
     public int $selectedCategoryId = 0;
@@ -27,6 +35,9 @@ class CashierRegister extends Component
     public string $customerName = 'Pelanggan Walk-in';
 
     public int $selectedTableId = 1;
+
+    #[Url]
+    public ?int $table_id = null;
 
     public string $orderType = 'dine_in'; // dine_in, takeaway
 
@@ -49,37 +60,201 @@ class CashierRegister extends Component
 
     public ?string $toastMessage = null;
 
-    // Mobile Table Cash Ticket Scan & Validation State
-    public string $ticketSearch = '';
+    // Customization Modal State for POS Cashier
+    public bool $showCustomModal = false;
 
-    public ?int $selectedTicketOrderId = null;
+    // Table Status & Floor Map Modal State
+    public bool $showTableModal = false;
 
-    public bool $showTicketModal = false;
+    public ?int $customMenuId = null;
 
-    public float $ticketCashGiven = 0;
+    public ?string $customMenuName = null;
 
-    public function mount(): void
+    public ?string $customMenuCategory = null;
+
+    public float $customMenuPrice = 0;
+
+    public string $formattedCustomMenuPrice = 'Rp 0';
+
+    public string $formattedCustomSubtotal = 'Rp 0';
+
+    public bool $customIsBeverage = true;
+
+    public int $customQuantity = 1;
+
+    public string $customTemperature = 'cold';
+
+    public string $customSugar = 'normal';
+
+    public string $customServing = 'warm';
+
+    public string $customSauce = 'standard';
+
+    public string $customNotes = '';
+
+    public function mount(?int $table_id = null): void
     {
-        $firstTable = Table::first();
-        if ($firstTable) {
-            $this->selectedTableId = $firstTable->id;
+        $targetTableId = $table_id ?: $this->table_id ?: (int) request()->query('table_id');
+
+        if ($targetTableId && Table::where('id', $targetTableId)->exists()) {
+            $this->selectedTableId = (int) $targetTableId;
+            $this->table_id = (int) $targetTableId;
+        } else {
+            $availableTable = Table::where('status', 'available')->first();
+            if ($availableTable) {
+                $this->selectedTableId = $availableTable->id;
+            } else {
+                $firstTable = Table::first();
+                if ($firstTable) {
+                    $this->selectedTableId = $firstTable->id;
+                }
+            }
         }
+    }
+
+    public function openTableModal(): void
+    {
+        $this->showTableModal = true;
+    }
+
+    public function closeTableModal(): void
+    {
+        $this->showTableModal = false;
+    }
+
+    public function selectTable(int $tableId): void
+    {
+        $table = Table::find($tableId);
+        if (! $table) {
+            return;
+        }
+
+        if (! $table->isAvailable()) {
+            $this->triggerToast("Meja {$table->table_number} sedang terisi dan tidak dapat dipilih.");
+
+            return;
+        }
+
+        $this->selectedTableId = $table->id;
+        $this->triggerToast("Meja {$table->table_number} (Kosong) dipilih.");
+    }
+
+    public function selectTableAndClose(int $tableId): void
+    {
+        $table = Table::find($tableId);
+        if (! $table || ! $table->isAvailable()) {
+            if ($table) {
+                $this->triggerToast("Meja {$table->table_number} sedang terisi dan tidak dapat dipilih.");
+            }
+
+            return;
+        }
+
+        $this->selectTable($tableId);
+        $this->showTableModal = false;
+    }
+
+    public function updatedSelectedTableId(mixed $value): void
+    {
+        $table = Table::find((int) $value);
+        if ($table && ! $table->isAvailable()) {
+            $available = Table::where('status', 'available')->first();
+            $this->selectedTableId = $available ? $available->id : 0;
+            $this->triggerToast("Meja {$table->table_number} sedang terisi dan tidak dapat dipilih.");
+        }
+    }
+
+    public function markTableDirty(int $tableId): void
+    {
+        $table = Table::find($tableId);
+        if ($table) {
+            $table->update(['status' => 'dirty']);
+            if ((int) $this->selectedTableId === (int) $tableId) {
+                $available = Table::where('status', 'available')->first();
+                $this->selectedTableId = $available ? $available->id : 0;
+            }
+            $this->triggerToast("Meja {$table->table_number} ditandai Kotor. Info diteruskan ke Tim Pembersih!");
+        }
+    }
+
+    public function markTableAvailable(int $tableId): void
+    {
+        $table = Table::find($tableId);
+        if ($table) {
+            $table->update(['status' => 'available']);
+            $this->triggerToast("Meja {$table->table_number} sekarang Kosong & Siap digunakan.");
+        }
+    }
+
+    public function markTableOccupied(int $tableId): void
+    {
+        $table = Table::find($tableId);
+        if ($table) {
+            $table->update(['status' => 'occupied']);
+            $this->triggerToast("Meja {$table->table_number} ditandai Terisi (Occupied).");
+        }
+    }
+
+    public function toggleTableStatus(int $tableId): void
+    {
+        $table = Table::find($tableId);
+        if (! $table) {
+            return;
+        }
+
+        // Toggle status between available and occupied, or reset to available
+        $newStatus = match ($table->status) {
+            'available' => 'occupied',
+            'occupied' => 'available',
+            default => 'available',
+        };
+        $table->update(['status' => $newStatus]);
+
+        $label = match ($newStatus) {
+            'available' => 'Kosong (Tersedia)',
+            'occupied' => 'Terisi (Occupied)',
+            'dirty' => 'Kotor (Perlu Dibersihkan)',
+            default => $newStatus,
+        };
+        $this->triggerToast("Meja {$table->table_number} sekarang ditandai: {$label}");
+    }
+
+    public function getAvailableTablesCountProperty(): int
+    {
+        return Table::where('status', 'available')->count();
+    }
+
+    public function getDirtyTablesCountProperty(): int
+    {
+        return Table::where('status', 'dirty')->count();
+    }
+
+    public function getOccupiedTablesCountProperty(): int
+    {
+        return Table::where('status', 'occupied')->count();
+    }
+
+    public function getTotalTablesCountProperty(): int
+    {
+        return Table::count();
     }
 
     public function addToCart(int $menuId): void
     {
-        $menu = Menu::find($menuId);
+        $menu = Menu::with('category')->find($menuId);
         if (! $menu) {
             return;
         }
 
-        if (isset($this->cart[$menuId])) {
-            $this->cart[$menuId]['quantity']++;
-            $this->cart[$menuId]['subtotal'] = $this->cart[$menuId]['quantity'] * $this->cart[$menuId]['price'];
-            $this->cart[$menuId]['formatted_subtotal'] = 'Rp '.number_format($this->cart[$menuId]['subtotal'], 0, ',', '.');
+        $key = (string) $menuId;
+        $price = (float) $menu->price;
+
+        if (isset($this->cart[$key])) {
+            $this->cart[$key]['quantity']++;
+            $this->cart[$key]['subtotal'] = $this->cart[$key]['quantity'] * $this->cart[$key]['price'];
+            $this->cart[$key]['formatted_subtotal'] = 'Rp '.number_format($this->cart[$key]['subtotal'], 0, ',', '.');
         } else {
-            $price = (float) $menu->price;
-            $this->cart[$menuId] = [
+            $this->cart[$key] = [
                 'id' => $menu->id,
                 'name' => $menu->name,
                 'price' => $price,
@@ -87,31 +262,153 @@ class CashierRegister extends Component
                 'quantity' => 1,
                 'subtotal' => $price,
                 'formatted_subtotal' => 'Rp '.number_format($price, 0, ',', '.'),
+                'is_beverage' => $menu->isBeverage(),
+                'notes' => null,
+                'options_summary' => null,
             ];
         }
 
         $this->triggerToast("Ditambahkan: {$menu->name}");
     }
 
-    public function updateQuantity(int $menuId, int $delta): void
+    public function openCustomModal(int $menuId): void
     {
-        if (! isset($this->cart[$menuId])) {
+        $menu = Menu::with('category')->find($menuId);
+        if (! $menu) {
             return;
         }
 
-        $this->cart[$menuId]['quantity'] += $delta;
+        $this->customMenuId = $menu->id;
+        $this->customMenuName = $menu->name;
+        $this->customMenuCategory = $menu->category?->name;
+        $this->customMenuPrice = (float) $menu->price;
+        $this->customIsBeverage = $menu->isBeverage();
 
-        if ($this->cart[$menuId]['quantity'] <= 0) {
-            unset($this->cart[$menuId]);
-        } else {
-            $this->cart[$menuId]['subtotal'] = $this->cart[$menuId]['quantity'] * $this->cart[$menuId]['price'];
-            $this->cart[$menuId]['formatted_subtotal'] = 'Rp '.number_format($this->cart[$menuId]['subtotal'], 0, ',', '.');
+        $this->customQuantity = 1;
+        $this->customTemperature = 'cold';
+        $this->customSugar = 'normal';
+        $this->customServing = 'warm';
+        $this->customSauce = 'standard';
+        $this->customNotes = '';
+
+        $this->updateCustomFormattedPrices();
+        $this->showCustomModal = true;
+    }
+
+    public function closeCustomModal(): void
+    {
+        $this->showCustomModal = false;
+        $this->customMenuId = null;
+    }
+
+    public function incrementCustomQty(): void
+    {
+        if ($this->customQuantity < 50) {
+            $this->customQuantity++;
+            $this->updateCustomFormattedPrices();
         }
     }
 
-    public function removeFromCart(int $menuId): void
+    public function decrementCustomQty(): void
     {
-        unset($this->cart[$menuId]);
+        if ($this->customQuantity > 1) {
+            $this->customQuantity--;
+            $this->updateCustomFormattedPrices();
+        }
+    }
+
+    protected function updateCustomFormattedPrices(): void
+    {
+        $this->formattedCustomMenuPrice = 'Rp '.number_format($this->customMenuPrice, 0, ',', '.');
+        $this->formattedCustomSubtotal = 'Rp '.number_format($this->customQuantity * $this->customMenuPrice, 0, ',', '.');
+    }
+
+    public function addCustomizedToCart(): void
+    {
+        if (! $this->customMenuId) {
+            return;
+        }
+
+        $options = [];
+        if ($this->customIsBeverage) {
+            $options[] = $this->customTemperature === 'cold' ? 'Dingin' : 'Panas';
+            if ($this->customSugar !== 'normal') {
+                $options[] = match ($this->customSugar) {
+                    'less' => 'Less Sugar',
+                    'zero' => 'No Sugar',
+                    default => ucfirst($this->customSugar).' Sugar',
+                };
+            }
+        } else {
+            $options[] = $this->customServing === 'warm' ? 'Dihangatkan' : 'Suhu Ruang';
+            if ($this->customSauce !== 'standard') {
+                $options[] = match ($this->customSauce) {
+                    'extra_sauce' => 'Extra Saus',
+                    'no_sauce' => 'Tanpa Saus',
+                    default => $this->customSauce,
+                };
+            }
+        }
+
+        $cleanNotes = trim($this->customNotes);
+        if (! empty($cleanNotes)) {
+            $options[] = $cleanNotes;
+        }
+
+        $summary = implode(', ', $options);
+        $optKey = $this->customIsBeverage
+            ? "{$this->customTemperature}_{$this->customSugar}"
+            : "{$this->customServing}_{$this->customSauce}";
+        $itemKey = md5("{$this->customMenuId}_{$optKey}_{$cleanNotes}");
+
+        $price = $this->customMenuPrice;
+        $qty = $this->customQuantity;
+        $subtotal = $qty * $price;
+
+        if (isset($this->cart[$itemKey])) {
+            $this->cart[$itemKey]['quantity'] += $qty;
+            $this->cart[$itemKey]['subtotal'] = $this->cart[$itemKey]['quantity'] * $price;
+            $this->cart[$itemKey]['formatted_subtotal'] = 'Rp '.number_format($this->cart[$itemKey]['subtotal'], 0, ',', '.');
+        } else {
+            $this->cart[$itemKey] = [
+                'id' => $this->customMenuId,
+                'name' => $this->customMenuName,
+                'price' => $price,
+                'formatted_price' => 'Rp '.number_format($price, 0, ',', '.'),
+                'quantity' => $qty,
+                'subtotal' => $subtotal,
+                'formatted_subtotal' => 'Rp '.number_format($subtotal, 0, ',', '.'),
+                'is_beverage' => $this->customIsBeverage,
+                'notes' => $summary,
+                'options_summary' => $summary,
+            ];
+        }
+
+        $addedName = $this->customMenuName;
+        $this->closeCustomModal();
+        $this->triggerToast("Ditambahkan: {$addedName} ({$summary})");
+    }
+
+    public function updateQuantity(string|int $menuId, int $delta): void
+    {
+        $key = (string) $menuId;
+        if (! isset($this->cart[$key])) {
+            return;
+        }
+
+        $this->cart[$key]['quantity'] += $delta;
+
+        if ($this->cart[$key]['quantity'] <= 0) {
+            unset($this->cart[$key]);
+        } else {
+            $this->cart[$key]['subtotal'] = $this->cart[$key]['quantity'] * $this->cart[$key]['price'];
+            $this->cart[$key]['formatted_subtotal'] = 'Rp '.number_format($this->cart[$key]['subtotal'], 0, ',', '.');
+        }
+    }
+
+    public function removeFromCart(string|int $menuId): void
+    {
+        unset($this->cart[(string) $menuId]);
     }
 
     public function clearCart(): void
@@ -181,6 +478,15 @@ class CashierRegister extends Component
             return;
         }
 
+        if ($this->orderType === 'dine_in' && $this->selectedTableId) {
+            $table = Table::find($this->selectedTableId);
+            if (! $table || ! $table->isAvailable()) {
+                $this->triggerToast('Meja yang dipilih sedang tidak tersedia atau sudah terisi.');
+
+                return;
+            }
+        }
+
         $orderCode = 'ORD-'.now()->format('ymd').'-'.strtoupper(bin2hex(random_bytes(2)));
         $isMidtrans = ($this->paymentMethod === 'qris');
 
@@ -204,7 +510,12 @@ class CashierRegister extends Component
                     'quantity' => $item['quantity'],
                     'unit_price' => $item['price'],
                     'subtotal' => $item['subtotal'],
+                    'item_notes' => $item['notes'] ?? $item['options_summary'] ?? null,
                 ]);
+            }
+
+            if ($this->selectedTableId) {
+                Table::where('id', $this->selectedTableId)->where('status', 'available')->update(['status' => 'occupied']);
             }
 
             $this->lastOrderCode = $orderCode;
@@ -289,87 +600,8 @@ class CashierRegister extends Component
         $this->lastOrderCode = null;
         $this->snapToken = null;
         $this->cashGiven = 0;
-    }
 
-    /**
-     * Open validation modal for a pending cash table order.
-     */
-    public function openTicketValidation(int $orderId): void
-    {
-        $order = Order::find($orderId);
-        if (! $order) {
-            $this->triggerToast('Pesanan tidak ditemukan.');
-
-            return;
-        }
-
-        $this->selectedTicketOrderId = $orderId;
-        $this->ticketCashGiven = (float) $order->total_amount;
-        $this->showTicketModal = true;
-    }
-
-    /**
-     * Close the cash ticket validation modal.
-     */
-    public function closeTicketModal(): void
-    {
-        $this->showTicketModal = false;
-        $this->selectedTicketOrderId = null;
-        $this->ticketCashGiven = 0;
-    }
-
-    /**
-     * Scan or search an incoming table order via barcode or short code.
-     */
-    public function scanOrSearchTicket(): void
-    {
-        $code = trim($this->ticketSearch);
-        if (empty($code)) {
-            $this->triggerToast('Masukkan atau scan kode tiket pelanggan.');
-
-            return;
-        }
-
-        $cleanCode = ltrim($code, '#');
-
-        $order = Order::where(function ($q) use ($cleanCode) {
-            $q->where('order_code', $cleanCode)
-                ->orWhere('order_code', 'like', "%{$cleanCode}");
-        })
-            ->where('payment_status', '!=', 'paid')
-            ->latest()
-            ->first();
-
-        if (! $order) {
-            $this->triggerToast("Tiket '{$code}' tidak ditemukan atau sudah lunas.");
-
-            return;
-        }
-
-        $this->ticketSearch = '';
-        $this->openTicketValidation($order->id);
-    }
-
-    /**
-     * Confirm cash payment received from the customer at cashier counter.
-     */
-    public function confirmTicketPayment(): void
-    {
-        if (! $this->selectedTicketOrderId) {
-            return;
-        }
-
-        $order = Order::find($this->selectedTicketOrderId);
-        if ($order) {
-            $order->update([
-                'payment_status' => 'paid',
-                'order_status' => $order->order_status === 'pending' ? 'processing' : $order->order_status,
-            ]);
-
-            $this->triggerToast("Pembayaran Tunai {$order->order_code} Berhasil Diterima! Pesanan dikirim ke Barista.");
-        }
-
-        $this->closeTicketModal();
+        $this->redirectRoute('staff.cashier-tables', navigate: true);
     }
 
     public function triggerToast(string $message): void
@@ -378,10 +610,17 @@ class CashierRegister extends Component
         $this->dispatch('toast-notify');
     }
 
+    public function dismissToast(): void
+    {
+        $this->toastMessage = null;
+    }
+
     public function render()
     {
         $categories = Category::where('is_active', true)->get();
-        $tables = Table::all();
+        $tables = Table::with(['orders' => function ($q) {
+            $q->whereNotIn('order_status', ['completed', 'cancelled'])->latest();
+        }])->get();
 
         $menusQuery = Menu::where('is_available', true);
 
@@ -395,24 +634,10 @@ class CashierRegister extends Component
 
         $menus = $menusQuery->get();
 
-        $pendingCashOrders = Order::with(['table', 'orderItems.menu'])
-            ->where('payment_method', 'cash')
-            ->where('payment_status', 'unpaid')
-            ->where('order_status', '!=', 'cancelled')
-            ->latest()
-            ->take(6)
-            ->get();
-
-        $selectedTicketOrder = $this->selectedTicketOrderId
-            ? Order::with(['table', 'orderItems.menu'])->find($this->selectedTicketOrderId)
-            : null;
-
         return view('livewire.staff.CashierRegister', [
             'categories' => $categories,
             'tables' => $tables,
             'menus' => $menus,
-            'pendingCashOrders' => $pendingCashOrders,
-            'selectedTicketOrder' => $selectedTicketOrder,
         ]);
     }
 }

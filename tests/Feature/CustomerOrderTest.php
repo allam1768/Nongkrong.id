@@ -124,6 +124,7 @@ class CustomerOrderTest extends TestCase
             ->call('openDetail', $menu->id)
             ->assertSet('showDetailModal', true)
             ->assertSet('detailMenuName', $menu->name)
+            ->assertSet('detailIsBeverage', true)
             ->set('detailQuantity', 2)
             ->set('detailTemperature', 'hot')
             ->set('detailSugar', 'less')
@@ -131,6 +132,30 @@ class CustomerOrderTest extends TestCase
             ->call('addCustomizedToCart')
             ->assertSet('showDetailModal', false)
             ->assertSet('cartCount', 2);
+    }
+
+    public function test_customer_can_customize_food_menu_and_add_to_cart(): void
+    {
+        $foodMenu = Menu::whereHas('category', function ($q) {
+            $q->whereIn('slug', ['pastry-bakery', 'meals-snacks']);
+        })->first();
+
+        if (! $foodMenu) {
+            $this->markTestSkipped('No food menu available in seed data.');
+        }
+
+        Livewire::test(CustomerOrder::class)
+            ->call('openDetail', $foodMenu->id)
+            ->assertSet('showDetailModal', true)
+            ->assertSet('detailMenuName', $foodMenu->name)
+            ->assertSet('detailIsBeverage', false)
+            ->set('detailQuantity', 1)
+            ->set('detailServing', 'warm')
+            ->set('detailSauce', 'extra_sauce')
+            ->set('detailNotes', 'Saus dipisah ya kak')
+            ->call('addCustomizedToCart')
+            ->assertSet('showDetailModal', false)
+            ->assertSet('cartCount', 1);
     }
 
     /**
@@ -358,5 +383,27 @@ class CustomerOrderTest extends TestCase
         $order = Order::where('order_code', $orderCode)->first();
         $this->assertEquals('unpaid', $order->payment_status);
         $this->assertFalse($component->get('placedOrderPaid'));
+    }
+
+    public function test_customer_can_open_detail_by_name_from_ai_recommendation(): void
+    {
+        $menu = Menu::where('name', 'like', '%Berry%')->first() ?: Menu::first();
+
+        $component = Livewire::test(CustomerOrder::class)
+            ->call('openDetailByName', $menu->name);
+
+        $this->assertTrue($component->get('showDetailModal'));
+        $this->assertEquals($menu->id, $component->get('detailMenuId'));
+    }
+
+    public function test_customer_can_open_detail_via_livewire_event(): void
+    {
+        $menu = Menu::first();
+
+        $component = Livewire::test(CustomerOrder::class)
+            ->dispatch('open-menu-detail', menuId: $menu->id);
+
+        $this->assertTrue($component->get('showDetailModal'));
+        $this->assertEquals($menu->id, $component->get('detailMenuId'));
     }
 }

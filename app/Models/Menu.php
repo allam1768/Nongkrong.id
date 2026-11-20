@@ -85,4 +85,14 @@ class Menu extends Model
     {
         return $this->hasMany(OrderItem::class);
     }
+
+    /**
+     * Determine if this menu item is a beverage/drink.
+     */
+    public function isBeverage(): bool
+    {
+        $category = $this->relationLoaded('category') ? $this->category : $this->category()->first();
+
+        return $category ? $category->isBeverage() : true;
+    }
 }

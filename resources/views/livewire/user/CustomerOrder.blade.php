@@ -30,17 +30,17 @@
     }
 }" @toast-notify.window="showToast(@this.toastMessage)"
     @open-midtrans-snap.window="openMidtrans($event.detail.token)"
-    class="min-h-screen lg:h-screen lg:overflow-hidden bg-[#F8FAFC] text-slate-900 flex flex-col font-sans selection:bg-brand-blue selection:text-white">
+    class="min-h-screen lg:h-screen lg:overflow-hidden bg-[#F8FAFC] text-slate-900 flex flex-col font-sans selection:bg-brand-blue selection:text-white w-full max-w-full overflow-x-hidden">
     {{-- 1. TOP NAVBAR (Identik Mockup 03_web_customer_catalog.html) --}}
     <header
-        class="h-16 shrink-0 bg-white border-b-[1.5px] border-[#E2E8F0] sticky top-0 z-30 px-4 sm:px-8 flex items-center justify-between gap-4">
+        class="h-16 shrink-0 bg-white border-b-[1.5px] border-[#E2E8F0] sticky top-0 z-30 px-3.5 sm:px-8 flex items-center justify-between gap-2 sm:gap-4 max-w-full">
         {{-- Brand Logo --}}
-        <div class="flex items-center gap-3 shrink-0">
+        <div class="flex items-center gap-2 sm:gap-3 min-w-0 shrink">
             <a href="{{ route('customer.order') }}" wire:navigate
-                class="inline-flex items-center transition-transform duration-200 hover:scale-105 focus:outline-none"
+                class="inline-flex items-center transition-transform duration-200 focus:outline-none"
                 title="NONGKRONG.id">
                 <x-icon name="logo"
-                    class="h-6 sm:h-7 md:h-8 w-auto max-w-36.25 sm:max-w-none object-contain select-none text-brand-blue" />
+                    class="h-5 sm:h-7 md:h-8 w-auto max-w-[115px] xs:max-w-[135px] sm:max-w-none object-contain select-none text-brand-blue" />
             </a>
             <span class="sr-only">Digital Menu</span>
         </div>
@@ -64,20 +64,43 @@
         </div>
 
         {{-- Right Controls: Table Badge Pill & Mobile Cart Button --}}
-        <div class="flex items-center gap-2.5 shrink-0">
+        <div class="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
+            @if ($latestActiveOrder)
+                <a
+                    href="{{ route('order.tracking', ['code' => $latestActiveOrder->order_code]) }}"
+                    wire:navigate
+                    @class([
+                        'inline-flex items-center gap-1 sm:gap-1.5 text-[11px] sm:text-xs font-black px-2 sm:px-3 py-1 sm:py-1.5 rounded-full shadow-2xs transition active:scale-95 border',
+                        'bg-emerald-50 hover:bg-emerald-100 border-emerald-300 text-emerald-800' => $latestActiveOrder->isPaid(),
+                        'bg-amber-50 hover:bg-amber-100 border-amber-300 text-amber-800' => ! $latestActiveOrder->isPaid(),
+                    ])
+                    title="Lacak Status Pesanan Aktif"
+                >
+                    <span class="relative flex h-2 w-2 shrink-0">
+                        @if ($latestActiveOrder->isPaid())
+                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                            <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                        @else
+                            <span class="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span>
+                        @endif
+                    </span>
+                    <span class="truncate max-w-[65px] xs:max-w-[85px] sm:max-w-none">#{{ $latestActiveOrder->order_code }}</span>
+                </a>
+            @endif
+
             {{-- Table Tag Pill --}}
             <div
-                class="inline-flex items-center gap-1.5 bg-slate-100 border border-slate-200 text-slate-700 text-xs sm:text-[13px] font-extrabold px-3 sm:px-4 py-1.5 sm:py-2 rounded-full shadow-2xs select-none">
+                class="inline-flex items-center gap-1 bg-slate-100 border border-slate-200 text-slate-700 text-[11px] sm:text-[13px] font-extrabold px-2.5 sm:px-4 py-1 sm:py-2 rounded-full shadow-2xs select-none shrink-0">
                 <span>Meja {{ $tableNumber ?: '01' }}</span>
             </div>
 
             {{-- Mobile Cart Trigger (Visible on < lg) --}}
-            <button type="button" wire:click="openCart" title="Lihat Keranjang Pesanan" class="relative">
-                <x-icon name="card" class="w-6 h-6 text-slate-700 select-none" />
+            <button type="button" wire:click="openCart" title="Lihat Keranjang Pesanan" class="relative p-1 text-slate-700 select-none shrink-0">
+                <x-icon name="shopping-bag" class="w-5 h-5 sm:w-6 sm:h-6" />
 
                 @if ($cartCount > 0)
                     <span
-                        class="absolute -top-1.5 -right-1.5 bg-brand-blue text-white font-black text-[10px] w-5 h-5 rounded-full flex items-center justify-center shadow-xs">
+                        class="absolute -top-1 -right-1 bg-brand-blue text-white font-black text-[10px] w-4.5 h-4.5 rounded-full flex items-center justify-center shadow-xs">
                         {{ $cartCount }}
                     </span>
                 @endif
@@ -86,10 +109,10 @@
     </header>
 
     {{-- Mobile Search Row (Screen < sm) --}}
-    <div class="sm:hidden px-4 pt-2.5 pb-2.5">
+    <div class="sm:hidden px-3.5 pt-2.5 pb-2">
         <div
             class="w-full h-10 border-[1.5px] border-[#CBD5E1] rounded-full flex items-center px-3.5 gap-2 focus-within:border-brand-blue bg-white transition-all">
-            <x-icon name="search" class="w-4 h-4 text-slate-400 select-none" />
+            <x-icon name="search" class="w-4 h-4 text-slate-400 select-none shrink-0" />
             <input type="text" wire:model.live.debounce.300ms="searchQuery"
                 placeholder="Cari kopi, tea, makanan, atau snack..."
                 class="w-full bg-transparent border-none text-xs text-slate-800 placeholder-slate-400 focus:outline-none" />
@@ -103,14 +126,155 @@
     </div>
 
     {{-- 2. SPLIT CONTENT LAYOUT (Left: Catalog, Right: 360px Sticky Cart) --}}
-    <div class="flex-1 flex overflow-hidden bg-[#F8FAFC]">
+    <div class="flex-1 flex overflow-hidden bg-[#F8FAFC] w-full max-w-full">
         {{-- LEFT MAIN SCROLLABLE CATALOG --}}
-        <main class="flex-1 overflow-y-auto px-4 sm:px-8 py-6 flex flex-col gap-5">
+        <main class="flex-1 min-w-0 overflow-y-auto px-3.5 sm:px-8 py-4 sm:py-6 flex flex-col gap-4 sm:gap-5 max-w-full">
+            {{-- ACTIVE ORDER HERO CARD (Sesuai Mockup progres.svg - Fully Responsive) --}}
+            @if ($latestActiveOrder)
+                <div @class([
+                    'shrink-0 bg-white rounded-2xl sm:rounded-3xl p-3.5 sm:p-5 lg:px-6 lg:py-5 border transition-all shadow-xs flex flex-col xl:flex-row xl:items-center justify-between gap-3.5 sm:gap-4 xl:gap-6 w-full max-w-full overflow-hidden',
+                    'border-[#E2E8F0]' => $latestActiveOrder->isPaid(),
+                    'border-amber-300 bg-amber-50/15' => ! $latestActiveOrder->isPaid(),
+                ])>
+                    {{-- 1. Left Side: Barista Illustration + Order Info --}}
+                    <div class="flex items-center gap-3 sm:gap-4 min-w-0 flex-1">
+                        <img
+                            src="{{ asset('assets/img/progres.svg') }}"
+                            alt="Barista"
+                            class="h-12 sm:h-16 lg:h-20 w-auto object-contain shrink-0 select-none"
+                        />
+                        <div class="min-w-0 flex-1">
+                            {{-- Top Badges Row --}}
+                            <div class="flex items-center gap-1.5 sm:gap-2 flex-wrap mb-0.5 sm:mb-1">
+                                <span class="font-mono text-[10px] sm:text-[11px] font-bold text-brand-blue bg-[#EFF6FF] px-2 sm:px-2.5 py-0.5 rounded-full border border-[#BFDBFE] truncate max-w-full">
+                                    #{{ $latestActiveOrder->order_code }}
+                                </span>
+                            </div>
+
+                            {{-- Heading & Subtitle --}}
+                            <h3 class="text-sm sm:text-base lg:text-lg font-black text-[#0F172A] tracking-tight leading-snug line-clamp-1 sm:line-clamp-none">
+                                @if (! $latestActiveOrder->isPaid())
+                                    Selesaikan Pembayaran Pesananmu
+                                @elseif ($latestActiveOrder->order_status === 'ready')
+                                    Pesananmu Sudah Siap di Meja / Bar!
+                                @elseif ($latestActiveOrder->order_status === 'processing')
+                                    Barista Sedang Meracik Pesananmu
+                                @else
+                                    Pesanan Diterima Dapur
+                                @endif
+                            </h3>
+                            <p class="text-[11px] sm:text-xs lg:text-[13px] text-[#64748B] mt-0.5 font-medium leading-relaxed line-clamp-1 sm:line-clamp-none">
+                                @if (! $latestActiveOrder->isPaid())
+                                    Silakan selesaikan pembayaran untuk memproses pesanan ini.
+                                @else
+                                    Mau tambah menu? Pilih menu di bawah.
+                                @endif
+                            </p>
+                        </div>
+                    </div>
+
+                    {{-- 2. Center: Mini Progress Stepper (Responsive on Mobile, Tablet, & Desktop) --}}
+                    @if ($latestActiveOrder->isPaid())
+                        <div class="w-full xl:w-auto flex flex-col items-center justify-center shrink-0 max-w-full sm:max-w-md xl:max-w-none xl:w-64 lg:xl:w-72 mx-auto xl:mx-0 px-1 sm:px-2 select-none py-1 xl:py-0">
+                            {{-- Stepper Circles & Lines --}}
+                            <div class="w-full flex items-center justify-between relative px-6 sm:px-8">
+                                {{-- Line 1 --}}
+                                <div class="absolute left-10 sm:left-12 right-1/2 top-1/2 -translate-y-1/2 h-1 z-0 rounded-full {{ in_array($latestActiveOrder->order_status, ['processing', 'ready', 'completed']) ? 'bg-[#004AAD]' : 'bg-[#E2E8F0]' }}"></div>
+
+                                {{-- Line 2 --}}
+                                <div class="absolute left-1/2 right-10 sm:right-12 top-1/2 -translate-y-1/2 h-1 z-0 rounded-full {{ in_array($latestActiveOrder->order_status, ['ready', 'completed']) ? 'bg-[#004AAD]' : 'bg-[#E2E8F0]' }}"></div>
+
+                                {{-- Step 1 --}}
+                                <div class="relative z-10 flex items-center justify-center">
+                                    <div class="w-5 h-5 rounded-full bg-[#004AAD] text-white flex items-center justify-center shadow-2xs">
+                                        <x-icon name="check" class="w-3 h-3 text-white" />
+                                    </div>
+                                </div>
+
+                                {{-- Step 2 --}}
+                                <div class="relative z-10 flex items-center justify-center">
+                                    @if (in_array($latestActiveOrder->order_status, ['ready', 'completed']))
+                                        <div class="w-5 h-5 rounded-full bg-[#004AAD] text-white flex items-center justify-center shadow-2xs">
+                                            <x-icon name="check" class="w-3 h-3 text-white" />
+                                        </div>
+                                    @elseif ($latestActiveOrder->order_status === 'processing')
+                                        <div class="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-[#D1FAE5] flex items-center justify-center">
+                                            <div class="w-2.5 h-2.5 rounded-full bg-[#004AAD]"></div>
+                                        </div>
+                                    @else
+                                        <div class="w-5 h-5 rounded-full bg-[#E2E8F0]"></div>
+                                    @endif
+                                </div>
+
+                                {{-- Step 3 --}}
+                                <div class="relative z-10 flex items-center justify-center">
+                                    @if ($latestActiveOrder->order_status === 'ready')
+                                        <div class="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-[#D1FAE5] flex items-center justify-center">
+                                            <div class="w-2.5 h-2.5 rounded-full bg-[#10B981] animate-ping"></div>
+                                        </div>
+                                    @elseif ($latestActiveOrder->order_status === 'completed')
+                                        <div class="w-5 h-5 rounded-full bg-[#10B981] text-white flex items-center justify-center shadow-2xs">
+                                            <x-icon name="check" class="w-3 h-3 text-white" />
+                                        </div>
+                                    @else
+                                        <div class="w-5 h-5 rounded-full bg-[#E2E8F0]"></div>
+                                    @endif
+                                </div>
+                            </div>
+
+                            {{-- Stepper Text Labels (Aligned with 3 steps) --}}
+                            <div class="w-full grid grid-cols-3 text-[10px] sm:text-[11px] mt-1.5 font-medium select-none">
+                                <span class="text-left {{ $latestActiveOrder->order_status === 'pending' ? 'text-[#0F172A] font-bold' : 'text-[#475569]' }}">
+                                    Pesanan Diterima
+                                </span>
+                                <span class="text-center {{ $latestActiveOrder->order_status === 'processing' ? 'text-[#0F172A] font-extrabold' : 'text-[#64748B]' }}">
+                                    Sedang Diracik
+                                </span>
+                                <span class="text-right {{ $latestActiveOrder->order_status === 'ready' ? 'text-[#0F172A] font-extrabold' : 'text-[#94A3B8]' }}">
+                                    Siap Diantar
+                                </span>
+                            </div>
+                        </div>
+                    @endif
+
+                    {{-- 3. Right Side: Action Buttons --}}
+                    <div class="flex items-center gap-2 sm:gap-2.5 shrink-0 w-full xl:w-auto justify-end pt-2 xl:pt-0 border-t xl:border-t-0 border-slate-100">
+                        @if (! $latestActiveOrder->isPaid())
+                            <button
+                                type="button"
+                                wire:click="reopenOrderSuccess('{{ $latestActiveOrder->order_code }}')"
+                                class="flex-1 sm:flex-initial px-4 py-2.5 bg-amber-500 hover:bg-amber-600 text-white font-extrabold text-xs rounded-full transition active:scale-95 cursor-pointer shadow-sm flex items-center justify-center gap-1.5"
+                            >
+                                <x-icon name="qrcode" class="w-4 h-4 text-white" />
+                                <span>Buka Tiket Bayar</span>
+                            </button>
+                        @endif
+
+                        <a
+                            href="{{ route('order.tracking', ['code' => $latestActiveOrder->order_code]) }}"
+                            wire:navigate
+                            class="w-full sm:w-auto px-5 sm:px-6 py-2.5 sm:py-3 bg-brand-blue hover:bg-[#003da1] text-white font-black text-xs sm:text-[13px] rounded-full transition active:scale-95 flex items-center justify-center gap-2 shadow-sm whitespace-nowrap"
+                        >
+                            <span>Pantau Live Tracking</span>
+                            <x-icon name="arrow-right" class="w-4 h-4 text-white" />
+                        </a>
+                    </div>
+                </div>
+            @endif
+
             {{-- AI HERO BANNER (Compact & Modern) --}}
             <div
-                class="shrink-0 bg-brand-blue rounded-2xl sm:rounded-3xl p-4 sm:p-6 text-white flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4 border-2 border-[#003087] relative overflow-hidden shadow-xs">
-                <div class="relative z-10 max-w-xl">
-
+                class="shrink-0 bg-brand-blue rounded-2xl sm:rounded-3xl p-4 sm:p-6 text-white flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4 border-2 border-[#003087] relative overflow-hidden shadow-xs cursor-pointer select-none w-full max-w-full"
+                @click="$dispatch('open-ai-barista', { context: 'order' })"
+                role="button"
+                tabindex="0"
+                @keydown.enter="$dispatch('open-ai-barista', { context: 'order' })"
+                title="Tanya Rekomendasi Menu ke AI Barista">
+                <div class="relative z-10 max-w-xl w-full min-w-0">
+                    <div class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-white/15 text-blue-100 text-[11px] font-bold mb-1.5">
+                        <x-icon name="sparkles" class="w-3.5 h-3.5 text-blue-200" />
+                        <span>AI Barista Assistant</span>
+                    </div>
                     <h2 class="text-base sm:text-xl font-black text-white leading-snug">
                         Bingung Mau Minum Apa Hari Ini?
                     </h2>
@@ -119,8 +283,9 @@
                     </p>
                 </div>
 
-                <button type="button" wire:click="openAiModal"
+                <button type="button" @click.stop="$dispatch('open-ai-barista', { context: 'order' })"
                     class="relative z-10 shrink-0 w-full sm:w-auto bg-white hover:bg-blue-50 text-brand-blue font-black text-xs sm:text-[13px] px-5 sm:px-6 py-2.5 sm:py-3 rounded-xl sm:rounded-full flex items-center justify-center gap-2 shadow-sm transition-all active:scale-95 cursor-pointer">
+                    <x-icon name="sparkles" class="w-4 h-4 text-brand-blue" />
                     <span>Tanya Barista AI</span>
                     <x-icon name="toright" class="w-5 h-auto text-brand-blue select-none" />
                 </button>
@@ -300,7 +465,6 @@
                             <x-icon name="shopping-bag" class="w-6 h-6 text-slate-400" />
                         </div>
                         <p class="text-xs font-bold text-slate-600">Keranjang Masih Kosong</p>
-                        <p class="text-[11px] text-slate-400 mt-0.5">Pilih menu favorit Anda dengan menekan tombol (+)
                         </p>
                     </div>
                 @endforelse

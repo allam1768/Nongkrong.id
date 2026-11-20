@@ -42,4 +42,10 @@ return [
         'is_production' => env('MIDTRANS_IS_PRODUCTION', false),
     ],
 
+    'nine_router' => [
+        'base_url' => env('NINEROUTER_BASE_URL', 'http://127.0.0.1:20128/v1'),
+        'api_key' => env('NINEROUTER_API_KEY'),
+        'model' => env('NINEROUTER_MODEL', 'ag/gemini-3.8-flash-low'),
+    ],
+
 ];
