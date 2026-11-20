@@ -22,5 +22,7 @@
     "SESSION_DRIVER": "cookie",
     "CACHE_STORE": "array",
     "QUEUE_CONNECTION": "sync"
-  }
+  },
+  "framework": null,
+  "outputDirectory": "public"
 }
