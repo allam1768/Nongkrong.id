@@ -28,7 +28,13 @@
     "APP_PACKAGES_CACHE": "/tmp/storage/bootstrap/cache/packages.php",
     "APP_CONFIG_CACHE": "/tmp/storage/bootstrap/cache/config.php",
     "APP_ROUTES_CACHE": "/tmp/storage/bootstrap/cache/routes-v7.php",
-    "APP_EVENTS_CACHE": "/tmp/storage/bootstrap/cache/events.php"
+    "APP_EVENTS_CACHE": "/tmp/storage/bootstrap/cache/events.php",
+    "DB_CONNECTION": "pgsql",
+    "DB_PORT": "6543",
+    "DB_DATABASE": "postgres",
+    "DB_USERNAME": "postgres.xjitcozbsbnxooqjavby",
+    "DB_HOST": "aws-1-ap-southeast-1.pooler.supabase.com",
+    "DB_SSLMODE": "require"
   },
   "framework": null,
   "outputDirectory": "public"
