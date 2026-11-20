@@ -35,4 +35,12 @@ putenv("LARAVEL_STORAGE_PATH={$storagePath}");
 $_ENV['LARAVEL_STORAGE_PATH'] = $storagePath;
 $_SERVER['LARAVEL_STORAGE_PATH'] = $storagePath;
 
-require __DIR__ . '/../public/index.php';
+try {
+    require __DIR__ . '/../public/index.php';
+} catch (\Throwable ) {
+    http_response_code(500);
+    echo "<h1>Laravel Boot Exception</h1>";
+    echo "<p><strong>Message:</strong> " . htmlspecialchars(->getMessage()) . "</p>";
+    echo "<p><strong>File:</strong> " . htmlspecialchars(->getFile()) . ":" . ->getLine() . "</p>";
+    echo "<pre>" . htmlspecialchars(->getTraceAsString()) . "</pre>";
+}
