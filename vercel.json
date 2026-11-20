@@ -17,11 +17,18 @@
   ],
   "env": {
     "APP_ENV": "production",
-    "APP_DEBUG": "true",
+    "APP_DEBUG": "false",
     "LOG_CHANNEL": "stderr",
     "SESSION_DRIVER": "cookie",
     "CACHE_STORE": "array",
-    "QUEUE_CONNECTION": "sync"
+    "QUEUE_CONNECTION": "sync",
+    "LARAVEL_STORAGE_PATH": "/tmp/storage",
+    "VIEW_COMPILED_PATH": "/tmp/storage/framework/views",
+    "APP_SERVICES_CACHE": "/tmp/storage/bootstrap/cache/services.php",
+    "APP_PACKAGES_CACHE": "/tmp/storage/bootstrap/cache/packages.php",
+    "APP_CONFIG_CACHE": "/tmp/storage/bootstrap/cache/config.php",
+    "APP_ROUTES_CACHE": "/tmp/storage/bootstrap/cache/routes-v7.php",
+    "APP_EVENTS_CACHE": "/tmp/storage/bootstrap/cache/events.php"
   },
   "framework": null,
   "outputDirectory": "public"

@@ -31,6 +31,7 @@ $app = Application::configure(basePath: dirname(__DIR__))
 
 if ($storagePath = env('LARAVEL_STORAGE_PATH')) {
     $app->useStoragePath($storagePath);
+    $app->useBootstrapPath($storagePath . '/bootstrap');
 }
 
 return $app;

@@ -1,13 +1,9 @@
 <?php
 
-ini_set('display_errors', '1');
-ini_set('display_startup_errors', '1');
-error_reporting(E_ALL);
-
 /**
  * Entry point for Vercel Serverless PHP Runtime.
  *
- * Prepares writable /tmp directory for cache, views, logs, and sessions
+ * Prepares writable /tmp directory for cache, views, logs, sessions, and bootstrap cache
  * because the root filesystem on Vercel is strictly read-only.
  */
 
@@ -23,6 +19,8 @@ $dirs = [
     $storagePath . '/framework/sessions',
     $storagePath . '/framework/views',
     $storagePath . '/logs',
+    $storagePath . '/bootstrap',
+    $storagePath . '/bootstrap/cache',
 ];
 
 foreach ($dirs as $dir) {
@@ -31,16 +29,22 @@ foreach ($dirs as $dir) {
     }
 }
 
+// Copy pre-existing bootstrap cache files if any
+$originCache = __DIR__ . '/../bootstrap/cache';
+if (is_dir($originCache)) {
+    foreach (scandir($originCache) as $file) {
+        if ($file !== '.' && $file !== '..' && $file !== '.gitignore') {
+            @copy($originCache . '/' . $file, $storagePath . '/bootstrap/cache/' . $file);
+        }
+    }
+}
+
 putenv("LARAVEL_STORAGE_PATH={$storagePath}");
 $_ENV['LARAVEL_STORAGE_PATH'] = $storagePath;
 $_SERVER['LARAVEL_STORAGE_PATH'] = $storagePath;
 
-try {
-    require __DIR__ . '/../public/index.php';
-} catch (\Throwable $e) {
-    http_response_code(500);
-    echo "<h1>Laravel Boot Exception</h1>";
-    echo "<p><strong>Message:</strong> " . htmlspecialchars($e->getMessage()) . "</p>";
-    echo "<p><strong>File:</strong> " . htmlspecialchars($e->getFile()) . ":" . $e->getLine() . "</p>";
-    echo "<pre>" . htmlspecialchars($e->getTraceAsString()) . "</pre>";
-}
+putenv("VIEW_COMPILED_PATH={$storagePath}/framework/views");
+$_ENV['VIEW_COMPILED_PATH'] = "{$storagePath}/framework/views";
+$_SERVER['VIEW_COMPILED_PATH'] = "{$storagePath}/framework/views";
+
+require __DIR__ . '/../public/index.php';
