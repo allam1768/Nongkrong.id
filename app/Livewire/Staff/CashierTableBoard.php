@@ -112,9 +112,6 @@ class CashierTableBoard extends Component
      */
     public function getTablesProperty(): Collection
     {
-        $driver = \Illuminate\Support\Facades\DB::connection()->getDriverName();
-        $castType = ($driver === 'pgsql' || $driver === 'sqlite') ? 'INTEGER' : 'UNSIGNED';
-
         return Table::query()
             ->when($this->activeFilter !== 'all', function ($query) {
                 $query->where('status', $this->activeFilter);
@@ -125,7 +122,7 @@ class CashierTableBoard extends Component
             ->with(['orders' => function ($q) {
                 $q->whereIn('order_status', ['pending', 'processing', 'ready'])->latest();
             }])
-            ->orderByRaw("CAST(table_number AS {$castType}) ASC")
+            ->orderByRaw('LENGTH(table_number) ASC, table_number ASC')
             ->orderBy('id', 'asc')
             ->get();
     }
