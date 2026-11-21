@@ -83,8 +83,11 @@
 
         {{-- Section D: Barista Illustration Touching Bottom Edge --}}
         <div class="w-full flex-1 min-h-0 flex items-end justify-center select-none pointer-events-none overflow-hidden">
-            <img src="{{ asset('assets/img/portal.svg') }}" alt="Barista Nongkrong.id"
-                class="w-[122%] max-w-none h-auto max-h-[52vh] object-contain object-bottom pointer-events-none" />
+            <picture class="w-[122%] max-w-none h-auto max-h-[52vh] flex items-end justify-center pointer-events-none">
+                <source srcset="{{ asset('assets/img/portal.webp') }}" type="image/webp">
+                <img src="{{ asset('assets/img/portal.svg') }}" alt="Barista Nongkrong.id"
+                    class="w-full h-auto object-contain object-bottom pointer-events-none" />
+            </picture>
         </div>
     </div>
 
@@ -94,8 +97,11 @@
         {{-- Left: Barista Illustration Fixed to Bottom Left --}}
         <div
             class="relative w-full flex items-center justify-center select-none my-0 md:fixed md:bottom-0 md:left-0 md:w-[38vw] lg:w-[42vw] xl:w-[46vw] md:max-w-130 lg:max-w-150 md:h-[75vh] lg:h-[82vh] xl:h-[88vh] pointer-events-none z-10 overflow-visible">
-            <img src="{{ asset('assets/img/portal.svg') }}" alt="Barista Nongkrong.id"
-                class="w-full h-full object-contain object-bottom-left pointer-events-none" />
+            <picture class="w-full h-full pointer-events-none">
+                <source srcset="{{ asset('assets/img/portal.webp') }}" type="image/webp">
+                <img src="{{ asset('assets/img/portal.svg') }}" alt="Barista Nongkrong.id"
+                    class="w-full h-full object-contain object-bottom-left pointer-events-none" />
+            </picture>
         </div>
 
         {{-- Right Side: Typography & Action Buttons --}}
