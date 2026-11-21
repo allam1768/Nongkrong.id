@@ -8,24 +8,37 @@
         setTimeout(() => this.toast = false, 3500);
     },
     openMidtrans(token) {
-        if (window.snap && token) {
-            window.snap.pay(token, {
-                onSuccess: (result) => {
-                    $wire.handleMidtransSuccess();
-                },
-                onPending: (result) => {
-                    this.showToast('Menunggu penyelesaian pembayaran...');
-                },
-                onError: (result) => {
-                    this.showToast('Pembayaran Midtrans tidak berhasil diselesaikan.');
-                },
-                onClose: () => {
-                    // User closed popup
-                }
-            });
-        } else if (!token) {
-            this.showToast('Membuat token Snap Midtrans...');
-            $wire.payWithMidtrans();
+        const pay = (t) => {
+            if (window.snap && t) {
+                window.snap.pay(t, {
+                    onSuccess: (result) => {
+                        $wire.handleMidtransSuccess();
+                    },
+                    onPending: (result) => {
+                        this.showToast('Menunggu penyelesaian pembayaran...');
+                    },
+                    onError: (result) => {
+                        this.showToast('Pembayaran Midtrans tidak berhasil diselesaikan.');
+                    },
+                    onClose: () => {}
+                });
+            } else if (!t) {
+                this.showToast('Membuat token Snap Midtrans...');
+                $wire.payWithMidtrans();
+            }
+        };
+
+        if (window.snap) {
+            pay(token);
+        } else {
+            const script = document.getElementById('midtrans-snap-script') || document.createElement('script');
+            script.id = 'midtrans-snap-script';
+            script.src = '{{ config('services.midtrans.is_production') ? 'https://app.midtrans.com/snap/snap.js' : 'https://app.sandbox.midtrans.com/snap/snap.js' }}';
+            script.setAttribute('data-client-key', '{{ config('services.midtrans.client_key') }}');
+            script.onload = () => pay(token);
+            if (!document.getElementById('midtrans-snap-script')) {
+                document.head.appendChild(script);
+            }
         }
     }
 }" @toast-notify.window="showToast(@this.toastMessage)"

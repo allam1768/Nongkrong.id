@@ -634,6 +634,9 @@ class CustomerOrder extends Component
                 if ($qrisData) {
                     $this->placedQrisUrl = $qrisData['qr_url'] ?? null;
                     $this->placedQrString = $qrisData['qr_string'] ?? null;
+                    if (! $this->placedQrisUrl && ! empty($this->placedQrString)) {
+                        $this->placedQrisUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=300x300&data='.urlencode($this->placedQrString);
+                    }
                 }
             }
         } elseif ($this->placedPaymentMethod === 'cash' && $this->placedOrderCode) {

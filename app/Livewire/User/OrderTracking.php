@@ -115,6 +115,9 @@ class OrderTracking extends Component
                     $qrisData = $midtransService->getOrCreateQris($order);
                     if ($qrisData) {
                         $this->qrisUrl = $qrisData['qr_url'] ?? null;
+                        if (! $this->qrisUrl && ! empty($qrisData['qr_string'])) {
+                            $this->qrisUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=300x300&data='.urlencode($qrisData['qr_string']);
+                        }
                     }
                 } catch (\Throwable $e) {
                     // Ignore Midtrans error on local tracking view

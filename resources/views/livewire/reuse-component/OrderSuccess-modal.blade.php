@@ -111,11 +111,18 @@
                             <span class="font-mono text-slate-500 text-[11px]">{{ $placedOrderCode }}</span>
                         </div>
 
+                        @php
+                            $effectiveQrUrl = $placedQrisUrl;
+                            if (! $effectiveQrUrl && ! empty($placedQrString)) {
+                                $effectiveQrUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=' . urlencode($placedQrString);
+                            }
+                        @endphp
+
                         {{-- QR Code Image Directly from Midtrans --}}
-                        @if ($placedQrisUrl)
+                        @if ($effectiveQrUrl)
                             <div class="w-48 sm:w-56 h-48 sm:h-56 mx-auto bg-white p-2 border-2 border-slate-900 rounded-2xl flex items-center justify-center shadow-xs overflow-hidden">
                                 <img
-                                    src="{{ $placedQrisUrl }}"
+                                    src="{{ $effectiveQrUrl }}"
                                     alt="QRIS Midtrans - {{ $placedOrderCode }}"
                                     class="w-full h-full object-contain select-none"
                                 />
@@ -215,11 +222,12 @@
                         @if ($placedSnapToken)
                             <button
                                 type="button"
-                                wire:click="payWithMidtrans"
+                                @click="openMidtrans('{{ $placedSnapToken }}')"
                                 id="btn-midtrans-snap-pay"
-                                class="w-full py-1 text-slate-400 hover:text-brand-blue text-[11px] font-semibold transition cursor-pointer underline"
+                                class="w-full py-2.5 px-4 bg-brand-blue/10 hover:bg-brand-blue/20 text-brand-blue border border-brand-blue/30 rounded-xl text-xs font-bold transition active:scale-98 flex items-center justify-center gap-2 cursor-pointer mt-2"
                             >
-                                Opsi: Buka Jendela Snap Pop-up
+                                <x-icon name="credit-card" class="w-4 h-4 text-brand-blue" />
+                                <span>Buka Pop-up Pembayaran (GoPay / BCA / E-Wallet)</span>
                             </button>
                         @endif
                     </div>

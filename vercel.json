@@ -38,7 +38,12 @@
     "DB_DATABASE": "postgres",
     "DB_USERNAME": "postgres.xjitcozbsbnxooqjavby",
     "DB_HOST": "aws-1-ap-southeast-1.pooler.supabase.com",
-    "DB_SSLMODE": "require"
+    "DB_SSLMODE": "require",
+    "APP_KEY": "base64:pS0rlFdyOr4u3qgu1iMxNO4Gp3OjVSnwYKMetZ/OQ58=",
+    "MIDTRANS_MERCHANT_ID": "M811456458",
+    "MIDTRANS_CLIENT_KEY": "SB-Mid-client-h06NcLoCtcJ~90CpjtjboD~T",
+    "MIDTRANS_SERVER_KEY": "SB-Mid-server-LrKfjpTfctmuml.5U1_Zsge5",
+    "MIDTRANS_IS_PRODUCTION": "false"
   },
   "framework": null,
   "outputDirectory": "public",
